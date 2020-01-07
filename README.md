@@ -1,6 +1,6 @@
 # CC-OSish
 
-don't try to use this as lua.
+don't try to use this readme file as lua.
 
 So, this is just an attempt to make some quality of live improvements to CC. thats it really.
 Also, many things that  let you use it as a.. 'family pc' i guess.

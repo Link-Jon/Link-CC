@@ -2,11 +2,10 @@
 function nilcheck(var, default)
     local nilary = {'nil','Nil','NIL','NULL','null','Null','',' '}
     if var==nilary then
-
-        var=nil
-
-    end
-
-return(var)
-
+        if not default then
+                var=nil
+            else
+                var=default
+        end
+    return(var)
 end

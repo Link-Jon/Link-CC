@@ -2,15 +2,10 @@
 mon=peripheral.find("monitor")
 perp=false --Immibis peripherals  (gets checked with server)
 loop=0
-
+name=="Link"
 exitvar=true --just incase i may ever use it...
 function Main()
-    if fs.exists("update")==false then
-        up=fs.open("update","w")
-        up.writeLine("fs.delete('startup')")
-        up.writeLine("shell.run(pastebin get 7W48dz3c startup)")
-        up.close()
-    end
+	git("functions/help.lua","help")
     --backup, just incase. also for more complex code :/ oh well.
     pullBack = pullEvent
     osPullBack = os.pullEvent
@@ -22,12 +17,13 @@ function Main()
     term.clear()
     term.setCursorPos(1,1)
         if mon~=nil then
-            mwrite("Use the connected Monitor?\n Warning: This file is not very well built for a monitor\n (y/n)\n>")--it isnt. working on that now...
-            if read()=="y" then
+            mwrite("Use the connected Monitor?\n Warning: This 'os*' is not very well built for a monitor\n (y/n)\n>")--it isnt. working on that now...
+            if read()=="y" then -- using the word OS very streacged here
                     monitors=true
                     mon.setTextScale(0.5)
                     mon.clear()
                     mon.setCursorPos(1,1)
+					git("functions/mtext.lua","mtext")
                 else
                     mwrite("\nImpromper input or input was no\n")
             end
@@ -49,7 +45,7 @@ function Main()
             user = 1
             sleep(2)
         elseif input==pass[2] then
-            mprint("SIGNED IN AS LINK. RESTRICTIONS REMOVED")
+            mprint("SIGNED IN AS "..name..". RESTRICTIONS REMOVED")
             --enable events.
             pullEvent = pullBack
             os.pullEvent = osPullBack
@@ -64,118 +60,68 @@ function Main()
     servercheck(ipcheck())
 
     while exitvar do
+		if user>=2 then
+			mprint("Welcome back "..name.."!")
+		end
         mwrite("What do you want to do? (help for list)\n>")
         local inputb=read()
    
-        if inputb=="help" then
-        
-        mprint("\nhelp (tier 0 required)")
-		sleep(1)
-
-        mprint("chat (tier 1 required)")
-        mprint("chat. Requires a modem of some kind.")
-            if perp==true then
-                mprint("This may or may not work with lan cables...")
-            end
-		mprint("Anyone else that wants to join they must have the host name.")
-		--mprint("I usually use 'Internet', which is why I call it internet.")
-        sleep(3)
-
-        mprint("\nrun (tier 1 required)")
-		mprint("Notice: you must type 'run' first to start the command.")
-		sleep(4)
-
-        mprint("")
-        mprint("exit (reboots computer; tier 0 required)")
-		mprint("If you are tier 2+, then it will simply exit the program.")
-        sleep(4)
-
-        mprint("")
-        mprint("reboot (tier 0 required)")
-		mprint("Reboots the computer. Purpose is being a reboot command for tier 2+")
-        sleep(4)
-        
-        mprint("\ndiscord (gives you a discord link. (tier 0 required)\n")
-        sleep(1)
-
-        mprint("\nclear (clears the screen. tier 0 required\n")
-        sleep(1)
-
-		mprint("\nlog (log of my edits. generalized. (tier 0 required)\n")
-		sleep(1)
-
-        mprint("\ntimer (starts a timer for x seconds.)")
-        mprint("Timer shown in both minutes and seconds (its a bit odd though)")
-        
-        sleep(3)
-        mprint("\nNotes: no caps in commands.\n")
-        mprint("Enter the command first, then add the arguments.")
-        mprint("Such as:")
-        mprint(">timer")
-        mprint("Amount of time? in seconds.")
-        mprint(">30")
-        sleep(5)
+        if inputb=="help" then --note, make an array for the help list. maybe make it its own file too.
+			help()
    
-            elseif inputb=="chat" then
+            elseif inputb=="chat" then --move. make more friendly.
                 if user>=1 then
                     		Internet()
                 	else
                     		permerr()
                 end
 
-            elseif inputb=="exit" then
+            elseif inputb=="exit" then --keep here
                 if user>=2 then
                         error("Process ended")
                     else
                         os.reboot()
                 end
         
-            elseif inputb=="run" then
+            elseif inputb=="run" then --idc
                 if user>=1 then
                         run()
                     else
                         permerr()
                 end
             
-            elseif inputb=="discord" then
+            elseif inputb=="discord" then -- new file. merge the two discord functions.
                 discord()
             
-            elseif inputb=="disk" then
+            --elseif inputb=="disk" then    -to be remade with a full updater.
             mwrite("\nHow is the disk connected \n IE 'left','right'.'top', ect\n>")
             shell.run("label set")
             file=fs.open(disk/update)
-            file.mwrite(" fs.delete('startup') ")
+            file.mwrite(" fs.delete('startup')")
             file.mwrite("shell.run(pastebin get 7W48dz3c startup)")
             file.mwrite("shell.run('startup')")
             file.close()
 
-            elseif inputb=="reboot" then
+            elseif inputb=="reboot" then -- keep here
                 os.reboot()
-
-            elseif inputb=="log" then
-                shell.openTab(log())
                 
-            elseif inputb=="clear" then
+            elseif inputb=="clear" then -- keep here.
                 term.clear()
 
-            elseif inputb=="timer" then
-                mwrite("Amount of time? in seconds.\n>")
-                time=read()
-                time=tonumber(time)
-                shell.openTab(timer(time))
-                term.clear()
+            elseif inputb=="timer" then -- put this extra code into the timer file also..
+				timer()
 
-            elseif inputb=="math" then
+            elseif inputb=="math" then -- new file
                 shell.openTab(calc())
 
-            elseif inputb=="function" then
+            elseif inputb=="function" then -- new file
                 if user>=1 then
                         shell.openTab(dofun())
                     else
                         permerr()
                 end
 
-            elseif inputb=="logistic" then
+            elseif inputb=="logistic" then --allready seperated.
                 LPmonitor() -- maybe tier one..?
 
         end
@@ -320,18 +266,6 @@ function discogen()
     disco.readAll()
 
 end
-
-function nilcheck(var)
-    if var=='nil' or var=='Nil' or var=='NIL' or var=='null' or var=='Null' or var=='NULL' then
-        var=nil
-    end
-return(var)
-end
-
-function log()
-    mprint("added timer")
-end
-
 
 Main()
 

@@ -65,71 +65,12 @@ function Main()
 		end
         mwrite("What do you want to do? (help for list)\n>")
         local inputb=read()
-   
-        if inputb=="help" then --note, make an array for the help list. maybe make it its own file too.
-			help()
-   
-            elseif inputb=="chat" then --move. make more friendly.
-                if user>=1 then
-                    		Internet()
-                	else
-                    		permerr()
-                end
-
-            elseif inputb=="exit" then --keep here
-                if user>=2 then
-                        error("Process ended")
-                    else
-                        os.reboot()
-                end
-        
-            elseif inputb=="run" then --idc
-                if user>=1 then
-                        run()
-                    else
-                        permerr()
-                end
-            
-            elseif inputb=="discord" then -- new file. merge the two discord functions.
-                discord()
-            
-            --elseif inputb=="disk" then    -to be remade with a full updater.
-            mwrite("\nHow is the disk connected \n IE 'left','right'.'top', ect\n>")
-            shell.run("label set")
-            file=fs.open(disk/update)
-            file.mwrite(" fs.delete('startup')")
-            file.mwrite("shell.run(pastebin get 7W48dz3c startup)")
-            file.mwrite("shell.run('startup')")
-            file.close()
-
-            elseif inputb=="reboot" then -- keep here
-                os.reboot()
-                
-            elseif inputb=="clear" then -- keep here.
-                term.clear()
-
-            elseif inputb=="timer" then -- put this extra code into the timer file also..
-				timer()
-
-            elseif inputb=="math" then -- new file
-                shell.openTab(calc())
-
-            elseif inputb=="function" then -- new file
-                if user>=1 then
-                        shell.openTab(dofun())
-                    else
-                        permerr()
-                end
-
-            elseif inputb=="logistic" then --allready seperated.
-                LPmonitor() -- maybe tier one..?
-
-        end
+			dolua(inputb)
     end
 end
  
 function permerr()
-    mprint("WARNING: INSUFFICIENT PERMMISIONS\n")
+    mprint("WARNING: INSUFFICIENT PERMMISIONS\n YOUR LEVEL:"..user.."\n>")
 end
  
 function calc()

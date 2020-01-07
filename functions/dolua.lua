@@ -40,7 +40,7 @@ function dolua(inputb)
                     mon.clear()
 				else
 					timer()
-				end
+			end
 
         elseif inputb=="math" then
             shell.openTab(calc())
@@ -50,8 +50,10 @@ function dolua(inputb)
                     shell.openTab(dofun())
                 else
                     permerr()
-                end
+            end
 
         elseif inputb=="logistic" then
-            LPmonitor() 
+            LPmonitor()
+		elseif inputb=="license" then
+			github(license,license,nil,nil,nil,"r")
 end

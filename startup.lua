@@ -2,54 +2,9 @@
 mon=peripheral.find("monitor")
 perp=false --Immibis peripherals  (gets checked with server)
 loop=0
-function mprint(str)
-    if monitors==true then
-            loop=loop+1
-            local x,y =mon.getCursorPos()
-            y=y+1
-            if loop==5 then
-                mon.scroll(5)
-                y=1
-                loop=0
-            end
-            mon.setCursorPos(1,y)
-            mon.write("\n"..str.."\n")
-            print(str)
-            return
-        else
-            print(str)
-            return
-    end
-end
-
-function mwrite(str)
-    if monitors==true then
-            loop=loop+1
-            local x,y=mon.getCursorPos()
-            y=y+1
-            if loop==5 then
-                mon.scroll(5)
-                y=1
-                loop=0
-            end
-            mon.setCursorPos(1,y)
-            mon.write(str)
-            write(str)
-            return
-        else
-            write(str)
-            return
-    end
-end
 
 exitvar=true --just incase i may ever use it...
 function Main()
-    if fs.exists("update")==false then
-        up=fs.open("update","w")
-        up.writeLine("fs.delete('startup')")
-        up.writeLine("shell.run(pastebin get 7W48dz3c startup)")
-        up.close()
-    end
     --backup, just incase. also for more complex code :/ oh well.
     pullBack = pullEvent
     osPullBack = os.pullEvent
@@ -60,18 +15,8 @@ function Main()
     
     term.clear()
     term.setCursorPos(1,1)
-        if mon~=nil then
-            mwrite("Use the connected Monitor?\n Warning: This file is not very well built for a monitor\n (y/n)\n>")--it isnt. working on that now...
-            if read()=="y" then
-                    monitors=true
-                    mon.setTextScale(0.5)
-                    mon.clear()
-                    mon.setCursorPos(1,1)
-                else
-                    mwrite("\nImpromper input or input was no\n")
-            end
-        end
-
+	git(mtext)
+	montest()
     local pass = {'not','getting','mypass'} --  :P
     if pocket then
         mprint("WARNING: NOT OPTIMIZED FOR POCKET COMPUTERS")

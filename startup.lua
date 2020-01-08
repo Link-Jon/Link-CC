@@ -2,9 +2,10 @@
 mon=peripheral.find("monitor")
 perp=false --Immibis peripherals  (gets checked with server)
 loop=0
-
 name=="Link"
 exitvar=true --just incase i may ever use it...
+
+
 function Main()
 	  --git("functions/help.lua","help")
     --backup, just incase. also for more complex code :/ oh well.
@@ -17,7 +18,7 @@ function Main()
     
     term.clear()
     term.setCursorPos(1,1)
-        --[[if mon~=nil then
+        if mon~=nil then
             mwrite("Use the connected Monitor?\n Warning: This 'os*' is not very well built for a monitor\n (y/n)\n>")--it isnt. working on that now...
             if read()=="y" then -- using the word OS very streacged here
                     monitors=true
@@ -28,7 +29,7 @@ function Main()
                 else
                     mwrite("\nImpromper input or input was no\n")
             end
-        end]]
+        end
     local pass = {'not','getting','mypass'} --  :P
     if pocket then
         mprint("WARNING: NOT OPTIMIZED FOR POCKET COMPUTERS")

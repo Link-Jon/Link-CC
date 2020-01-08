@@ -3,8 +3,10 @@ mon=peripheral.find("monitor")
 perp=false --Immibis peripherals  (gets checked with server)
 loop=0
 
+name=="Link"
 exitvar=true --just incase i may ever use it...
 function Main()
+	  --git("functions/help.lua","help")
     --backup, just incase. also for more complex code :/ oh well.
     pullBack = pullEvent
     osPullBack = os.pullEvent
@@ -15,8 +17,18 @@ function Main()
     
     term.clear()
     term.setCursorPos(1,1)
-	--git(mtext)
-	--montest()
+        --[[if mon~=nil then
+            mwrite("Use the connected Monitor?\n Warning: This 'os*' is not very well built for a monitor\n (y/n)\n>")--it isnt. working on that now...
+            if read()=="y" then -- using the word OS very streacged here
+                    monitors=true
+                    mon.setTextScale(0.5)
+                    mon.clear()
+                    mon.setCursorPos(1,1)
+					git("functions/mtext.lua","mtext")
+                else
+                    mwrite("\nImpromper input or input was no\n")
+            end
+        end]]
     local pass = {'not','getting','mypass'} --  :P
     if pocket then
         mprint("WARNING: NOT OPTIMIZED FOR POCKET COMPUTERS")
@@ -34,7 +46,7 @@ function Main()
             user = 1
             sleep(2)
         elseif input==pass[2] then
-            mprint("SIGNED IN AS LINK. RESTRICTIONS REMOVED")
+            mprint("SIGNED IN AS "..name..". RESTRICTIONS REMOVED")
             --enable events.
             pullEvent = pullBack
             os.pullEvent = osPullBack
@@ -49,8 +61,12 @@ function Main()
     servercheck(ipcheck())
 
     while exitvar do
+		if user>=2 then
+			mprint("Welcome back "..name.."!")
+		end
         mwrite("What do you want to do? (help for list)\n>")
         local inputb=read()
+			--dolua(inputb)
    
         if inputb=="help" then
         
@@ -167,7 +183,7 @@ function Main()
 end
  
 function permerr()
-    mprint("WARNING: INSUFFICIENT PERMMISIONS\n")
+    mprint("WARNING: INSUFFICIENT PERMMISIONS\n YOUR LEVEL:"..user.."\n>")
 end
  
 function calc()
@@ -284,40 +300,6 @@ function convertTime(time)
     return(time)
 end
 
-function LPmonitor()
-    block= {"Stats-Table","Security Station"}
-
-    count=1
-    max=3 --equals one higher than how many blocks you will wrap.
-    mprint("NOTE: made for people that understand CC more.")
-    if perp==true then
-        mprint("LAN or network cables?")
-        mwrite("LAN / NET\n>")
-        LPINPUT=read()
-        if LPINPUT=="LAN" then
-                mprint("not yet implemented")
-            elseif LPINPUT=="NET" then
-        end
-    end
-    
-    mprint("\nIf unused type 'nil' \n If placed next to the computer type the side it's connected to \n I am looking for the modem's 'name' that it gives when you turn it on")
-    while count<max do
-        mwrite(block[count].." Name?\n>")
-        block[count]=read()
-        nilcheck(block[count])
-        count=count+1
-    end
-
-    while count>0 do
-        peripheral.wrap(block[count])
-        count=count-1
-    end
-
-    while exitvar==true do
-    end
-        
-end
-
 function discogen()
     head = {}
     GenCos="https://discordapp.com/595567348916944915/595567348916944919"
@@ -338,18 +320,6 @@ function discogen()
     disco.readAll()
 
 end
-
-function nilcheck(var)
-    if var=='nil' or var=='Nil' or var=='NIL' or var=='null' or var=='Null' or var=='NULL' then
-        var=nil
-    end
-return(var)
-end
-
-function log()
-    mprint("added timer")
-end
-
 
 Main()
 

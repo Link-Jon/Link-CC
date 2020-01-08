@@ -19,3 +19,5 @@ Note: if i end up doing a quick bugfix because something in master is broken, it
 
 ~ I dont want to refer to this as an OS, its not. but its also a bit more than just a library... so i dont know.
 ~~ If you need to use an event in your code, either use rawBack() (same as os.pullEventRaw()) or check the near the top of startup
+
+I shall be making a pastebin file for simple installation soon. (i have it halfway made, just no access to it where i currently am.)

@@ -58,7 +58,7 @@ function Main()
             os.reboot()
     end
 
-    servercheck(ipcheck())
+    --servercheck(ipcheck())
 
     while exitvar do
 		if user>=2 then
@@ -66,122 +66,9 @@ function Main()
 		end
         mwrite("What do you want to do? (help for list)\n>")
         local inputb=read()
-			--dolua(inputb)
+		dolua(inputb)
    
-        if inputb=="help" then
-        
-        mprint("\nhelp (tier 0 required)")
-		sleep(1)
-
-        mprint("chat (tier 1 required))
-        mprint("chat. Requires a modem of some kind.")
-            if perp==true then
-                mprint("This may or may not work with lan cables...")
-            end
-		mprint("Anyone else that wants to join they must have the host name.")
-		--mprint("I usually use 'Internet', which is why I call it internet.")
-        sleep(3)
-
-        mprint("\nrun (tier 1 required)")
-		mprint("Notice: you must type 'run' first to start the command.")
-		sleep(4)
-
-        mprint("")
-        mprint("exit (reboots computer; tier 0 required)")
-		mprint("If you are tier 2+, then it will simply exit the program.")
-        sleep(4)
-
-        mprint("")
-        mprint("reboot (tier 0 required)")
-		mprint("Reboots the computer. Purpose is being a reboot command for tier 2+")
-        sleep(4)
-        
-        mprint("\ndiscord (gives you a discord link. (tier 0 required)NA*\n")
-        sleep(1)
-
-        mprint("\nclear (clears the screen. tier 0 required\n")
-        sleep(1)
-
-        mprint("\ntimer (starts a timer for x seconds.)NA*")
-        mprint("Timer shown in both minutes and seconds (its a bit odd though)")
-        
-        sleep(3)
-        mprint("\nNotes: no caps in commands.\n")
-        mprint("Enter the command first, then add the arguments.")
-        mprint("Such as:")
-        mprint(">timer")
-        mprint("Amount of time? in seconds.")
-        mprint(">30")
-		sleep(2)
-		mprint("Anything marked with NA* is not accessable")
-        sleep(5)
-   
-            elseif inputb=="chat" then
-                if user>=1 then
-                    		Internet()
-                	else
-                    		permerr()
-                end
-
-            elseif inputb=="exit" then
-                if user>=2 then
-                        error("Process ended")
-                    else
-                        os.reboot()
-                end
-        
-            elseif inputb=="run" then
-                if user>=1 then
-                        run()
-                    else
-                        permerr()
-                end
-            
-            elseif inputb=="discord" then
-                discord()
-            
-            elseif inputb=="disk" then
-            mwrite("\nHow is the disk connected \n IE 'left','right'.'top', ect\n>")
-            shell.run("label set")
-            file=fs.open(disk/update)
-            file.mwrite(" fs.delete('startup') ")
-            file.mwrite("shell.run(pastebin get 7W48dz3c startup)")
-            file.mwrite("shell.run('startup')")
-            file.close()
-
-            elseif inputb=="reboot" then
-                os.reboot()
-
-            elseif inputb=="log" then
-                shell.openTab(log())
-                
-            elseif inputb=="clear" then
-                term.clear()
-
-            elseif inputb=="timer" then
-                mwrite("Amount of time? in seconds.\n>")
-                time=read()
-                time=tonumber(time)
-                shell.openTab(timer(time))
-                term.clear()
-
-            elseif inputb=="math" then
-                shell.openTab(calc())
-
-            elseif inputb=="function" then
-                if user>=1 then
-                        shell.openTab(dofun())
-                    else
-                        permerr()
-                end
-
-            elseif inputb=="logistic" then
-                LPmonitor() -- maybe tier one..?
-
-        end
-    end
-end
- 
+    
 function permerr()
     mprint("WARNING: INSUFFICIENT PERMMISIONS\n YOUR LEVEL:"..user.."\n>")
 end
@@ -207,32 +94,7 @@ function calc()
 
 end
     
-function ipcheck()
-    ip=http.get("https://ipecho.net/plain")
-    ip2=ip.readLine()
-    ip3=http.get("https://api.hackertarget.com/reversedns/?q="..ip2)
-    domain=ip3.readLine()
-    return(ip2,domain)
-end
 
-function servercheck(ip,domain)
-    MWL='?'
-    MWLd='?' -- i dont have this ip yet..!
-    Cosmic='95.216.32.202'
-    Cosmicd=''
-
-
-    if ip==MWL then
-            mprint("\nLoaded onto MWL!\n") --LAGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
-            perp=false
-        elseif ip==Cosmic then
-            mprint("\nLoaded onto Cosmic!\n") -- favourite.
-            perp=true
-        else
-            mprint("\nLoaded onto an Unknown Server!\n")
-            mprint("Domain:"..domain)
-    end
-end
 
 function Internet()
     local CN="string"
@@ -274,52 +136,6 @@ function run()
     shell.openTab(read())
 end
 
-function discord()
-    mprint("Join the discord that i for some reason made for this file!")
-    mprint("https://discord.gg/MYyHVzB")
-end
-
-function timer(time)
-    min=convertTime(time)
-        while time>0 do
-            term.setCursorPos(1,3)
-            term.clear()
-            mwrite("Seconds:"..time)
-            term.setCursorPos(1,1)
-            if min>1 then
-                mwrite("Minutes:"..min)
-            end
-            time=time-0.1
-            min=min-0.1/60
-            sleep(0.1)
-        end--WARNING: minutes are not accurate...enough for me anyway
-end
-
-function convertTime(time)
-    time=time/60
-    return(time)
-end
-
-function discogen()
-    head = {}
-    GenCos="https://discordapp.com/595567348916944915/595567348916944919"
-    mprint("Paste link?")
-    mwrite("y / n\n>")
-        if read()=="y" then
-                mwrite("Paste channel link\n>")
-                discordlink=read()
-                disco=http.get(discordlink,"")
-            else
-                mwrite("What channel?\n General-CC = CCG \n General-Cosmic = GC")
-                input=read()
-                if input==CCG then
-                    discordlink=GenCos
-                end
-        end
-    disco=http.get(discordlink)
-    disco.readAll()
-
-end
 
 Main()
 

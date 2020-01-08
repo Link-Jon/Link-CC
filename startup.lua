@@ -15,15 +15,16 @@ function Main()
     
     term.clear()
     term.setCursorPos(1,1)
-	git(mtext)
-	montest()
+	--git(mtext)
+	--montest()
     local pass = {'not','getting','mypass'} --  :P
     if pocket then
         mprint("WARNING: NOT OPTIMIZED FOR POCKET COMPUTERS")
     end
 
     mwrite("Enter Password: ")
-    local input=read("*")
+	mprint("OH! how nice. this version gave you the password... but theres so much less stuff... here... in the first place.")
+    local input='getting'--read("*")
     if input==pass[1] then
             mprint("WARNING: SIGNED IN AS GUEST. RESTRICTIONS ENABLED")
             user = 0 --note; user=0 is guest, user=1 is a friend, user=2 is me
@@ -56,7 +57,7 @@ function Main()
         mprint("\nhelp (tier 0 required)")
 		sleep(1)
 
-        mprint("chat (tier 1 required)")
+        mprint("chat (tier 1 required))
         mprint("chat. Requires a modem of some kind.")
             if perp==true then
                 mprint("This may or may not work with lan cables...")
@@ -79,16 +80,13 @@ function Main()
 		mprint("Reboots the computer. Purpose is being a reboot command for tier 2+")
         sleep(4)
         
-        mprint("\ndiscord (gives you a discord link. (tier 0 required)\n")
+        mprint("\ndiscord (gives you a discord link. (tier 0 required)NA*\n")
         sleep(1)
 
         mprint("\nclear (clears the screen. tier 0 required\n")
         sleep(1)
 
-		mprint("\nlog (log of my edits. generalized. (tier 0 required)\n")
-		sleep(1)
-
-        mprint("\ntimer (starts a timer for x seconds.)")
+        mprint("\ntimer (starts a timer for x seconds.)NA*")
         mprint("Timer shown in both minutes and seconds (its a bit odd though)")
         
         sleep(3)
@@ -98,6 +96,8 @@ function Main()
         mprint(">timer")
         mprint("Amount of time? in seconds.")
         mprint(">30")
+		sleep(2)
+		mprint("Anything marked with NA* is not accessable")
         sleep(5)
    
             elseif inputb=="chat" then

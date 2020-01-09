@@ -4,8 +4,11 @@ don't try to use this readme file as lua.
 
 So, this is just an attempt to make some quality of life improvements to CC. thats it really.
 Also, many things that  let you use it as a.. 'family pc' I guess. In this I mean there are currently three levels to the... ehh. "os"~. 
+
 Teir 0 -- Guest. Has very small access... should probably make it even less access.
+
 Teir 1 -- Friend. Should probably rename this 'rank'. This has access to pretty much the whole pc, but isn't allowed out of the main file. (startup.lua). Events are locked out so they cannot use ctrl+t.~~
+
 Teir 2 -- Main. This is you. Default password is 'getting', for puns.
 
 
@@ -20,4 +23,7 @@ Note: if i end up doing a quick bugfix because something in master is broken, it
 ~ I dont want to refer to this as an OS, its not. but its also a bit more than just a library... so i dont know.
 ~~ If you need to use an event in your code, either use rawBack() (same as os.pullEventRaw()) or check the near the top of startup
 
-I shall be making a pastebin file for simple installation soon. (i have it halfway made, just no access to it where i currently am.)
+Use 'pastebin get 7W48dz3c install' in a CC computer and it will get the two most important items: 
+startup
+httpbasic
+and these two can just download the rest. (I do have it set so it doesnt download unless you need it. Hopeful to make this lower filesize.)

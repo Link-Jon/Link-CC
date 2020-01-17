@@ -32,8 +32,36 @@ function github(arg[1],arg[2],arg[3],arg[4],arg[5],arg[6]) --note. lua arrays st
     end
 end
 
-function htest(url) -- very basic. will change.
+--[[
+function msgRecieve(channel)
+    peripheral.find('modem')
+end
+]]
+
+function ipcheck()
+    ip=http.get("https://ipecho.net/plain")
+    ip2=ip.readLine()
+    ip3=http.get("https://api.hackertarget.com/reversedns/?q="..ip2)
+    domain=ip3.readLine()
+    return(ip2,domain)
+end
+
+function servercheck(ip,domain)
+    MWL='?'
+    MWLd='?' -- i dont have this ip yet..!
+    Cosmic='95.216.32.202'
+    Cosmicd=''
+    RCN='164.132.202.60'
+    RCNd
     
-    return(http.getResponse(url))
-    
+    if ip==MWL then
+            mprint("\nLoaded onto MWL!\n") --LAGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+            perp=false
+        elseif ip==Cosmic then
+            mprint("\nLoaded onto Cosmic!\n") -- favourite.
+            perp=true
+        else
+            mprint("\nLoaded onto an Unknown Server!\n")
+            mprint("Domain:"..domain)
+    end
 end

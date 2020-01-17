@@ -4,8 +4,13 @@ perp=false --Immibis peripherals  (gets checked with server)
 loop=0
 name=="Link"
 exitvar=true --just incase i may ever use it...
+
+
 function Main()
-	git("functions/help.lua","help")
+    if fs.
+    git("functions/help.lua","help")
+    git("functions/mtext.lua","mtext")
+    git("functions/maths.lua","calc")
     --backup, just incase. also for more complex code :/ oh well.
     pullBack = pullEvent
     osPullBack = os.pullEvent
@@ -18,12 +23,11 @@ function Main()
     term.setCursorPos(1,1)
         if mon~=nil then
             mwrite("Use the connected Monitor?\n Warning: This 'os*' is not very well built for a monitor\n (y/n)\n>")--it isnt. working on that now...
-            if read()=="y" then -- using the word OS very streacged here
+            if read()=="y" then -- using the word OS very streached here
                     monitors=true
                     mon.setTextScale(0.5)
                     mon.clear()
                     mon.setCursorPos(1,1)
-					git("functions/mtext.lua","mtext")
                 else
                     mwrite("\nImpromper input or input was no\n")
             end
@@ -72,54 +76,6 @@ end
 function permerr()
     mprint("WARNING: INSUFFICIENT PERMMISIONS\n YOUR LEVEL:"..user.."\n>")
 end
- 
-function calc()
-    mwrite("First number:")
-    numa=read()
-    mprint("What type of calculation")
-    mwrite("M / D / A / S\n>")
-    fun=read()
-    mwrite("Second number:\n>")
-    numb=read()
-    if fun=="M" or fun=="m" then
-            numc=numa*numb
-        elseif fun=="D" or fun=="d" then
-            numc=numa/numb
-        elseif fun=="A" or fun=="a" then
-            numc=numa+numb
-        elseif fun=="S" or fun=="s" then
-            numc=numa-numb
-    end
-
-
-end
-    
-function ipcheck()
-    ip=http.get("https://ipecho.net/plain")
-    ip2=ip.readLine()
-    ip3=http.get("https://api.hackertarget.com/reversedns/?q="..ip2)
-    domain=ip3.readLine()
-    return(ip2,domain)
-end
-
-function servercheck(ip,domain)
-    MWL='?'
-    MWLd='?' -- i dont have this ip yet..!
-    Cosmic='95.216.32.202'
-    Cosmicd=''
-
-
-    if ip==MWL then
-            mprint("\nLoaded onto MWL!\n") --LAGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
-            perp=false
-        elseif ip==Cosmic then
-            mprint("\nLoaded onto Cosmic!\n") -- favourite.
-            perp=true
-        else
-            mprint("\nLoaded onto an Unknown Server!\n")
-            mprint("Domain:"..domain)
-    end
-end
 
 function Internet()
     local CN="string"
@@ -150,9 +106,8 @@ end
 
 function dofun()
     mwrite("\nType the EXACT name of the function\n>")
-    doing=read()--warning broken
-    shell.run(lua,doing)
-
+    local doing=load(read())
+    doing()
 end
 
 function run()
@@ -162,7 +117,7 @@ function run()
 end
 
 function discord()
-    mprint("Join the discord that i for some reason made for this file!")
+    mprint("Join the discord that i for some reason made for this repo!")
     mprint("https://discord.gg/MYyHVzB")
 end
 

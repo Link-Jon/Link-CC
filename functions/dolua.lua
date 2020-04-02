@@ -3,7 +3,7 @@ function dolua(inputb)
             help()
         
         elseif inputb=="chat" then 
-          if user>=1 then
+            if user>=1 then
                     Internet()
                 else
                     permerr()
@@ -14,7 +14,7 @@ function dolua(inputb)
                     error("Process ended")
                 else
                     os.reboot()
-             end
+            end
         
         elseif inputb=="run" then --idc
             if user>=1 then
@@ -28,7 +28,6 @@ function dolua(inputb)
 
         elseif inputb=="reboot" then 
             os.reboot()
-            
                             
         elseif inputb=="clear" then
             term.clear()
@@ -56,4 +55,10 @@ function dolua(inputb)
             LPmonitor()
 		elseif inputb=="license" then
 			github(license,license,nil,nil,nil,"r")
+end
+
+function dofun()
+    mwrite("\nType the EXACT name of the function\n>")
+    doing=read()--warning broken
+    shell.run(lua,doing)
 end

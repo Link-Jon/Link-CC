@@ -3,7 +3,6 @@ mon=peripheral.find("monitor")
 perp=false --Immibis peripherals  (gets checked with server)
 loop=0
 name=="Link"
-exitvar=true --just incase i may ever use it...
 
 
 function Main()
@@ -42,7 +41,7 @@ function Main()
     local input=read("*")
     if input==pass[1] then
             mprint("WARNING: SIGNED IN AS GUEST. RESTRICTIONS ENABLED")
-            user = 0 --note; user=0 is guest, user=1 is a friend, user=2 is me
+            user = 0 --note; user=0 is guest, user=1 is a friend, user=2 is main
             sleep(2)
         elseif input==pass[3] then
             mprint("NOTICE: SIGNED IN AS FRIEND. SOME RESTRICTIONS NOT REMOVED")
@@ -64,8 +63,9 @@ function Main()
     servercheck(ipcheck())
 
     while exitvar do
-		if user>=2 then
-			mprint("Welcome back "..name.."!")
+		if user>=2 and seen==1 then
+            mprint("Welcome back "..name.."!")
+            seen=1
 		end
         mwrite("What do you want to do? (help for list)\n>")
         local inputb=read()
@@ -74,34 +74,7 @@ function Main()
 end
  
 function permerr()
-    mprint("WARNING: INSUFFICIENT PERMMISIONS\n YOUR LEVEL:"..user.."\n>")
-end
-
-function Internet()
-    local CN="string"
-    local name="string"
-    local style="string"
- 
-    term.clear()
-    term.setCursorPos(1,1)
-    term.mwrite("\nWhat kind of internet do you want (host/client)\n>")
-    term.setCursorPos(1,2)
-    style=io.read()
-    if style=="join" then
-            term.mwrite("What is the name of the chat? \n>")
-            term.setCursorPos(1,4)
-            CN=io.read()  
-   
-            term.mwrite("What shall you be called? \n>")
-            term.setCursorPos(1,6)
-            inname=io.read()
-            shell.openTab("chat join "..CN.." "..inname)
-        elseif style=="host" then
-            term.mwrite("What will be the name of the chat?\n>")
-            term.setCursorPos(1,4)
-            CN=io.read()
-            shell.openTab("chat host "..CN)
-    end
+    mprint("WARNING: INSUFFICIENT PERMMISIONS\n YOUR LEVEL: "..user.."\n>")
 end
 
 function dofun()
@@ -144,6 +117,7 @@ end
 
 function discogen()
     head = {}
+    --what do my var names even mean? XD. im sure im avoiding duplicate names but...
     GenCos="https://discordapp.com/595567348916944915/595567348916944919"
     mprint("Paste link?")
     mwrite("y / n\n>")
@@ -164,8 +138,3 @@ function discogen()
 end
 
 Main()
-
--- cool thing: https://www.youtube.com/watch?v=cGufy1PAeTU
-
---noitsnotrickroll
---use the command 'update' for updates

@@ -54,3 +54,41 @@ function nilcheck(var, default)
         end
     return(var)
 end
+
+function binary()
+    mprint("Warning. Do not use more than one byte. (8 bits or 255 in dec)")
+    mprint("Start value binary or decimal?")
+    mprint("B / D \n>")
+    input=read()
+    
+    if input=="B" then
+        byte = {0,0,0,0,0,0,0,0}
+        loop=1
+        mprint("Input the number as a byte, from left to right.")
+        mprint("Eg. 00001111 == 16, you can type 00001111.\n>")
+        while loop>8 true
+            byte[loop]=read()
+            loop=loop+1
+        end
+    elseif input=="D" then
+        mprint("Input the decimal number\n>")
+        input=read()
+
+end
+
+function testbin()
+    mprint("Warning. Do not use more than one byte.")
+    mprint("Start value binary or decimal?")
+    mprint("B / D \n>")
+    input=read()
+    
+    if input=="B" then
+        mprint("Input the number like this: 16 == 00001111\n>")
+        dec=tonumber(read(),10)
+        mprint(dec)
+        return(dec)
+    elseif input=="D" then
+        mprint("Input the decimal number\n>")
+        byte=tonumber(read(),2)
+        return(byte)
+end

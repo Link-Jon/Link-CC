@@ -1,6 +1,6 @@
 
 mon=peripheral.find("monitor")
-perp=false --Immibis peripherals  (gets checked with server)
+perp=false --Immibis peripherals (gets checked with server)
 loop=0
 name=="Link"
 

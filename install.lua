@@ -49,7 +49,7 @@ if dir then
     temp=nil
 end
 
-for counter=1,table.getn(gitlist)
+for counter=1,table.getn(gitlist) do
     lista = gitlist[counter]
     listb = gotlist[counter]
     if lisa==nil then

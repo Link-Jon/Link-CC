@@ -8,7 +8,7 @@ function dolua(inputb)
         
         elseif inputb=="chat" then 
                 if not fs.exists("bluenet") then
-                    if not http
+                    if not http then
                     printError("Warning; This function requires an undownloaded library. Download now?")
                     printError(" y / n ")
                     input=read()

@@ -1,20 +1,21 @@
-
+--calc. lib
 function timer(time)
-    mwrite("Amount of time? in seconds.\n>")
+    mtext.mwrite("Amount of time? in seconds.\n>")
     time=read()
     time=tonumber(time)
     min=convertTime(time)
         while time>0 do
-            term.setCursorPos(1,3)
-            term.clear()
-            mwrite("Seconds:"..time)
             term.setCursorPos(1,1)
             if min>1 then
-                mwrite("Minutes:"..min)
+                mtext.mwrite("Minutes:"..min)
             end
-            time=time-0.1
-            min=min-0.1/60
-            sleep(0.1)
+            term.setCursorPos(1,3)
+            mtext.mwrite("Seconds:"..time)
+            term.clear()
+            time=time-0.05
+            min=min-0.05/60
+            sleep(0.05)
+            
         end--WARNING: minutes are not accurate...enough for me anyway
      term.clear()
      print("TIME OUT")
@@ -26,12 +27,12 @@ function convertTime(time)
 end
 
 function calc()
-    mwrite("First number:")
+    mtext.mwrite("First number:")
     numa=read()
-    mprint("What type of calculation")
-    mwrite("M / D / A / S\n>")
+    mtext.mprint("What type of calculation")
+    mtext.mwrite("M / D / A / S\n>")
     fun=read()
-    mwrite("Second number:\n>")
+    mtext.mwrite("Second number:\n>")
     numb=read()
     if fun=="M" or fun=="m" then
             numc=numa*numb
@@ -55,40 +56,42 @@ function nilcheck(var, default)
     return(var)
 end
 
+--[[
 function binary()
-    mprint("Warning. Do not use more than one byte. (8 bits or 255 in dec)")
-    mprint("Start value binary or decimal?")
-    mprint("B / D \n>")
+    mtext.mprint("Warning. Do not use more than one byte. (8 bits or 255 in dec)")
+    mtext.mprint("Start value binary or decimal?")
+    mtext.mprint("B / D \n>")
     input=read()
     
     if input=="B" then
         byte = {0,0,0,0,0,0,0,0}
         loop=1
-        mprint("Input the number as a byte, from left to right.")
-        mprint("Eg. 00001111 == 16, you can type 00001111.\n>")
+        mtext.mprint("Input the number as a byte, from left to right.")
+        mtext.mprint("Eg. 00001111 == 16, you can type 00001111.\n>")
         while loop>8 true
             byte[loop]=read()
             loop=loop+1
         end
     elseif input=="D" then
-        mprint("Input the decimal number\n>")
+        mtext.mprint("Input the decimal number\n>")
         input=read()
-
+        --MUCH easier to do...
 end
 
 function testbin()
-    mprint("Warning. Do not use more than one byte.")
-    mprint("Start value binary or decimal?")
-    mprint("B / D \n>")
+    mtext.mprint("Warning. Do not use more than one byte.")
+    mtext.mprint("Start value binary or decimal?")
+    mtext.mprint("B / D \n>")
     input=read()
     
     if input=="B" then
-        mprint("Input the number like this: 16 == 00001111\n>")
+        mtext.mprint("Input the number like this: 16 == 00001111\n>")
         dec=tonumber(read(),10)
-        mprint(dec)
+        mtext.mprint(dec)
         return(dec)
     elseif input=="D" then
-        mprint("Input the decimal number\n>")
+        mtext.mprint("Input the decimal number\n>")
         byte=tonumber(read(),2)
         return(byte)
 end
+]]--

@@ -8,6 +8,8 @@
 --required: arg1 and arg2. 
 --if you put nil for 3, 4, or 5 it will use default.
 --for arg[2] if its inside a file like /functions/git.lua you need to input "foldername/filename" for arg[2]
+os.loadAPI("mtext")
+
 function github(arg[1],arg[2],arg[3],arg[4],arg[5],arg[6]) --note. lua arrays start at 1, not 0. (changeable, but i'd rather not)
     if nilcheck then
         nilcheck(arg[4],"CC-OSish")
@@ -26,7 +28,7 @@ function github(arg[1],arg[2],arg[3],arg[4],arg[5],arg[6]) --note. lua arrays st
                 file.write(f2)
                 file.close()
             elseif arg[6]=="r"
-                mprint(f2)
+                mtext.mprint(f2)
         end
         else
             return(false)
@@ -36,14 +38,13 @@ end
 
 
 
-function printRes(url)
-    local count --wanted count to be local
-    --for count do
+function printRes(url,bool)
     local file = http.get(url) -- should probably have this loop till it empties.. using ReadLine.
-    file.ReadAll               -- IE slow print. so that a user can understand it.
-    --sleep(1)  Count needs to check 'file' for how many more lines left...
-    --end
-    return
+    raw=file.ReadAll()               -- IE slow print. so that a user can understand it.                 
+    if bool==true or bool==nil then
+        print(raw)
+    end
+    return(raw)
 end
 
 function ipcheck()
@@ -57,18 +58,19 @@ end
 function servercheck(ip,domain)
     MWL='?'
     MWLd='?' -- i dont have this ip yet..!
-    Cosmic='95.216.32.202'
+    Cosmic='95.216.32.202'-- wrong.
     Cosmicd=''
 
 
     if ip==MWL then
-            mprint("\nLoaded onto MWL!\n") --LAGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+            mtext.mprint("\nLoaded onto MWL!\n") 
             perp=false
         elseif ip==Cosmic then
-            mprint("\nLoaded onto Cosmic!\n") -- favourite.also laggy. ur not gunna get something without lag on tekkit legends yaknow...
+            mtext.mprint("\nLoaded onto Cosmic!\n") 
             perp=true
         else
-            mprint("\nLoaded onto an Unknown Server!\n")
-            mprint("Domain:"..domain)
+            mtext.mprint("\nLoaded onto an Unknown Server!\n")
+            mtext.mprint("IP: "..ip)
+            mtext.mprint("Domain:"..domain)
     end
 end

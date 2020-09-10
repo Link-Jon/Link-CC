@@ -1,22 +1,40 @@
+os.loadAPI("mtext")
+os.loadAPI("help")
+os.loadAPI("system_notes")
+
 function dolua(inputb)
     if inputb=="help" then --note, make an array for the help list. maybe make it its own file too.
             help()
         
         elseif inputb=="chat" then 
-            if user>=1 then
-                    Internet()
+                if not fs.exists("bluenet") then
+                    if not http
+                    printError("Warning; This function requires an undownloaded library. Download now?")
+                    printError(" y / n ")
+                    input=read()
+                    if string.lower(input)=='y' then
+                            github(system_notes.dir,'function/wireless')
+                            wireless.Internet()
+                        elseif string.lower(input)=='n'
+                            print("Aborting.")
+                        else
+                            print("Unknown input")
+                    end
+
+                elseif fs.exists("bluenet")
+                    wireless.Internet()
                 else
                     permerr()
-            end
+                end
 
         elseif inputb=="exit" then 
             if user>=2 then
                     error("Process ended")
                 else
-                    os.reboot()
+                    os.shutdown()
             end
         
-        elseif inputb=="run" then --idc
+        elseif inputb=="run" then 
             if user>=1 then
                     run()
                 else
@@ -24,7 +42,7 @@ function dolua(inputb)
             end
             
         elseif inputb=="discord" then 
-            discord()
+            startup.discord()
 
         elseif inputb=="reboot" then 
             os.reboot()
@@ -57,8 +75,12 @@ function dolua(inputb)
 			github(license,license,nil,nil,nil,"r")
 end
 
-function dofun()
-    mwrite("\nType the EXACT name of the function\n>")
-    doing=read()--warning broken
-    shell.run(lua,doing)
+function run()
+    mtext.mprint("What do you wish to run?")
+    mwrite("Note: type the whole command, like \n'>chat host Internet Link'\n>") --too lazy to check for args.
+    shell.openTab(read())
+end
+
+function permerr()
+    mtext.mprint("WARNING: INSUFFICIENT PERMMISIONS\n YOUR LEVEL: "..user.."\n>")
 end

@@ -1,7 +1,7 @@
 --[[
 function msgRecieve(channel)
     peripheral.find('modem')
-end
+end wut
 ]]
 
 
@@ -9,7 +9,7 @@ function Internet()
     local CN="string"
     local name="string"
     local style="string"
- 
+
     term.clear()
     term.setCursorPos(1,1)
     term.mwrite("\nWhat kind of internet do you want (host/client)\n>")

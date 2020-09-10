@@ -9,10 +9,14 @@ function install(bug)
  
 -- Download as "install", IE: >pastebin get 7W48dz3c install
 -- this way i can move it into the main directory when startup loads.
-local gitlist = {"startup.lua","functions/http.lua"}
-local gotlist = {"startup","https"}
+local gitlist = {
+    "startup.lua",
+    "functions/http.lua",
+    "functions/mtext.lua",
+    "functions/help.lua",
+    "functions/maths.lua"}
+local gotlist = {"startup","https","mtext","help","calc"}
 local exception = {"startup.lua"} -- doesnt go into the directory. stays in root.
-local counter=1
 
 if not fs.exists("sys") then
         local dir = "sys"
@@ -43,24 +47,24 @@ end
 
 if dir then
     fs.makeDir(dir)
-    temp=fs.open(dir.."/notes","w")
+    temp=fs.open("system_notes","w")
     temp.write("dir="..dir)
     temp.close()
     temp=nil
 end
 
-for counter=1,table.getn(gitlist)
-    lista = gitlist[counter]
-    listb = gotlist[counter]
-    if lisa==nil then
-        break
+for i=1,table.getn(gitlist) do
+    lista = gitlist[i]
+    listb = gotlist[i]
+    if lista==nil then
+        return
     end
 
     temp = http.get("https://raw.githubusercontent.com/Link-Jon/CC-OSish/Link-Jon-1.0/"..lista)
     --temp = http.get("https://raw.githubusercontent.com/Link-Jon/CC-OSish/master/"..lista)
     
     raw=temp.readAll()
-    if lista==exception[counter] or dir==nil then
+    if lista==exception[i] or dir==nil then
             file = fs.open(listb,"w")
         else
             file = fs.open(dir.."/"..listb,"w")
@@ -68,11 +72,10 @@ for counter=1,table.getn(gitlist)
     file.write(raw)
     file.close()
     print("Downloaded: "..lista.." as "..listb)
-    counter=counter+1
     --bad. im going to let it bios error to end. not a great idea, should be changed.
-    --changed to For loop, fixes this err.
+    --changed to For loop, fixes this err. (forgot to get rid of x=x+1)
 end
-print("Finsihed!")
+print("Finished!")
 end --ends function
 
 install()

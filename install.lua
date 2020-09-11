@@ -1,10 +1,9 @@
-function replace(name)
-    if fs.exists(name) then
-        print("WARNING: \'"..name.."\' detected!")
-        print("Please restart the install file with a file/folder name that isnt used!")
-    end
-end
- 
+
+--Will install from branch Master when im done with it.
+--Each release will ALSO get its own install file.
+--Ontop of this, there will be a 'beta' install file also that i will use the most for
+-- -- testing the new versions i add.
+
 function install(bug)
  
 -- Download as "install", IE: >pastebin get 7W48dz3c install
@@ -19,8 +18,8 @@ local gotlist = {"startup","https","mtext","help","calc"}
 local exception = {"startup.lua"} -- doesnt go into the directory. stays in root.
 
 if not fs.exists("sys") then
-        local dir = "sys"
-        local dircheck = true
+    dir = "sys"
+    dircheck = true
 end
         
 while not dircheck do

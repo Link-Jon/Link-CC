@@ -18,9 +18,10 @@ function mprint(str)
             return
     end
 end
-
+--both works?
 function mwrite(str)
     if monitors==true then
+            --loop=loop+1 nah
             temp=term.current()
             term.redirect(mon)
             write(str)

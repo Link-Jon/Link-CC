@@ -1,28 +1,40 @@
 os.loadAPI("mtext")
 os.loadAPI("help")
 os.loadAPI("system_notes")
+if fs.exists("bluenet") then --functions/wireless
+   os.loadAPI("bluenet") 
+end
+--[[
+if fs.exists(?) then
+    os.loadAPI(?)
+end]]--
 
 function dolua(inputb)
     if inputb=="help" then --note, make an array for the help list. maybe make it its own file too.
-            help()
+            help.help()
         
         elseif inputb=="chat" then 
                 if not fs.exists("bluenet") then
                     if not http then
-                    printError("Warning; This function requires an undownloaded library. Download now?")
-                    printError(" y / n ")
+                        mtext.mprint("This function requires an undownloaded library and HTTP is inacessable")
+                    end
+                    mtext.mprint("Warning; This function requires an undownloaded library. Download now?")
+                    mtext.mwrite(" y / n ")
                     input=read()
                     if string.lower(input)=='y' then
                             github(system_notes.dir,'function/wireless')
-                            wireless.Internet()
-                        elseif string.lower(input)=='n'
-                            print("Aborting.")
-                        else
-                            print("Unknown input")
+                            bluenet.Internet()
+                    elseif string.lower(input)=='n' then
+                            mtext.mprint("Aborting.")
+                    else
+                            mtext.mprint("Unknown input")
                     end
+                else
+                    bluenet.Internet()
+                end
 
                 elseif fs.exists("bluenet")
-                    wireless.Internet()
+                    bluenet.Internet()
                 else
                     permerr()
                 end

@@ -3,7 +3,7 @@ mon=peripheral.find("monitor")
 perp=false --Immibis peripherals (gets checked with server)
 loop=0
 name="Link"
-fs.open("sys/notes")
+notes=fs.open("system_notes")
 
 os.loadAPI("mtext")
 os.loadAPI("https")

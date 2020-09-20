@@ -5,7 +5,7 @@ perp=false --Immibis peripherals (gets checked with server)
 loop=0
 name="Link"
 print("Initilizing...")
-notes=os.loadAPI("system_notes")
+os.loadAPI(".system/notes")
 print("loaded notes")
 os.loadAPI(notes.dir.."mtext")
 print("loaded mtext")

@@ -47,7 +47,7 @@ end
 
 if dir then
     fs.makeDir(dir)
-    temp=fs.open("system_notes","w")
+    temp=fs.open(".system/notes","w")
     temp.write("dir = ".."'"..dir.."'") -- this hurts my soul
     temp.close() --but its the easiest way to turn it into a string to be read later
     temp=nil

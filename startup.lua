@@ -29,10 +29,8 @@ function Main()
     rawBack = os.pullEventRaw
     --disable events...
 
-    os.pullEventRaw = os.pullEvent
-    local pullEvent = nil
-    --os.pullEvent = 
-
+    os.pullEvent = os.pullEventRaw
+    
     term.clear()
     term.setCursorPos(1,1)
     mtext.montest()

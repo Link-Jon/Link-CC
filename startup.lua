@@ -30,18 +30,17 @@ function Main()
     --disable events...
 
     os.pullEvent = os.pullEventRaw
-    
+
     term.clear()
     term.setCursorPos(1,1)
     mtext.montest()
-    print("events off")
 
     local pass = {'not','getting','mypass'} --  :P
 
     if pocket then-- because its not \/
         mtext.mprint("WARNING: NOT OPTIMIZED FOR POCKET COMPUTERS")
     end
-    print("pocket warn")
+
     mtext.mwrite("Enter Password: ")
     local input=read("*")
     if input==pass[1] then

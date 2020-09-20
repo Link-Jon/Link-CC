@@ -3,11 +3,15 @@ mon=peripheral.find("monitor")
 perp=false --Immibis peripherals (gets checked with server)
 loop=0
 name="Link"
+print("Initilizing...")
 notes=loadAPI("system_notes")
-
+print("loaded notes")
 os.loadAPI(notes.dir.."mtext")
+print("loaded mtext")
 os.loadAPI(notes.dir.."https")
---os.loadAPI("dolua")
+print("loaded https")
+os.loadAPI("dofile")
+print("loaded dolua")
 
 function Main()
     --backup, just incase. also for more complex code :/ oh well.

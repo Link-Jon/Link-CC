@@ -36,9 +36,6 @@ function github(arg1,arg2,arg3,arg4,arg5,arg6) --note. lua arrays start at 1, no
     end
 end
 
-
-
-
 function printRes(url,bool)
     local file = http.get(url) -- should probably have this loop till it empties.. using ReadLine.
     raw=file.ReadAll()               -- IE slow print. so that a user can understand it.                 
@@ -53,7 +50,8 @@ function ipcheck()
     ip2=ip.readLine()
     ip3=http.get("https://api.hackertarget.com/reversedns/?q="..ip2)
     domain=ip3.readLine()
-    return(ip2,domain)
+    local temp={ip2,domain}
+    return(table.unpack(temp))
 end
 
 function servercheck(ip,domain)

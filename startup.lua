@@ -9,7 +9,7 @@ print("loaded notes")
     --note work
     local str=string.sub(notes.dir,-2,-1)
     if str ~= '/' or str ~='\\' then
-        notes.dir=string.rep(notes.dir.."/")
+        notes.dir=string.rep(notes.dir,"/")
     elseif str == '\\' then
         notes.dir=string.rep(string.sub(notes.dir,1,-2),"/")
     end

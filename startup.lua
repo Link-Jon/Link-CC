@@ -7,7 +7,7 @@ notes=loadAPI("system_notes")
 
 os.loadAPI(notes.dir.."mtext")
 os.loadAPI(notes.dir.."https")
---os.loadAPI("")
+--os.loadAPI("dolua")
 
 function Main()
     --backup, just incase. also for more complex code :/ oh well.
@@ -22,13 +22,14 @@ function Main()
     term.clear()
     term.setCursorPos(1,1)
     mtext.montest()
+    print("events off")
 
     local pass = {'not','getting','mypass'} --  :P
 
     if pocket then-- because its not \/
         mtext.mprint("WARNING: NOT OPTIMIZED FOR POCKET COMPUTERS")
     end
-
+    print("pocket warn")
     mtext.mwrite("Enter Password: ")
     local input=read("*")
     if input==pass[1] then

@@ -2,7 +2,7 @@ os.loadAPI("mtext")
 os.loadAPI("help")
 os.loadAPI("system_notes")
 if fs.exists("bluenet") then --functions/wireless
-   os.loadAPI("bluenet") 
+    bluenet=os.loadAPI("bluenet") 
 end
 --[[
 if fs.exists(?) then
@@ -14,7 +14,7 @@ function dolua(inputb)
             help.help()
         
         elseif inputb=="chat" then 
-                if not fs.exists("bluenet") then
+                if not bluenet then
                     if not http then
                         mtext.mprint("This function requires an undownloaded library and HTTP is inacessable")
                     end

@@ -6,7 +6,7 @@
 --arg[6]==print or save. (checks for "r" or "W") Read==print, write==save (default="W")
 
 --required: arg1 and arg2. 
---if you put nil for 3, 4, or 5 it will use default.
+--if you put nil for 3, 4, 5, or 6 it will use default.
 --for arg[2] if its inside a file like /functions/git.lua you need to input "foldername/filename" for arg[2]
 os.loadAPI("mtext")
 
@@ -22,7 +22,7 @@ function github(arg[1],arg[2],arg[3],arg[4],arg[5],arg[6]) --note. lua arrays st
         --http.getResponse(url)
         local file = http.get("https://raw.githubusercontent.com/"..arg[3].."/"..arg[4].."/"..arg[5].."/"..arg[2])
         local f2 = file.readAll() -- all i need is the data. dont need the other stuff from the get request. or have anything else in the request either.
-        if arg[6]=="W" then
+        if arg[6]=="w" then
                 file.close()
                 file.open(arg[1],"w")
                 file.write(f2)

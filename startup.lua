@@ -28,10 +28,11 @@ function Main()
     osPullBack = os.pullEvent
     rawBack = os.pullEventRaw
     --disable events...
+
+    os.pullEventRaw = os.pullEvent
     local pullEvent = nil
-    os.pullEvent = nil
-    os.pullEventRaw = nil
-    
+    --os.pullEvent = 
+
     term.clear()
     term.setCursorPos(1,1)
     mtext.montest()

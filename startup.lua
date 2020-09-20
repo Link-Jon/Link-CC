@@ -1,4 +1,3 @@
-
 mon=peripheral.find("monitor")
 print("monitor checked")
 perp=false --Immibis peripherals (gets checked with server)
@@ -9,11 +8,10 @@ os.loadAPI(".system/notes")
 print("loaded notes")
     --note work
     local str=string.sub(notes.dir,-2,-1)
-    if str ~= '/' or ~='\\' then
-        notes.dir=notes.dir.."/"
+    if str ~= '/' or str ~='\\' then
+        notes.dir=string.rep(notes.dir.."/")
     elseif str == '\\' then
-        notes.dir=string.sub(notes.dir,1,-2)
-        notes.dir=notes.dir.."/"
+        notes.dir=string.rep(string.sub(notes.dir,1,-2),"/")
     end
 os.loadAPI(notes.dir.."mtext")
 print("loaded mtext")

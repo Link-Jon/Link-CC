@@ -46,13 +46,13 @@ while not dircheck do
 end
 
 if dir then
-    
-    local str=string.sub(notes.dir,-2,-1)
-    if str ~= '/' or ~='\\' then
-        notes.dir=notes.dir.."/"
+
+    local str=string.sub(dir,-2,-1)
+    if str ~= '/' or str ~= '\\' then
+        dir=dir.."/"
     elseif str == '\\' then
-        notes.dir=string.sub(notes.dir,1,-2)
-        notes.dir=notes.dir.."/"
+        dir=string.sub(dir,1,-2)
+        dir=dir.."/"
     end
 
     fs.makeDir(dir)

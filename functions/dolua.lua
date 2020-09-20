@@ -33,7 +33,7 @@ function dolua(inputb)
                     bluenet.Internet()
                 end
 
-                elseif fs.exists("bluenet")
+                elseif fs.exists("bluenet") then
                     bluenet.Internet()
                 else
                     permerr()

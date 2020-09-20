@@ -3,19 +3,20 @@
 --arg[3]==user on github (default=Link-Jon)
 --arg[4]==repo (default="CC-OSish")
 --arg[5]==branch (default="master")
---arg[6]==print or save. (checks for "r" or "W") Read==print, write==save (default="W")
+--arg[6]==print or save. (checks for "r" or "w") Read==print, write==save (default="2")
 
 --required: arg1 and arg2. 
 --if you put nil for 3, 4, 5, or 6 it will use default.
 --for arg[2] if its inside a file like /functions/git.lua you need to input "foldername/filename" for arg[2]
 os.loadAPI("mtext")
-
+os.loadAPI("calc")
+arg={}
 function github(arg[1],arg[2],arg[3],arg[4],arg[5],arg[6]) --note. lua arrays start at 1, not 0. (changeable, but i'd rather not)
-    if nilcheck then
-        nilcheck(arg[4],"CC-OSish")
-        nilcheck(arg[5],"master")
-        nilcheck(arg[3],"Link-Jon")
-        nilcheck(arg[6],"w")
+    if calc then
+        calc.nilcheck(arg[4],"CC-OSish")
+        calc.nilcheck(arg[5],"master")
+        calc.nilcheck(arg[3],"Link-Jon")
+        calc.nilcheck(arg[6],"w")
     end
     --ugh. translate \/ that into a single var... using string api more than likely. so i can test it XD
     if fs.exists(arg[1]) or arg[6]=="r" then

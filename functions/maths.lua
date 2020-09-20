@@ -53,6 +53,7 @@ function nilcheck(var, default)
             else
                 var=default
         end
+    end
     return(var)
 end
 

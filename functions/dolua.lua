@@ -29,9 +29,6 @@ function dolua(inputb)
                     else
                             mtext.mprint("Unknown input")
                     end
-                else
-                    bluenet.Internet()
-                end
 
                 elseif fs.exists("bluenet") then
                     bluenet.Internet()
@@ -84,7 +81,10 @@ function dolua(inputb)
         elseif inputb=="logistic" then
             LPmonitor()
 		elseif inputb=="license" then
-			github(license,license,nil,nil,nil,"r")
+            github(license,license,nil,nil,nil,"r")
+        else
+            printError("what")
+    end
 end
 
 function run()

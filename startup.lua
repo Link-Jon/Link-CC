@@ -1,16 +1,17 @@
 
 mon=peripheral.find("monitor")
+print("monitor checked")
 perp=false --Immibis peripherals (gets checked with server)
 loop=0
 name="Link"
 print("Initilizing...")
-notes=loadAPI("system_notes")
+notes=os.loadAPI("system_notes")
 print("loaded notes")
 os.loadAPI(notes.dir.."mtext")
 print("loaded mtext")
 os.loadAPI(notes.dir.."https")
 print("loaded https")
-os.loadAPI("dofile")
+os.loadAPI("dofun")
 print("loaded dolua")
 
 function Main()
@@ -66,7 +67,7 @@ function Main()
 		end
         mtext.mwrite("What do you want to do? (help for list)\n>")
         local inputb=read()
-			dolua(inputb)
+			dofun.dolua(inputb)
     end
 end
 

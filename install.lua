@@ -16,7 +16,7 @@ local gitlist = {
     "functions/maths.lua",
     "functions/dolua.lua"
 }
-local gotlist = {"startup","https","mtext","help","calc","dofile"}
+local gotlist = {"startup","https","mtext","help","calc","dofun"}
 local exception = {"startup.lua"} -- doesnt go into the directory. stays in root.
 
 if not fs.exists("sys") then

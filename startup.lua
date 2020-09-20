@@ -21,17 +21,7 @@ function Main()
     
     term.clear()
     term.setCursorPos(1,1)
-        if mon then
-            mtext.mwrite("Use the connected Monitor?\n Warning: This 'os*' is not very well built for a monitor\n (y/n)\n>")--it isnt. working on that now...
-            if string.lower(read())=="y" then -- using the word OS very streached here
-                    monitors=true
-                    mon.setTextScale(0.5)
-                    mon.clear()
-                    mon.setCursorPos(1,1)
-                else
-                    mtext.mwrite("\nImpromper input or input was no\n")
-            end
-        end
+    mtext.montest()
 
     local pass = {'not','getting','mypass'} --  :P
 

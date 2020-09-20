@@ -21,34 +21,33 @@ if not fs.exists("sys") then
     dir = "sys"
     dircheck = true
 end
-        
+
 while not dircheck do
     print("Input a name for the directory that you would like to use. This will contain pretty much all of my files. If it's not empty, then items inside may end up being deleted. This only appears after 'sys' has been checked (this will be the name for a directory)")
     dir = read()
     if not fs.exists(dir) then
             dircheck=true
-        else
+    else
             dircheck=false
             write("WARNING: File/Folder exists. Continue? (y/n)")
             local input = read()
             if input=='y' then
                 dircheck=true
+            else
+               dir=nil 
             end
-        
     end
 --Tell user that it will loop, if it is going to.
     if dircheck==false then
         print("Warning, this will loop until a usable directory has been found")
     end
 end
---im going to let the print command have fun with that. infact ima go see how that works so i can
---make the write command work like it.
 
 if dir then
     fs.makeDir(dir)
     temp=fs.open("system_notes","w")
-    temp.write("dir="..dir)
-    temp.close()
+    temp.write("dir = ".."'"..dir.."'") -- this hurts my soul
+    temp.close() --but its the easiest way to turn it into a string to be read later
     temp=nil
 end
 

@@ -3,10 +3,10 @@ mon=peripheral.find("monitor")
 perp=false --Immibis peripherals (gets checked with server)
 loop=0
 name="Link"
-notes=fs.open("system_notes")
+notes=loadAPI("system_notes")
 
-os.loadAPI("mtext")
-os.loadAPI("https")
+os.loadAPI(notes.dir.."mtext")
+os.loadAPI(notes.dir.."https")
 --os.loadAPI("")
 
 function Main()
@@ -15,8 +15,9 @@ function Main()
     osPullBack = os.pullEvent
     rawBack = os.pullEventRaw
     --disable events...
-    local pullEvent = os.pullEvent
-    os.pullEvent = os.pullEventRaw
+    local pullEvent = nil
+    os.pullEvent = nil
+    os.pullEventRaw = nil
     
     term.clear()
     term.setCursorPos(1,1)

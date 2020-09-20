@@ -7,6 +7,14 @@ name="Link"
 print("Initilizing...")
 os.loadAPI(".system/notes")
 print("loaded notes")
+    --note work
+    local str=string.sub(notes.dir,-2,-1)
+    if str ~= '/' or ~='\\' then
+        notes.dir=notes.dir.."/"
+    elseif str == '\\' then
+        notes.dir=string.sub(notes.dir,1,-2)
+        notes.dir=notes.dir.."/"
+    end
 os.loadAPI(notes.dir.."mtext")
 print("loaded mtext")
 os.loadAPI(notes.dir.."https")

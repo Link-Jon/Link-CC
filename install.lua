@@ -20,7 +20,7 @@ local gotlist = {"startup","https","mtext","help","calc","dofun"}
 local exception = {"startup.lua"} -- doesnt go into the directory. stays in root.
 
 if not fs.exists("sys") then
-    dir = "sys"
+    dir = "sys/"
     dircheck = true
 end
 
@@ -46,6 +46,15 @@ while not dircheck do
 end
 
 if dir then
+    
+    local str=string.sub(notes.dir,-2,-1)
+    if str ~= '/' or ~='\\' then
+        notes.dir=notes.dir.."/"
+    elseif str == '\\' then
+        notes.dir=string.sub(notes.dir,1,-2)
+        notes.dir=notes.dir.."/"
+    end
+
     fs.makeDir(dir)
     temp=fs.open(".system/notes","w")
     temp.write("dir = ".."'"..dir.."'") -- this hurts my soul

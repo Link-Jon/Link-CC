@@ -134,34 +134,28 @@ function inErr(user,check)
     if str==check then
         return true
     end
+    --massive input err checker
+    --could probably be simplified but would lose unique reactions.
     if str=="string" then
         printError("Expected "..check..", got string")
-        return false
     elseif str=="nil" then
         printError("Expected "..check..", got nil")
-        return false
     elseif str=="bool" then
         printError("Expected "..check..", got bool")
-        return false
     elseif str=="number" then
         printError("Expected "..check..", got number")
-        return false
     elseif str=="table" then
         printError("Expected "..check..", got table")
-        return false
     elseif str=="function" then
         printError("Expected "..check..", got function")
-        return false
     elseif str=="thread" then
         printError("Expected "..check..", got thread")
-        return false
     elseif str=="userdata" then
         printError("How in the world have you done this? Var was of type userdata, which should be impossible in CraftOS")
         printError("Expected "..check..", got userdata??")
-        return false
     else
         printError("Something broke with the 'inErr' function.")
         printError("Expected "..check..", got "..str)
-        return false
     end
+    return false
 end

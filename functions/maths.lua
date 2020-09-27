@@ -69,10 +69,6 @@ function nilcheck(var, default)
     end
 end
 
-function inErr()-- work on this
-    printError("Incorrect input; maybe you misspelled?")
-end
-
 function xPerSec(amount, interval)
     return amount/interval
 end

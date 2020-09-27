@@ -81,8 +81,6 @@ for i=1,table.getn(gitlist) do
     file.write(raw)
     file.close()
     print("Downloaded: "..lista.." as "..listb)
-    --bad. im going to let it bios error to end. not a great idea, should be changed.
-    --changed to For loop, fixes this err. (forgot to get rid of x=x+1)
 end
 print("Finished!")
 end --ends function

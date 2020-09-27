@@ -12,28 +12,25 @@ os.loadAPI("mtext")
 os.loadAPI("calc")
 
 function github(arg1,arg2,arg3,arg4,arg5,arg6) --note. lua arrays start at 1, not 0. (changeable, but i'd rather not)
-    if calc then
-        arg3=calc.nilcheck(arg3,"Link-Jon")
-        arg4=calc.nilcheck(arg4,"CC-OSish")
-        arg5=calc.nilcheck(arg5,"master")
-        arg6=calc.nilcheck(arg6,"w")
-    end
-    --ugh. translate \/ that into a single var... using string api more than likely. so i can test it XD
-    if fs.exists(arg1) or arg6=="r" then
-        --http.getResponse(url)
+    arg3=calc.nilcheck(arg3,"Link-Jon")
+    arg4=calc.nilcheck(arg4,"CC-OSish")
+    arg5=calc.nilcheck(arg5,"master")
+    arg6=calc.nilcheck(arg6,"w")
+
+    if arg1 or arg6=="r" then
         local file = http.get("https://raw.githubusercontent.com/"..arg3.."/"..arg4.."/"..arg5.."/"..arg2)
         local f2 = file.readAll() -- all i need is the data. dont need the other stuff from the get request. or have anything else in the request either.
         if arg6=="w" then
                 file.close()
-                file.open(arg1,"w")
-                file.write(f2)
-                file.close()
+                local temp=file.open(arg1,"w")
+                temp.write(f2)
+                temp.close()
+                return f2
             elseif arg6=="r" then
                 mtext.mprint(f2)
+                return true
         end
-        else
-            return(false)
-    end
+    else return false end
 end
 --[[
     This will be an absolute pain to make...
@@ -42,7 +39,7 @@ end
     args[1] = 
 ]]
 function gitpost(args)
-    
+
 end
 
 function printRes(url,bool)
@@ -80,4 +77,11 @@ function servercheck(dynamic,static)
             mtext.mprint("Normal IP: "..dynamic)
             mtext.mprint("Static IP: "..static)
     end
+end
+
+function time(offset)
+
+    offset=calc.nilcheck(offset)
+    local recieve=http.get("http://worldtimeapi.org/api/timezone")
+
 end

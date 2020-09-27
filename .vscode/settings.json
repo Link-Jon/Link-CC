@@ -20,5 +20,8 @@
         "printError",
         "pocket",
         "https"
+    ],
+    "Lua.diagnostics.disable": [
+        "lowercase-global"
     ]
 }

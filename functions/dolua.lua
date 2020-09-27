@@ -1,15 +1,15 @@
-os.loadAPI("mtext")
-os.loadAPI("help")
+os.loadAPI("sys/mtext")
+os.loadAPI("sys/help")
 os.loadAPI("system_notes")
-if fs.exists("bluenet") then --functions/wireless
-    bluenet=os.loadAPI("bluenet") 
+if fs.exists("sys/bluenet") then --functions/wireless
+    bluenet=os.loadAPI("sys/bluenet")
 end
 --[[
 if fs.exists(?) then
     os.loadAPI(?)
 end]]--
 
-function dolua(inputb)
+function dolua(inputb, user)
     if inputb=="help" then --note, make an array for the help list. maybe make it its own file too.
             help.help()
         
@@ -72,7 +72,7 @@ function dolua(inputb)
 			end
 
         elseif inputb=="math" then
-            shell.openTab(calc())
+            shell.openTab(calc.calc())
 
         elseif inputb=="function" then 
             if user>=1 then
@@ -84,7 +84,7 @@ function dolua(inputb)
         elseif inputb=="logistic" then
             LPmonitor()
 		elseif inputb=="license" then
-            github(license,license,nil,nil,nil,"r")
+            github("","",nil,nil,nil,"r")
         else
             printError("what")
     end

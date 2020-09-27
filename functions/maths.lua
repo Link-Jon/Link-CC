@@ -3,6 +3,7 @@ if mtext==nil then
     mtext.print = print
     mtext.write = write
 end
+
 function timer(time)
     mtext.mwrite("Amount of time? in seconds.\n>")
     time=read()
@@ -50,15 +51,21 @@ function calc()
 end
 
 function nilcheck(var, default)
-    local nilary = {'nil','Nil','NIL','NULL','null','Null','',' '}
-    if var==nilary then
-        if not default then
-                var=nil
-            else
-                var=default
-        end
+    local nilary = {'nil','null','',' '}
+    local falseary = {'false','not','no',false}
+    local trueary = {'true','yes',true}
+    var=string.lower(tostring(var))
+    if var==default then
+        return var --check if default
+    elseif var==nilary or var==nil then
+        return nil --check if nil
+    elseif var==trueary then
+        return true --check if true
+    elseif var==falseary then
+        return false --check if false
+    else --if none of the above, return var.
+        return var
     end
-    return var
 end
 
 function xOverTime(secs, xPerSec, xTotal)

@@ -55,9 +55,10 @@ function nilcheck(var, default)
     local falseary = {'false','not','no',false}
     local trueary = {'true','yes',true}
     var=string.lower(tostring(var))
-    if var==default then
-        return var --check if default
-    elseif var==nilary or var==nil then
+    if default and var==default then
+        return var --check if default AND if default is nil
+    end
+    if var==nilary or var==nil then
         return nil --check if nil
     elseif var==trueary then
         return true --check if true

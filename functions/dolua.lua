@@ -1,18 +1,50 @@
-os.loadAPI("sys/mtext")
-os.loadAPI("sys/help")
-os.loadAPI("system_notes")
+os.loadAPI(".system/notes")
+print("loaded notes")
+
+    --note work
+    local str=string.sub(notes.dir,-2,-1)
+    if str ~= '/' or str ~='\\' then
+        notes.dir=notes.dir.."/"
+    elseif str == '\\' then
+        notes.dir=string.sub(notes.dir,1,-2).."/"
+    end
+
+os.loadAPI(notes.dir.."mtext")
+os.loadAPI(notes.dir.."help")
+os.loadAPI(notes.dir.."https")
+os.loadAPI(notes.dir.."calc")
+
 if fs.exists("sys/bluenet") then --functions/wireless
     bluenet=os.loadAPI("sys/bluenet")
 end
---[[
-if fs.exists(?) then
-    os.loadAPI(?)
-end]]--
+
+if fs.exists("") then
+    os.loadAPI("")
+end
+    BASIC = {"chat", "discord", "functions", "help", "ls", "list"}
+    SHELL = {"clear", "exit", "reboot", "run"}
+    MATH = {"math", "timer"}
+    HTTP = {"license"}
+    USERFUN = {BASIC, HTTP, MATH, SHELL}
+
+    --a thing to hold all accessable functions from my libs.
+    Functions = {
+        calc="math",
+        mtext="text",
+        help="help",
+        system_notes="notes",
+        bluenet="wireless",
+        https=""
+    }
+
 
 function dolua(inputb, user)
-    if inputb=="help" then --note, make an array for the help list. maybe make it its own file too.
+    --basic array for function list...
+    --nvm this is going to get complicated quick. Also, user only. not raw functions.
+
+
+    if inputb==USERFUN[1] then --note, make an array for the help list. maybe make it its own file too.
             help.help()
-        
         elseif inputb=="chat" then 
                 if not bluenet then
                     if not http then
@@ -61,11 +93,12 @@ function dolua(inputb, user)
                             
         elseif inputb=="clear" then
             term.clear()
+            term.setCursorPos(1,1)
 
         elseif inputb=="timer" then
             if monitors then
                     mon.clear()
-                    timer()
+                    calc.timer()
                     mon.clear()
 				else
 					timer()
@@ -85,11 +118,50 @@ function dolua(inputb, user)
             LPmonitor()
 		elseif inputb=="license" then
             github("","",nil,nil,nil,"r")
+        elseif inputb=="list" or inputb=="ls" then
+            print("")
         else
-            printError("what")
+            printError("Not a viable input")
     end
 end
 
 function permerr()
     mtext.mprint("WARNING: INSUFFICIENT PERMMISIONS\n YOUR LEVEL: "..user.."\n>")
+end
+--goal of detecting and erroring when an incorrect input type is given
+function inErr(user,check)
+    local str=type(user)
+    if str==check then
+        return true
+    end
+    if str=="string" then
+        printError("Expected "..check..", got string")
+        return false
+    elseif str=="nil" then
+        printError("Expected "..check..", got nil")
+        return false
+    elseif str=="bool" then
+        printError("Expected "..check..", got bool")
+        return false
+    elseif str=="number" then
+        printError("Expected "..check..", got number")
+        return false
+    elseif str=="table" then
+        printError("Expected "..check..", got table")
+        return false
+    elseif str=="function" then
+        printError("Expected "..check..", got function")
+        return false
+    elseif str=="thread" then
+        printError("Expected "..check..", got thread")
+        return false
+    elseif str=="userdata" then
+        printError("How in the world have you done this? Var was of type userdata, which should be impossible in CraftOS")
+        printError("Expected "..check..", got userdata??")
+        return false
+    else
+        printError("Something broke with the 'inErr' function.")
+        printError("Expected "..check..", got "..str)
+        return false
+    end
 end

@@ -8,7 +8,7 @@
             "type": "lua",
             "request": "launch",
             "name": "Debug",
-            "program": "${workspaceFolder}/TEMP.lua"
+            "program": "${workspaceFolder}/functions/Test_File.lua"
         }
     ]
 }

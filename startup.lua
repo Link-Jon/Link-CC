@@ -15,12 +15,10 @@ print("loaded notes")
         notes.dir=string.sub(notes.dir,1,-2).."/"
     end
 
-os.loadAPI(notes.dir.."mtext")
-print("loaded mtext")
-os.loadAPI(notes.dir.."https")
-print("loaded https")
 os.loadAPI(notes.dir.."dofun")
 print("loaded dolua")
+os.loadAPI(notes.dir.."mtext")
+os.loadAPI(notes.dir.."help")
 
 function Main()
     --backup, just incase. also for more complex code :/ oh well.

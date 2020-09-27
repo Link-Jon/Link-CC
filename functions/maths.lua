@@ -1,4 +1,8 @@
 --calc. lib
+if mtext==nil then
+    mtext.print = print
+    mtext.write = write
+end
 function timer(time)
     mtext.mwrite("Amount of time? in seconds.\n>")
     time=read()
@@ -54,7 +58,7 @@ function nilcheck(var, default)
                 var=default
         end
     end
-    return(var)
+    return var
 end
 
 function xOverTime(secs, xPerSec, xTotal)

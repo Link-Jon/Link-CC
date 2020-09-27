@@ -13,10 +13,10 @@ os.loadAPI("calc")
 
 function github(arg1,arg2,arg3,arg4,arg5,arg6) --note. lua arrays start at 1, not 0. (changeable, but i'd rather not)
     if calc then
-        calc.nilcheck(arg4,"CC-OSish")
-        calc.nilcheck(arg5,"master")
-        calc.nilcheck(arg3,"Link-Jon")
-        calc.nilcheck(arg6,"w")
+        arg3=calc.nilcheck(arg3,"Link-Jon")
+        arg4=calc.nilcheck(arg4,"CC-OSish")
+        arg5=calc.nilcheck(arg5,"master")
+        arg6=calc.nilcheck(arg6,"w")
     end
     --ugh. translate \/ that into a single var... using string api more than likely. so i can test it XD
     if fs.exists(arg1) or arg6=="r" then
@@ -34,6 +34,15 @@ function github(arg1,arg2,arg3,arg4,arg5,arg6) --note. lua arrays start at 1, no
         else
             return(false)
     end
+end
+--[[
+    This will be an absolute pain to make...
+    Anywayyy here we go.
+    First, because its easier to manage, you will need to give your args as an array/table
+    args[1] = 
+]]
+function gitpost(args)
+    
 end
 
 function printRes(url,bool)

@@ -23,7 +23,7 @@ end
 
 function convertTime(time)
     time=time/60
-    return(time)
+    return time
 end
 
 function calc()
@@ -57,6 +57,26 @@ function nilcheck(var, default)
     return(var)
 end
 
+function xOverTime(secs, xPerSec, xTotal)
+    --xTotal if u want to find seconds instead of xTotal
+    --secs= time waited in sec.
+    --xPerSec= how much x you get each sec.
+    --Also, if its something like 1 every 5sec, you need 0.5 (check after function is built)
+    if xTotal then
+        secs=xTotal/xPerSec
+        times={}
+        times[1]=secs--seconds
+        times[2]=secs/60--minutes
+        times[3]=(secs/60)/60--hours
+        times[4]=((secs/60)/60)/24--days
+        times[5]=(((secs/60)/60)/24)/7--weeks
+        return(times)
+    else
+    local xTotal=xPerSec*secs
+    return(xTotal)
+    end
+end
+--xOverTime(nil, 6, 600000)
 --[[
 function binary()
     mtext.mprint("Warning. Do not use more than one byte. (8 bits or 255 in dec)")

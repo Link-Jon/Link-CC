@@ -2,10 +2,10 @@
 --Will install from branch Master when im done with it.
 --Each release will ALSO get its own install file.
 --Ontop of this, there will be a 'beta' install file also that i will use the most for
--- -- testing the new versions i add.
+--testing the new versions i add.
 
-function install(bug)
- 
+function install()
+
 -- Download as "install", IE: >pastebin get 7W48dz3c install
 -- this way i can move it into the main directory when startup loads.
 local gitlist = {
@@ -36,7 +36,7 @@ while not dircheck do
             if input=='y' then
                 dircheck=true
             else
-               dir=nil 
+               dir=nil
             end
     end
 --Tell user that it will loop, if it is going to.

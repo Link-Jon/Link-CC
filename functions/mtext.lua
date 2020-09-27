@@ -1,7 +1,6 @@
-
 function mprint(str)
     if monitors==true then
-            loop=loop+1
+            local loop=loop+1
             local x,y =mon.getCursorPos()
             y=y+1
             if loop==5 then
@@ -22,7 +21,7 @@ end
 function mwrite(str)
     if monitors==true then
             --loop=loop+1 nah
-            temp=term.current()
+            local temp=term.current()
             term.redirect(mon)
             write(str)
             term.redirect(temp)

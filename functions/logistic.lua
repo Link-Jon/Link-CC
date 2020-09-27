@@ -1,8 +1,8 @@
 function LPmonitor()
-    block= {"sTable","Security Station"}
-    LPBlock="logisticsSolidBlock-"
-    count=1
-    max=3 --equals one higher than how many blocks you will wrap.
+    local block= {"sTable","Security Station"}
+    local LPBlock="logisticsSolidBlock-"
+    local count=1
+    local max=3 --equals one higher than how many blocks you will wrap.
     mtext.mprint("NOTE: made for people that understand CC more.")
         
     mtext.mprint("\nIf unused type 'nil' \n I am looking for the modem's 'number' that it gives when you turn it on")
@@ -17,8 +17,6 @@ function LPmonitor()
         peripheral.wrap(block[count])
         count=count-1
     end
-
-    while exitvar==true do
-    end
         
 end
+--ugh i hate this

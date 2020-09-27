@@ -1,0 +1,24 @@
+{
+    "Lua.diagnostics.globals": [
+        "read",
+        "mtext",
+        "write",
+        "term",
+        "mprint",
+        "mwrite",
+        "montest",
+        "monitors",
+        "http",
+        "fs",
+        "system_notes",
+        "shell",
+        "dofun",
+        "github",
+        "peripheral",
+        "sleep",
+        "notes",
+        "printError",
+        "pocket",
+        "https"
+    ]
+}

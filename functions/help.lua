@@ -1,4 +1,5 @@
 function help()
+	--man this is ugly
 	mtext.mprint("license")
 	mtext.mprint("prints the latest license straight from the hub")
 	sleep(2)
@@ -28,11 +29,10 @@ function help()
 	mtext.mprint("\ndiscord (gives you a discord link. (tier 0 required)\n")
 	sleep(1)
 
-	mtext.mprint("\nclear (clears the screen. tier 0 required\n")
+	mtext.mprint("\nclear (clears the screen.)\n")
 	sleep(1)
 
-	mtext.mprint("\nlog (log of my edits. generalized. (tier 0 required)\n")
-	sleep(1)
+
 
 	mtext.mprint("\ntimer (starts a timer for x seconds.)")
 	mtext.mprint("Timer shown in both minutes and seconds (its a bit odd though)")

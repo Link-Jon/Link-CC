@@ -46,30 +46,29 @@ function printRes(url,bool)
 end
 
 function ipcheck()
-    ip=http.get("https://ipecho.net/plain")
-    ip2=ip.readLine()
-    ip3=http.get("https://api.hackertarget.com/reversedns/?q="..ip2)
-    domain=ip3.readLine()
-    local temp={ip2,domain}
-    return(table.unpack(temp))
+    local ip=http.get("https://ipecho.net/plain")
+    local ip2=ip.readLine()
+    local ip3=http.get("https://api.hackertarget.com/reversedns/?q="..ip2)
+    static=ip3.readLine()
+    return ip2, static
 end
 
-function servercheck(ip,domain)
+function servercheck(dynamic,static)
     MWL='?'
     MWLd='?' -- i dont have this ip yet..!
-    Cosmic='95.216.32.202'-- wrong.
-    Cosmicd=''
+    Cosmic='116.202.32.126'
+    Cosmicd='126.32.202.116'
 
 
-    if ip==MWL then
+    if string.find(static,MWLd) then
             mtext.mprint("\nLoaded onto MWL!\n") 
             perp=false
-        elseif ip==Cosmic then
-            mtext.mprint("\nLoaded onto Cosmic!\n") 
+        elseif string.find(static,Cosmicd) then
+            mtext.mprint("\nLoaded onto SiriusMC!\n") 
             perp=true
         else
             mtext.mprint("\nLoaded onto an Unknown Server!\n")
-            mtext.mprint("IP: "..ip)
-            mtext.mprint("Domain:"..domain)
+            mtext.mprint("Normal IP: "..dynamic)
+            mtext.mprint("Static IP: "..static)
     end
 end

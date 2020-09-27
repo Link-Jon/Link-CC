@@ -65,43 +65,23 @@ function Main()
     end
 
     https.servercheck(https.ipcheck())
+        seen=nil
 
-    while exitvar do
+        while true do
 		if user>=2 and seen==1 then
             mtext.mprint("Welcome back "..name.."!")
-            seen=1-- get from a file?
-		end
-        mtext.mwrite("What do you want to do? (help for list)\n>")
+        end
+
+        mtext.mwrite("What do you want to do? ('help' for a list)\n>")
         local inputb=read()
-			dofun.dolua(inputb)
-    end
+		dofun.dolua(inputb)
+        end
 end
 
 
 function discord()
     mtext.mprint("Join the discord that i for some reason made for this repo!")
     mtext.mprint("https://discord.gg/MYyHVzB")
-end
-
-function timer(time)
-    min=convertTime(time)
-        while time>0 do
-            term.setCursorPos(1,3)
-            term.clear()
-            mtext.mwrite("Seconds:"..time)
-            term.setCursorPos(1,1)
-            if min>1 then
-                mtext.mwrite("Minutes:"..min)
-            end
-            time=time-0.1
-            min=min-0.1/60
-            sleep(0.1)
-        end--WARNING: minutes are not accurate...enough for me anyway
-end
-
-function convertTime(time)
-    time=time/60
-    return(time)
 end
 
 Main()

@@ -38,20 +38,23 @@ function dolua(inputb)
 
         elseif inputb=="exit" then 
             if user>=2 then
-                    error("Process ended")
+                    error("Process forcefully ended")
                 else
                     os.shutdown()
             end
         
         elseif inputb=="run" then 
             if user>=1 then
-                    run()
+                    mtext.mprint("What do you wish to run?")
+                    mwrite("Note: type the whole command, like \n'>chat host Internet Link'\n>") --too lazy to check for args.
+                    shell.openTab(read())
                 else
                     permerr()
             end
             
         elseif inputb=="discord" then 
-            startup.discord()
+            mtext.mprint("Join the discord that i for some reason made for this repo!")
+            mtext.mprint("https://discord.gg/MYyHVzB")
 
         elseif inputb=="reboot" then 
             os.reboot()
@@ -85,12 +88,6 @@ function dolua(inputb)
         else
             printError("what")
     end
-end
-
-function run()
-    mtext.mprint("What do you wish to run?")
-    mwrite("Note: type the whole command, like \n'>chat host Internet Link'\n>") --too lazy to check for args.
-    shell.openTab(read())
 end
 
 function permerr()

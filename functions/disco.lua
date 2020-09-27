@@ -1,5 +1,5 @@
 function discogen()
-    head = {}
+    local head = {}
     GenCos="https://discordapp.com/595567348916944915/595567348916944919"
     mtext.mprint("Paste link?")
     mwrite("y / n\n>")
@@ -11,7 +11,7 @@ function discogen()
                 mwrite("What channel?\n General-CC = CCG \n General-Cosmic = GC")
                 input=read()
                 if input=='CCG' then
-                    discordlink=GenCos
+                    local discordlink=GenCos
                 end
         end
     disco=http.get(discordlink)

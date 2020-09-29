@@ -34,7 +34,7 @@ end
         help="help",
         system_notes="notes",
         bluenet="wireless",
-        https=""
+        https="https"
     }
 
 

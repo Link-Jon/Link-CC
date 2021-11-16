@@ -35,7 +35,7 @@ end
 
 function montest()
     if mon~=nil then
-            mwrite("Use the connected Monitor?\n Warning: This file is not very well built for a monitor\n (y/n)\n>")--it isnt. working on that now...
+            mwrite("Use the connected Monitor?\n Warning: This 'program' is not very well built for a monitor\n (y/n)\n>")--it isnt. working on that now...
         if read()=="y" then
                     monitors=true
                     mon.setTextScale(0.5)

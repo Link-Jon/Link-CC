@@ -5,18 +5,8 @@ loop=0
 name="Link"
 print("Initilizing...")
 os.loadAPI(".system/notes")
-print("loaded notes")
-
-    --note work
-    local str=string.sub(notes.dir,-2,-1)
-    if str ~= '/' or str ~='\\' then
-        notes.dir=notes.dir.."/"
-    elseif str == '\\' then
-        notes.dir=string.sub(notes.dir,1,-2).."/"
-    end
 
 os.loadAPI(notes.dir.."dofun")
-print("loaded dolua")
 os.loadAPI(notes.dir.."mtext")
 os.loadAPI(notes.dir.."help")
 

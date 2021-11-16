@@ -8,18 +8,8 @@
 --required: arg1 and arg2. 
 --if you put nil for 3, 4, 5, or 6 it will use default.
 --for arg[2] if its inside a file like /functions/git.lua you need to input "foldername/filename" for arg[2]
-print("loaded notes")
+os.loadAPI("apiHandle.lua")
 
-    --note work
-    local str=string.sub(notes.dir,-2,-1)
-    if str ~= '/' or str ~='\\' then
-        notes.dir=notes.dir.."/"
-    elseif str == '\\' then
-        notes.dir=string.sub(notes.dir,1,-2).."/"
-    end--returns notes.dir, formatted
-
-os.loadAPI(notes.dir.."mtext")
-os.loadAPI(notes.dir.."calc")
 
 function github(arg1,arg2,arg3,arg4,arg5,arg6) --note. lua arrays start at 1, not 0. (changeable, but i'd rather not)
     arg3=calc.nilcheck(arg3,"Link-Jon")
@@ -80,7 +70,7 @@ function servercheck(dynamic,static)
             mtext.mprint("\nLoaded onto MWL!\n") 
             perp=false
         elseif string.find(static,Cosmicd) then
-            mtext.mprint("\nLoaded onto SiriusMC!\n") 
+            mtext.mprint("\nLoaded onto SiriusMC!\n")  --Note to self. Update ip adresses.
             perp=true
         else
             mtext.mprint("\nLoaded onto an Unknown Server!\n")
@@ -93,5 +83,4 @@ function time(offset)
 
     offset=calc.nilcheck(offset)
     local recieve=http.get("http://worldtimeapi.org/api/timezone")
-
 end

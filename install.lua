@@ -1,10 +1,9 @@
 
 --Will install from branch Master when im done with it.
 --Each release will ALSO get its own install file.
---Ontop of this, there will be a 'beta' install file also that i will use the most for
+--Correction; while each release will get its own install file, will use this main file for master and...
+--generall ALL the branches. most notably with the latest branch and master branch.
 --testing the new versions i add.
-
-function install()
 
 -- Download as "install", IE: >pastebin get 7W48dz3c install
 -- this way i can move it into the main directory when startup loads.
@@ -88,16 +87,16 @@ for i=1,table.getn(gitlist) do
     lista = gitlist[i]
     listb = gotlist[i]
     if lista==nil then
-        return
+        return --?
     end
 
     temp = http.get("https://raw.githubusercontent.com/Link-Jon/CC-OSish/"..branch..lista)
     
     raw=temp.readAll()
     if lista==exception[i] or dir==nil then
-            file = fs.open(listb,"w")
-        else
-            file = fs.open(dir..listb,"w")
+        file = fs.open(listb,"w")
+    else
+        file = fs.open(dir..listb,"w")
     end
     file.write(raw)
     file.close()
@@ -119,11 +118,11 @@ if temp == "y" or temp=="yes" then
     temp.flush()
 
     write("\nDo you want to add another user?\n>")
-    looper=read()
-    if name == "f" or name == "false" or name == "no" or name == "n" then
-        looper=false
-    else
+    name=string.lower(read())
+    if name == "t" or name == "true" or name == "yes" or name == "y" then
         looper=true
+    else
+        looper=false
     end
 
     while looper==true do
@@ -153,7 +152,3 @@ else
     write("\nUnderstood; name/password will be default.")
     write("\nYou will be asked again whenever the program starts.\n")
 end
-
-end --ends function
-
-install()

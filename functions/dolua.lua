@@ -1,3 +1,5 @@
+--NOTE: Fix for multiversion. (1.7.10 and 1.12 notably (1.12 is also very simalar to updated versions beyond it.))
+
 os.loadAPI(".system/notes")
 print("loaded notes")
 
@@ -17,103 +19,100 @@ end
     SHELL = {"clear", "exit", "reboot", "run"}
     MATH = {"math", "timer"}
     HTTP = {"license"}
-    USERFUN = {BASIC, HTTP, MATH, SHELL}
+    USERFUN = {BASIC, HTTP, MATH, SHELL} --Hey its a namespace LUL
 
     --a thing to hold all accessable functions from my libs.
     Functions = {
-        calc="math",
-        mtext="text",
+        logic="logic",
         help="help",
         system_notes="notes",
         bluenet="wireless",
-        https="https"
     }
 
 
 function dolua(inputb, user)
     --basic array for function list...
     --nvm this is going to get complicated quick. Also, user only. not raw functions.
+    --Yeah... Update to switch. is... very needed.
 
 
     if inputb==USERFUN[1] then --note, make an array for the help list. maybe make it its own file too.
-            help.help()
-        elseif inputb=="chat" then 
-                if not bluenet then
-                    if not http then
-                        mtext.mprint("This function requires an undownloaded library and HTTP is inacessable")
-                    end
-                    mtext.mprint("Warning; This function requires an undownloaded library. Download now?")
-                    mtext.mwrite(" y / n ")
-                    input=read()
-                    if string.lower(input)=='y' then
-                            github(system_notes.dir,'function/wireless')
-                            bluenet.Internet()
-                    elseif string.lower(input)=='n' then
-                            mtext.mprint("Aborting.")
-                    else
-                            mtext.mprint("Unknown input")
-                    end
-
-                elseif fs.exists("bluenet") then
+        help.help()
+        
+    elseif inputb=="chat" then 
+        if not bluenet then
+            if not http then
+                mprint("This function requires an undownloaded library and HTTP is inacessable")
+            end
+                mprint("Warning; This function requires an undownloaded library. Download now?")
+                mwrite(" y / n ")
+                input=read()
+                if string.lower(input)=='y' then
+                    github(system_notes.dir,'function/wireless')
                     bluenet.Internet()
+                elseif string.lower(input)=='n' then
+                    mprint("Aborting.")
                 else
-                    permerr()
+                    mprint("Unknown input")
                 end
 
-        elseif inputb=="exit" then 
-            if user>=2 then
-                    error("Process forcefully ended")
-                else
-                    os.shutdown()
+            elseif fs.exists("bluenet") then
+                bluenet.Internet()
+            else
+                permerr()
             end
+
+    elseif inputb=="exit" then 
+        if user>=2 then
+                error("Process forcefully ended")
+            else
+                os.shutdown()
+        end
         
-        elseif inputb=="run" then 
-            if user>=1 then
-                    mtext.mprint("What do you wish to run?")
-                    mwrite("Note: type the whole command, like \n'>chat host Internet Link'\n>") --too lazy to check for args.
-                    shell.openTab(read())
-                else
-                    permerr()
-            end
-            
-        elseif inputb=="discord" then 
-            mtext.mprint("Join the discord that i for some reason made for this repo!")
-            mtext.mprint("https://discord.gg/MYyHVzB")
-
-        elseif inputb=="reboot" then 
-            os.reboot()
-                            
-        elseif inputb=="clear" then
-            term.clear()
-            term.setCursorPos(1,1)
-
-        elseif inputb=="timer" then
-            if monitors then
-                    mon.clear()
-                    calc.timer()
-                    mon.clear()
-				else
-					timer()
-			end
-
-        elseif inputb=="math" then
-            shell.openTab(calc.calc())
-
-        elseif inputb=="function" then 
-            if user>=1 then
-                    shell.openTab(dofun())
-                else
-                    permerr()
-            end
-
-        elseif inputb=="logistic" then
-            LPmonitor()
-		elseif inputb=="license" then
-            github("","",nil,nil,nil,"r")
-        elseif inputb=="list" or inputb=="ls" then
-            print("")
+    elseif inputb=="run" then 
+        if user>=1 then
+            mprint("What do you wish to run?")
+            mwrite("Note: type the whole command, like \n'>chat host Internet Link'\n>") --too lazy to check for args.
+            shell.openTab(read())
         else
-            printError("Not a viable input")
+            permerr()
+        end
+         
+
+    elseif inputb=="reboot" then 
+        os.reboot()
+                            
+    elseif inputb=="clear" then
+        term.clear()
+        term.setCursorPos(1,1)
+
+    elseif inputb=="timer" then
+        if monitors then
+            mon.clear()
+            timer()
+            mon.clear()
+		else
+			timer()
+		end
+
+    elseif inputb=="math" then
+        shell.openTab(calc.calc())
+
+    elseif inputb=="function" then 
+        if user>=1 then
+            shell.openTab(dofun())
+        else
+            permerr()
+        end
+
+    elseif inputb=="logistic" then
+        LPmonitor()
+	elseif inputb=="license" then
+        github("","",nil,nil,nil,"r")
+    elseif inputb=="list" or inputb=="ls" then
+        print("")
+    else
+        printError("Not a viable input")
     end
 end
 

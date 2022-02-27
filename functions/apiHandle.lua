@@ -6,7 +6,7 @@ function apiHandler(args[..])
 
 	if not args[]
 		loadAPI()
-	elseif args.getn() == 1 then --WARNING, need to find a better wayto find array length. function depreciated and doesnt exist in many places.
+	elseif #args == 1 then 
 		print("sigh.")
 	end
 end

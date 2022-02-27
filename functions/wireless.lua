@@ -8,9 +8,16 @@ Or maybe generally modem functions. :P
 
 
 --[[
-function msgRecieve(channel)
-    peripheral.find('modem')
-end wut
+function scanner(channel,modem)
+    if not modem then
+        modem = peripheral.find('modem')
+    end
+    modem.open(channel)
+    event, side, channel, rplyChannel, msg, distance = os.pullEvent("modem_message")
+    --we dont need event, side, or channel.
+    
+    return rplyChannel, msg, distance
+end
 ]]
 
 

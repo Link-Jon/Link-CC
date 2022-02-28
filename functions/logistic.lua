@@ -1,4 +1,3 @@
---[[
 function LPmonitor()
     local block= {"sTable","Security Station"}
     local LPBlock="logisticsSolidBlock-"
@@ -21,7 +20,3 @@ function LPmonitor()
         
 end
 --ugh i hate this
-
-Yeah.. im going to handle this later... when i have time to understand how LP pipes work with computercraft
-Besides, this will only work... most likely in 1.7.10.
-]]

@@ -1,4 +1,5 @@
-# CC-OSishSo, this is just an attempt to make some quality of life improvements to CC. thats it really.
+# CC-OSish
+So, this is just an attempt to make some quality of life improvements to CC. thats it really.
 
 Also, many things that  let you use it as a.. 'family pc' I guess. In this I mean there are currently three levels to the... ehh. "os"~. 
 

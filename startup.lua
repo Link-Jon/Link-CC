@@ -1,16 +1,26 @@
 mon=peripheral.find("monitor")
+print("monitor checked")
+perp=false --Immibis peripherals (gets checked with server)
 loop=0
 name="Link"
 print("Initilizing...")
-if os.loadAPI then
-    require = os.loadAPI
-end --Think it might be simpler to have the table.function set to require if it exists.
+os.loadAPI(".system/notes")
+print("loaded notes")
 
-require(".system/notes")
+    --note work
+    local str=string.sub(notes.dir,-2,-1)
+    if str ~= '/' or str ~='\\' then
+        notes.dir=notes.dir.."/"
+    elseif str == '\\' then
+        notes.dir=string.sub(notes.dir,1,-2).."/"
+    end
 
-require(notes.dir.."dofun")
-require(notes.dir.."mtext")
-require(notes.dir.."help")
+os.loadAPI(notes.dir.."mtext")
+print("loaded mtext")
+os.loadAPI(notes.dir.."https")
+print("loaded https")
+os.loadAPI(notes.dir.."dofun")
+print("loaded dolua")
 
 function Main()
     --backup, just incase. also for more complex code :/ oh well.
@@ -23,26 +33,26 @@ function Main()
 
     term.clear()
     term.setCursorPos(1,1)
-    montest()
+    mtext.montest()
 
     local pass = {'not','getting','mypass'} --  :P
 
     if pocket then-- because its not \/
-        mprint("WARNING: NOT OPTIMIZED FOR POCKET COMPUTERS")
+        mtext.mprint("WARNING: NOT OPTIMIZED FOR POCKET COMPUTERS")
     end
 
     mtext.mwrite("Enter Password: ")
     local input=read("*")
     if input==pass[1] then
-            mprint("WARNING: SIGNED IN AS GUEST. RESTRICTIONS ENABLED")
+            mtext.mprint("WARNING: SIGNED IN AS GUEST. RESTRICTIONS ENABLED")
             user = 0 --note; user=0 is guest, user=1 is a friend, user=2 is main
             sleep(2)
         elseif input==pass[3] then
-            mprint("NOTICE: SIGNED IN AS FRIEND. PARTIAL RESTRICTION ENABLED")
+            mtext.mprint("NOTICE: SIGNED IN AS FRIEND. PARTIAL RESTRICTION ENABLED")
             user = 1
             sleep(2)
         elseif input==pass[2] then
-            mprint("SIGNED IN AS "..name..". RESTRICTIONS REMOVED")
+            mtext.mprint("SIGNED IN AS "..name..". RESTRICTIONS REMOVED")
             --enable events.
             pullEvent = pullBack
             os.pullEvent = osPullBack
@@ -55,18 +65,23 @@ function Main()
     end
 
     https.servercheck(https.ipcheck())
-    
-    seen=nil
+        seen=nil
 
-    while true do
-	if user>=2 and seen==1 then
-        mprint("Welcome back "..name.."!")
-    end
+        while true do
+		if user>=2 and seen==1 then
+            mtext.mprint("Welcome back "..name.."!")
+        end
 
-    mwrite("What do you want to do? ('help' for a list)\n>")
-    local inputb=read()
-	dolua(inputb)
-    end
+        mtext.mwrite("What do you want to do? ('help' for a list)\n>")
+        local inputb=read()
+		dofun.dolua(inputb)
+        end
+end
+
+
+function discord()
+    mtext.mprint("Join the discord that i for some reason made for this repo!")
+    mtext.mprint("https://discord.gg/MYyHVzB")
 end
 
 Main()

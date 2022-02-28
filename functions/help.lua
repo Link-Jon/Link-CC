@@ -47,4 +47,3 @@ function help()
 	mtext.mprint(">30")
 	sleep(4)
 end
---SETUP HELP API!!!

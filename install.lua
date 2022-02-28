@@ -1,13 +1,13 @@
 
 --Will install from branch Master when im done with it.
 --Each release will ALSO get its own install file.
---Correction; while each release will get its own install file, will use this main file for master and...
---generall ALL the branches. most notably with the latest branch and master branch.
+--Ontop of this, there will be a 'beta' install file also that i will use the most for
 --testing the new versions i add.
+
+function install()
 
 -- Download as "install", IE: >pastebin get 7W48dz3c install
 -- this way i can move it into the main directory when startup loads.
--- (Although it seems to work fine just as a run, like> pastebin run 7W48dz3c)
 local gitlist = {
     "startup.lua",
     "functions/http.lua",
@@ -18,10 +18,6 @@ local gitlist = {
 }
 local gotlist = {"startup","https","mtext","help","calc","dofun"}
 local exception = {"startup.lua"} -- doesnt go into the directory. stays in root.
-local commitList = {
-    "master/", --main release channel
-    "Link-Jon-1.0/" --1.0
-}
 
 if not fs.exists("sys") then
     dir = "sys/"
@@ -29,25 +25,24 @@ if not fs.exists("sys") then
 end
 
 while not dircheck do
-    write("Input a name for the directory that you would like to use. \nThis will contain pretty much all of the files. If it's not empty, then items inside may end up being deleted. \nThis only appears after 'sys' has been checked (this will be the name for a directory)\n>")
+    print("Input a name for the directory that you would like to use. This will contain pretty much all of my files. If it's not empty, then items inside may end up being deleted. This only appears after 'sys' has been checked (this will be the name for a directory)")
     dir = read()
     if not fs.exists(dir) then
-        dircheck=true
-        break
-    else
-        dircheck=false
-        write("\nWARNING: File/Folder exists. Continue? (y/n)\n>")
-        local input = read()
-        if input=='y' then
             dircheck=true
-            write("\n")
-            break
-        else
-            dir=nil
-        end
+    else
+            dircheck=false
+            write("WARNING: File/Folder exists. Continue? (y/n)")
+            local input = read()
+            if input=='y' then
+                dircheck=true
+            else
+               dir=nil
+            end
     end
---Warn the user that it will loop
-    write("\nWarning, this will loop until a usable directory has been found\n")
+--Tell user that it will loop, if it is going to.
+    if dircheck==false then
+        print("Warning, this will loop until a usable directory has been found")
+    end
 end
 
 if dir then
@@ -61,94 +56,35 @@ if dir then
     end
 
     fs.makeDir(dir)
-    local temp=fs.open(".system/notes","w")
-    temp.write("dir = ".."'"..dir.."'\n") -- this hurts my soul
+    temp=fs.open(".system/notes","w")
+    temp.write("dir = ".."'"..dir.."'") -- this hurts my soul
     temp.close() --but its the easiest way to turn it into a string to be read later
     temp=nil
-    --This should prevent the need of repeating this 'fix' again anywhere else.
-end
-
-write("Would you like to download the latest release or latest commit? (Commit may not launch.)\n('C' for commit, 'M' for release (or 'S' to specify)\n>")
-local commit = read()
-commit=string.lower(commit)
-
-if commit == "m" or commit == "master" or commit=="main" then
-    print("\nDownloading master branch. (Stable release)\n")
-    branch = commitList[1]
-elseif commit == "c" or commit == "commit" or commit == "beta" then
-    print("\nDownloading latest commit; "..commitList[2].."\n")
-    branch = commitList[2]
-else
-    print("\nDownloading master, too tired to setup anything complicated thing atm\n")
-    branch = commitList[1]
 end
 
 for i=1,table.getn(gitlist) do
     lista = gitlist[i]
     listb = gotlist[i]
     if lista==nil then
-        return --?
+        return
     end
 
-    temp = http.get("https://raw.githubusercontent.com/Link-Jon/CC-OSish/"..branch..lista)
+    temp = http.get("https://raw.githubusercontent.com/Link-Jon/CC-OSish/Link-Jon-1.0/"..lista)
+    --temp = http.get("https://raw.githubusercontent.com/Link-Jon/CC-OSish/master/"..lista)
     
     raw=temp.readAll()
     if lista==exception[i] or dir==nil then
-        file = fs.open(listb,"w")
-    else
-        file = fs.open(dir..listb,"w")
+            file = fs.open(listb,"w")
+        else
+            file = fs.open(dir.."/"..listb,"w")
     end
     file.write(raw)
     file.close()
     print("Downloaded: "..lista.." as "..listb)
+    --bad. im going to let it bios error to end. not a great idea, should be changed.
+    --changed to For loop, fixes this err. (forgot to get rid of x=x+1)
 end
 print("Finished!")
-sleep(0.2)
+end --ends function
 
-write("Would you like to set up a username and password now? (y/n)\n>")
-local temp = string.lower(read())
-if temp == "y" or temp=="yes" then
-    write("\nEnter a username (It will be the admin username FYI)\n>")
-    local name=read()
-    write("\nEnter a password.\n>")
-    local pass=read()
-
-    temp=fs.open(".system/notes","a")
-    temp.write("user1={\""..name.."\",\""..pass.."\",2}\n") --name,pass,teir
-    temp.flush()
-
-    write("\nDo you want to add another user?\n>")
-    name=string.lower(read())
-    if name == "t" or name == "true" or name == "yes" or name == "y" then
-        looper=true
-    else
-        looper=false
-    end
-
-    while looper==true do
-        write("\nEnter the username\n>")
-        name=read()
-        write("\nEnter the password\n>")
-        pass=read()
-        write("\nEnter the teir\n(0 for guest, 1 for friend, 2 for admin. See readme for more detail.)\n>")
-        teir=read()
-        if teir==3 then
-            teir=2
-        end
-
-        temp.write("user1={\""..name.."\",\""..pass.."\","..teir.."}\n")
-        temp.flush()
-        write("\n>Do you want to add another user? (y/n)\n>")
-        name=string.lower(read())
-        if name == "f" or name == "false" or name == "no" or name == "n" then
-            looper=false
-        else
-            looper=true
-        end
-    end
-    temp.close()
-    temp=nil
-else
-    write("\nUnderstood; name/password will be default.")
-    write("\nYou will be asked again whenever the program starts.\n")
-end
+install()

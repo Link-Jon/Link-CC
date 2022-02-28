@@ -19,4 +19,7 @@ function LPmonitor()
     end
         
 end
---ugh i hate this
+--ugh i hate this.
+--Although i hope i get the chance to come back to it...
+--Maybe someday on tekkit legends, siriusMC / Cosmic Tekkit?
+--oh well. now isnt the time to reminece...

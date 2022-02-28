@@ -10,13 +10,13 @@ function install()
 -- this way i can move it into the main directory when startup loads.
 local gitlist = {
     "startup.lua",
-    "functions/http.lua",
+    "functions/wireless.lua",
     "functions/mtext.lua",
     "functions/help.lua",
-    "functions/maths.lua",
+    "functions/logic.lua",
     "functions/dolua.lua"
 }
-local gotlist = {"startup","https","mtext","help","calc","dofun"}
+local gotlist = {"startup","wireless","mtext","help","logic","dolua"}
 local exception = {"startup.lua"} -- doesnt go into the directory. stays in root.
 
 if not fs.exists("sys") then
@@ -69,8 +69,7 @@ for i=1,table.getn(gitlist) do
         return
     end
 
-    temp = http.get("https://raw.githubusercontent.com/Link-Jon/CC-OSish/Link-Jon-1.0/"..lista)
-    --temp = http.get("https://raw.githubusercontent.com/Link-Jon/CC-OSish/master/"..lista)
+    temp = http.get("https://raw.githubusercontent.com/Link-Jon/CC-OSish/beta-0.7/"..lista)
     
     raw=temp.readAll()
     if lista==exception[i] or dir==nil then

@@ -17,19 +17,52 @@ function mprint(str)
             return
     end
 end
+
 --both works?
+
 function mwrite(str)
     if monitors==true then
-            --loop=loop+1 nah
-            local temp=term.current()
-            term.redirect(mon)
-            write(str)
-            term.redirect(temp)
-            write(str)
-            return
-        else
-            write(str)
-            return
+        --loop=loop+1 nah
+        local temp=term.current()
+        term.redirect(mon)
+        write(str)
+
+        term.redirect(temp)
+        write(str)
+        return
+    else
+        write(str)
+        return
+    end
+end
+
+
+
+function mclear()
+    if monitors==true then
+        local temp=term.current()
+        term.redirect(mon)
+        clear()
+
+        term.redirect(temp)
+        clear()
+        return
+    else clear(); return
+    end
+end
+
+function msetCursorPos(x,y)
+    if monitors==true then
+        local temp=term.current()
+        term.redirect(mon)
+        term.setCursorPos(x,y)
+
+        term.redirect(temp)
+        term.setCursorPos(x,y)
+        return
+    else
+        term.setCursorPos(x,y)
+        return
     end
 end
 

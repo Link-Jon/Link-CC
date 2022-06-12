@@ -1,9 +1,8 @@
 --logic. lib? yeh.
 function timer(time)
     mwrite("Amount of time? in seconds.\n>")
-    time=read()
-    time=tonumber(time)
-    min=convertTime(time)
+    time=tonumber(read())
+    min=time/60
         while time>0 do
             term.setCursorPos(1,1)
             if min>1 then
@@ -81,8 +80,10 @@ function xOverTime(secs, xPerSec, xTotal)
     end
 end --How could i have the functionallity of xPerSec implanted into this function...?
 
+
+
 --act is how to compare num1 and 2.
---arry is to be an array of functions, the same length as num1. Or one function that will execute if a true is found
+--arry is to be an array of lua chunks, the same arry length as num1. Or only one function/chunk that will execute if a true is found
 --for switch to determine what function to use. Be sure to use simpler functions, espesially when you have alot.
 --equal is a bool; setup for equal to. if true, then if > or <, it will add (or subtract, depending on comparison direction)
 --1 to num2 to emulate an equal-to. (instead of new inlines for >= and <=) (assumed false)
@@ -104,11 +105,12 @@ function switch(num1,num2,arry,act,equal)
         --^ sets act to "str" if num2 is a string, just incase our input didnt.
     --phew!! Error handling is DONE!! YAY! XD (|except i just erased all my work due to deciding numbers are not needed. :(|)
     
+    -- equalto setup
         if equal then
-        if act == ">" then
-            num2=num2-1
-        elseif act == "<" then
-            num2=num2+1
+            if act == ">" then
+                num2=num2-1
+            elseif act == "<" then
+                num2=num2+1
         end;end
 
     -- doing '>'

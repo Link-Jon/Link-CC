@@ -10,17 +10,18 @@
 -- (Although it seems to work fine just as a run, like> pastebin run 7W48dz3c)
 local gitlist = {
     "startup.lua",
-    "functions/http.lua",
-    "functions/mtext.lua",
+    "functions/wireless.lua",
+    "functions/logic.lua",
     "functions/help.lua",
-    "functions/maths.lua",
     "functions/dolua.lua"
 }
+
 local gotlist = {"startup","https","mtext","help","calc","dofun"}
 local exception = {"startup.lua"} -- doesnt go into the directory. stays in root.
 local commitList = {
     "master/", --main release channel
-    "Link-Jon-1.0/" --1.0
+    "Link-Jon-1.0/", -- 1.0 release
+    "beta-0.7/" --Classic CC release channel
 }
 
 if not fs.exists("sys") then

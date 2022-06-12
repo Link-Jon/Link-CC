@@ -21,11 +21,6 @@ function timer(time)
      mprint("TIME OUT")
 end
 
-function convertTime(time)
-    time=time/60
-    return time
-end
-
 function calc()
     mwrite("First number:")
     numa=read()
@@ -64,9 +59,6 @@ function nilcheck(var, default)
     end
 end --Nvm... switch... is really just unneeded to have here.
 
-function xPerSec(amount, interval) --wonder if i can put this somewhere else
-    return amount/interval
-end
 
 function xOverTime(secs, xPerSec, xTotal)
     --xTotal if u want to find seconds instead of xTotal
@@ -199,7 +191,7 @@ function montest()
     if mon then
         mwrite("Use the connected Monitor?\n Warning: This 'program' is not very well built for a monitor\n (y/n)\n>")
         if nilcheck(read(),true)==true then
-            monitors=true
+            _MONITORS_=true
             mon.setTextScale(0.5)
             mon.clear()
             mon.setCursorPos(1,1)
@@ -212,4 +204,4 @@ end
 --err({x,y,z,...})
 function err(args) --To be completed :P
     args[]
-end
+end -- i know this was sposed to be really helpful with error handlin, and more so debugging, but idk what i wanted to make so...

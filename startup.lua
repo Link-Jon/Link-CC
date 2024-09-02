@@ -12,9 +12,8 @@ Abandoned.
 
 require(".system/notes")
 
-require(notes.dir.."dofun")
 require(notes.dir.."mtext")
-require(notes.dir.."help")
+
 
 -- I think i need to start from scratch, honestly.
 --Alright. Mtext is probably the best API here, so lets work on that next.

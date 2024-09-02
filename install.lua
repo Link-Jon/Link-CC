@@ -28,14 +28,13 @@ end
 
 
 local gitlist = {
-    "startup.lua",
-    "functions/wireless.lua",
-    "functions/logic.lua",
-    "functions/help.lua",
-    "functions/dolua.lua"
+    "startup.lua" = "startup.lua",
+    "wireless.lua" ="functions/wireless.lua",
+    "logic.lua" = "functions/logic.lua",
+    "help.lua" = "functions/help.lua",
+    "dolua.lua" = "functions/dolua.lua"
 }
 
-local gotlist = {"startup","https","mtext","help","dofun"}
 local exception = {"startup.lua"} -- doesnt go into the directory. stays in root.
 local commitList = {
     "master/", --main release channel
@@ -109,13 +108,12 @@ end--]]
 
 branch = "master/"
 
-for i=1,table.getn(gitlist) do
-    lista = gitlist[i] --github filenames
-    listb = gotlist[i] --CC filenames
+for key,value in pairs(gitlist) do
+    lista = value --github filenames
+    listb = key --CC filenames
     if lista==nil then
         return --?
     end
-
 
     local temp, a = http.get("https://raw.githubusercontent.com/Link-Jon/Link-CC/"..branch..lista)
     

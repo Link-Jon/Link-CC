@@ -8,6 +8,25 @@
 -- Download as "install", IE: >pastebin get 7W48dz3c install
 -- this way i can move it into the main directory when startup loads.
 -- (Although it seems to work fine just as a run, like> pastebin run 7W48dz3c)
+
+
+
+args = {...}
+if args[1] == "v" then
+    verbose = true
+end
+
+function printVerbose(str)
+    if verbose == true then
+        print(str)
+    end
+end
+--if verbose, print string.
+
+-- I will now need to make a install specifically for minecraft 1.7.10, should i want to keep it
+-- functional...
+
+
 local gitlist = {
     "startup.lua",
     "functions/wireless.lua",
@@ -16,13 +35,15 @@ local gitlist = {
     "functions/dolua.lua"
 }
 
-local gotlist = {"startup","https","mtext","help","calc","dofun"}
+local gotlist = {"startup","https","mtext","help","dofun"}
 local exception = {"startup.lua"} -- doesnt go into the directory. stays in root.
 local commitList = {
     "master/", --main release channel
-    "Link-Jon-1.0/", -- 1.0 release
     "beta-0.7/" --Classic CC release channel
 }
+
+--For now i wont change the above functionally. But im 99% sure it can be done with one array.
+--Todo... Not important atm cause it actually works.
 
 if not fs.exists("sys") then
     dir = "sys/"
@@ -30,6 +51,7 @@ if not fs.exists("sys") then
 end
 
 while not dircheck do
+    --If something went wrong with getting the directory automatically...
     write("Input a name for the directory that you would like to use. \nThis will contain pretty much all of the files. If it's not empty, then items inside may end up being deleted. \nThis only appears after 'sys' has been checked (this will be the name for a directory)\n>")
     dir = read()
     if not fs.exists(dir) then
@@ -59,7 +81,10 @@ if dir then
     elseif str == '\\' then
         dir=string.sub(dir,1,-2)
         dir=dir.."/"
-    end
+    end 
+    --Fixes problems with werid slashes.
+    --Honestly, i dont really remember why this was needed.
+    --I do remember it being added because of a really specific bug though.
 
     fs.makeDir(dir)
     local temp=fs.open(".system/notes","w")
@@ -69,29 +94,32 @@ if dir then
     --This should prevent the need of repeating this 'fix' again anywhere else.
 end
 
-write("Would you like to download the latest release or latest commit? (Commit may not launch.)\n('C' for commit, 'M' for release (or 'S' to specify)\n>")
-local commit = read()
-commit=string.lower(commit)
+--write("Would you like to download the latest release or latest commit? (Commit may not launch.)\n('C' for commit, 'M' for release (or 'S' to specify)\n>")
+--local commit = read()
+--commit=string.lower(commit)
 
+--[[Will leave this but currently unneeded i think.
 if commit == "m" or commit == "master" or commit=="main" then
     print("\nDownloading master branch. (Stable release)\n")
     branch = commitList[1]
 elseif commit == "c" or commit == "commit" or commit == "beta" then
     print("\nDownloading latest commit; "..commitList[2].."\n")
     branch = commitList[2]
-else
-    print("\nDownloading master, too tired to setup anything complicated thing atm\n")
-    branch = commitList[1]
-end
+end--]]
+
+branch = "master/"
 
 for i=1,table.getn(gitlist) do
-    lista = gitlist[i]
-    listb = gotlist[i]
+    lista = gitlist[i] --github filenames
+    listb = gotlist[i] --CC filenames
     if lista==nil then
         return --?
     end
 
-    temp = http.get("https://raw.githubusercontent.com/Link-Jon/CC-OSish/"..branch..lista)
+
+    local temp, a = http.get("https://raw.githubusercontent.com/Link-Jon/Link-CC/"..branch..lista)
+    
+    printVerbose(temp,a)
     
     raw=temp.readAll()
     if lista==exception[i] or dir==nil then
@@ -105,7 +133,7 @@ for i=1,table.getn(gitlist) do
 end
 print("Finished!")
 sleep(0.2)
-
+--[[
 write("Would you like to set up a username and password now? (y/n)\n>")
 local temp = string.lower(read())
 if temp == "y" or temp=="yes" then
@@ -152,4 +180,4 @@ if temp == "y" or temp=="yes" then
 else
     write("\nUnderstood; name/password will be default.")
     write("\nYou will be asked again whenever the program starts.\n")
-end
+end --]]

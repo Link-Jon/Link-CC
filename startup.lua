@@ -2,15 +2,22 @@ mon=peripheral.find("monitor")
 loop=0
 name="Link"
 print("Initilizing...")
-if os.loadAPI then
-    require = os.loadAPI
-end --Think it might be simpler to have the table.function set to require if it exists.
+--[[ if os.loadAPI then
+        require = os.loadAPI
+     end --Think it might be simpler to have the table.function set to require if it exists.
+
+90% sure this is attempted compatiblity between CC and CC:T
+Abandoned.
+--]]
 
 require(".system/notes")
 
 require(notes.dir.."dofun")
 require(notes.dir.."mtext")
 require(notes.dir.."help")
+
+-- I think i need to start from scratch, honestly.
+--Alright. Mtext is probably the best API here, so lets work on that next.
 
 function Main()
     --backup, just incase. also for more complex code :/ oh well.

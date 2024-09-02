@@ -21,9 +21,6 @@ end
 ]]
 
 
---needs to be in programs.
-
-
 --[[
 -- ========== --
 Internet functions.
@@ -41,7 +38,7 @@ HTTP.lua, merged.
 --required: arg1 and arg2.
 --if you put nil for 3, 4, 5, or 6 it will use default.
 --for arg[2] if its inside a file like /functions/git.lua you need to input "foldername/filename" for arg[2]
-logic = require("logic.lua")
+logic = require(notes.dir.."logic.lua")
 
 
 function github(arg1,arg2,arg3,arg4,arg5,arg6) --note. lua arrays start at 1, not 0. (changeable, but i'd rather not)
@@ -79,6 +76,9 @@ function printRes(url,bool)
     end
     return(raw)
 end
+--Need to see what this is doing
+--Appears to be 'print Result' but that doesnt seem correct.
+
 
 function ipcheck()
     local ip=http.get("https://ipecho.net/plain")
@@ -88,6 +88,9 @@ function ipcheck()
     return ip2, static
 end
 
+
+--i dont know if i will keep this because of the fact that i need to maintain it.
+--its not easy to do. at all. its pain. cannot be done automatically i dont think
 function servercheck(dynamic,static)
     MWL='?'
     MWLd='?' -- i dont have this ip yet..!

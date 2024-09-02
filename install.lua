@@ -28,15 +28,17 @@ end
 
 
 local gitlist = {
-    "startup.lua" = "startup.lua",
-    "wireless.lua" ="functions/wireless.lua",
-    "logic.lua" = "functions/logic.lua",
-    "help.lua" = "functions/help.lua",
-    "peripherals.lua" = "functions/peripherals.lua",
-    "programs.lua" = "functions/programs.lua"
+    ["startup.lua"] = "startup.lua",
+    ["wireless.lua"] ="functions/wireless.lua",
+    ["logic.lua"] = "functions/logic.lua",
+    ["help.lua"] = "functions/help.lua",
+    ["peripherals.lua"] = "functions/peripherals.lua",
+    ["programs.lua"] = "functions/programs.lua"
 }
 
-local exception = {"startup.lua"} -- doesnt go into the directory. stays in root.
+--local exception = {"startup.lua"} -- doesnt go into the directory. stays in root.
+--Currently unused, as key = value list is not deterministic. 
+
 local commitList = {
     "master/", --main release channel
     "beta-0.7/" --Classic CC release channel
@@ -112,6 +114,9 @@ branch = "master/"
 for key,value in pairs(gitlist) do
     lista = value --github filenames
     listb = key --CC filenames
+
+    printVerbose(key,value)
+
     if lista==nil then
         return --?
     end
@@ -121,7 +126,10 @@ for key,value in pairs(gitlist) do
     printVerbose(temp,a)
     
     raw=temp.readAll()
-    if lista==exception[i] or dir==nil then
+
+    --May need to do exceptions differently than before.
+    --Now, it manually excludes startup.
+    if lista=="startup.lua" or dir==nil then
         file = fs.open(listb,"w")
     else
         file = fs.open(dir..listb,"w")

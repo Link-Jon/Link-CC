@@ -32,7 +32,8 @@ local gitlist = {
     "wireless.lua" ="functions/wireless.lua",
     "logic.lua" = "functions/logic.lua",
     "help.lua" = "functions/help.lua",
-    "dolua.lua" = "functions/dolua.lua"
+    "peripherals.lua" = "functions/peripherals.lua",
+    "programs.lua" = "functions/programs.lua"
 }
 
 local exception = {"startup.lua"} -- doesnt go into the directory. stays in root.

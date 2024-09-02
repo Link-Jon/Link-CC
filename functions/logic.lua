@@ -1,47 +1,5 @@
 --logic. lib? yeh.
 
---Going to move this timer to a program file later.
-function timer(time)
-    mwrite("Amount of time? in seconds.\n>")
-    time=tonumber(read())
-    min=time/60
-        while time>0 do
-            term.setCursorPos(1,1)
-            if min>1 then
-                mwrite("Minutes:"..min)
-                term.setCursorPos(1,3)
-            end
-            mwrite("Seconds:"..time)
-            term.clear()
-            time=time-0.05
-            min=min-0.05/60
-            sleep(0.05)
-            
-        end --WARNING: minutes are not accurate...enough for me anyway
-     term.clear()
-     mprint("TIME OUT")
-end
-
---to be put into program file
-function calc()
-    mwrite("First number:")
-    numa=read()
-    mprint("What type of calculation")
-    mwrite("M / D / A / S\n>")
-    fun=read()
-    mwrite("Second number:\n>")
-    numb=read()
-    if fun=="M" or fun=="m" then
-            numc=numa*numb
-        elseif fun=="D" or fun=="d" then
-            numc=numa/numb
-        elseif fun=="A" or fun=="a" then
-            numc=numa+numb
-        elseif fun=="S" or fun=="s" then
-            numc=numa-numb
-    end
-end
-
 function nilcheck(var, default)
     local nilary = {'nil','null','',' '}
     local falseary = {'false','not','no',false}
@@ -91,6 +49,8 @@ end --How could i have the functionallity of xPerSec implanted into this functio
 --equal is a bool; setup for equal to. if true, then if > or <, it will add (or subtract, depending on comparison direction)
 --1 to num2 to emulate an equal-to. (instead of new inlines for >= and <=) (assumed false)
 
+
+--Needs to be updated to use multithreading.
 function switch(num1,num2,arry,act,equal)
     types = {type(num1),type(num2),type(arry)}
 
@@ -152,8 +112,8 @@ function switch(num1,num2,arry,act,equal)
     end
 end
 
---mtext functions. These exist to write to both the monitor AND the main screen at the same time.
 
+--mtext functions. These exist to write to both the monitor AND the main screen at the same time.
 function mprint(str) --for now i will assume i didnt just redirect and print for a reason, but i will come back to this later...
                      --currently, just merging files :P (wait does print exist while term=mon? not sure.)
     if monitors==true then
@@ -207,8 +167,10 @@ function montest()
 end
 
 --err({x,y,z,...})
-function err(args) --To be completed :P
-    args[]
+function errcheck(value, type, default) --To be completed :P
+    if type(value) ~= type and default == nil then
+        error("Expected "..type..", got "..value, 1)
+
 end -- i know this was sposed to be really helpful with error handlin, and more so debugging, but idk what i wanted to make so...
 
 

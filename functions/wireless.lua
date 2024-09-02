@@ -21,34 +21,8 @@ end
 ]]
 
 
-function Internet()
-    local CN="string"
-    local name="string"
-    local style="string"
+--needs to be in programs.
 
-    term.clear()
-    term.setCursorPos(1,1)
-    mwrite("\nWhat kind of internet do you want (host/client)\n>")
-    term.setCursorPos(1,2)
-    style=io.read()
-    if string.lower(style)=="client" then
-        mwrite("What is the name of the chat? \n>")
-        term.setCursorPos(1,4)
-        CN=io.read()
-
-        mwrite("What shall you be called? \n>")
-        term.setCursorPos(1,6)
-        uname=io.read()
-        shell.openTab("chat join "..CN.." "..uname)
-        --while i could build a string like this, assign it to a var,
-        --then use load(), then use the function it gives, this is faster.
-    elseif string.lower(style)=="host" then
-        mwrite("What will be the name of the chat?\n>")
-        term.setCursorPos(1,4)
-        CN=io.read()
-        shell.openTab("chat host "..CN)
-    end
-end
 
 --[[
 -- ========== --
@@ -67,14 +41,18 @@ HTTP.lua, merged.
 --required: arg1 and arg2.
 --if you put nil for 3, 4, 5, or 6 it will use default.
 --for arg[2] if its inside a file like /functions/git.lua you need to input "foldername/filename" for arg[2]
-os.loadAPI("apiHandle.lua")
+logic = require("logic.lua")
 
 
 function github(arg1,arg2,arg3,arg4,arg5,arg6) --note. lua arrays start at 1, not 0. (changeable, but i'd rather not)
-    arg3=calc.nilcheck(arg3,"Link-Jon")
-    arg4=calc.nilcheck(arg4,"CC-OSish")
-    arg5=calc.nilcheck(arg5,"master")
-    arg6=calc.nilcheck(arg6,"w")
+    --Check args that arent nessicary.
+    --give them default values if nil
+    arg3=logic.errcheck(arg3,"Link-Jon")
+    arg4=logic.errcheck(arg4,"Link-CC")
+    arg5=logic.errcheck(arg5,"master")
+    arg6=logic.errcheck(arg6,"w")
+    --Can be upgraded if i make errcheck()
+
 
     if arg1 and arg2 then
         local file = http.get("https://raw.githubusercontent.com/"..arg3.."/"..arg4.."/"..arg5.."/"..arg2)
@@ -91,16 +69,6 @@ function github(arg1,arg2,arg3,arg4,arg5,arg6) --note. lua arrays start at 1, no
         end
     else return false end --whatever happened, failed. Good luck.
 end
---[[
-    This will be an absolute pain to make...
-    Anywayyy here we go.
-    First, because its easier to manage, you will need to give your args as an array/table
-    args[1] = 
-]]
-function gitpost(args)
-
-end
---... ugh.
 
 
 function printRes(url,bool)
@@ -144,3 +112,5 @@ function time(offset)
     offset=calc.nilcheck(offset)
     local recieve=http.get("http://worldtimeapi.org/api/timezone")
 end
+
+return {}

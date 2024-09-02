@@ -1,4 +1,3 @@
-mon=peripheral.find("monitor")
 loop=0
 name="Link"
 print("Initilizing...")
@@ -12,7 +11,8 @@ Abandoned.
 
 require(".system/notes")
 
- = require(notes.dir.."mtext")
+peripherals = require(notes.dir.."peripherals.lua")
+logic = require(notes.dir.."logic.lua")
 
 
 -- I think i need to start from scratch, honestly.

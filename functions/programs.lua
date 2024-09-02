@@ -125,6 +125,10 @@ function Internet()
     end
 end
 
+function ()
+
+end
+
 return {
     login = login
     timer = timer

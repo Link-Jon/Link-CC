@@ -10,10 +10,25 @@ Abandoned.
 --]]
 
 require(".system/notes")
+print("Directory at '"..notes.dir.."'")
 
-peripherals = require(notes.dir.."peripherals.lua")
-logic = require(notes.dir.."logic.lua")
 
+package.preload ["peripherals"] = require(notes.dir.."peripherals")
+print("Loaded peripherals")
+--printVerbose("Peripherals found:)
+--loop and print non nil peripherals.
+
+package.preload ["logic"] = require(notes.dir.."logic")
+print("Loaded logic lib")
+
+package.preload ["wireless"] = require(notes.dir.."wireless")
+print("Loaded wireless lib")
+
+
+
+peripherals = require(notes.dir.."peripherals")
+logic = require(notes.dir.."logic")
+wireless = require(notes.dir.."wireless")
 
 -- I think i need to start from scratch, honestly.
 --Alright. Mtext is probably the best API here, so lets work on that next.

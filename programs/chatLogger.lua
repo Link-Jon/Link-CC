@@ -35,7 +35,7 @@ while true do
         --]]
         
         
-        Harder to read, i guess...
+        --Harder to read, i guess...
         premsg = "§7- "..username.."§f: §"
         msg = msg
         prefix = "§6CraftOS§r"

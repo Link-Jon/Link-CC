@@ -1,4 +1,6 @@
 --logic. lib? yeh.
+
+--Going to move this timer to a program file later.
 function timer(time)
     mwrite("Amount of time? in seconds.\n>")
     time=tonumber(read())
@@ -20,6 +22,7 @@ function timer(time)
      mprint("TIME OUT")
 end
 
+--to be put into program file
 function calc()
     mwrite("First number:")
     numa=read()
@@ -207,3 +210,14 @@ end
 function err(args) --To be completed :P
     args[]
 end -- i know this was sposed to be really helpful with error handlin, and more so debugging, but idk what i wanted to make so...
+
+
+return { 
+    nilcheck = nilcheck, 
+    switch = switch,
+    mtext = {
+        print = mprint,
+        write = mwrite,
+        montest = montest},
+    xOverTime = xOverTime
+}

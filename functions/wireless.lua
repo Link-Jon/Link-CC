@@ -38,7 +38,7 @@ HTTP.lua, merged.
 --required: arg1 and arg2.
 --if you put nil for 3, 4, 5, or 6 it will use default.
 --for arg[2] if its inside a file like /functions/git.lua you need to input "foldername/filename" for arg[2]
-logic = require(notes.dir.."logic.lua")
+logic = require(notes.dir.."logic")
 
 
 function github(arg1,arg2,arg3,arg4,arg5,arg6) --note. lua arrays start at 1, not 0. (changeable, but i'd rather not)

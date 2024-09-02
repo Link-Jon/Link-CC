@@ -1,3 +1,4 @@
+
 # CC-OSish
 So, this is just an attempt to make some quality of life improvements to CC. thats it really.
 
@@ -29,3 +30,6 @@ maths (as calc)
 mtext
 dolua
 and if needed can download the rest. (I do have it setup this way so it doesnt download unless you need it. Hopeful this will lower filesize.)
+
+So uh. If for some reason you want some code from here,
+feel free :P

@@ -6,6 +6,10 @@ Or maybe generally modem functions. :P
 -- ========== --
 --]]
 
+--need to make a transmitter
+--with SOME level of encryption of some kind
+--i dont really care how bad it is.
+--im thinking just convert to binary function.
 
 --[[
 function scanner(channel,modem)

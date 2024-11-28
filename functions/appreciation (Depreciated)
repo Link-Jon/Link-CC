@@ -48,3 +48,19 @@ function errcheck(value, default, type, conform)
 end
 --ignore the missing 'end' im trying to use the function type as a variable...
 --bai bai type() checks XD
+
+
+--[[
+require("dwarfAPI")
+
+turtleForward = turtle.forward
+turtleTurnLeft = turtle.turnLeft
+turtleTurnRight = turtle.turnRight
+turtleUp = turtle.up
+turtleDown = turtle.down
+
+function turtleTurnAround()
+    turtleTurnRight()
+    turtleTurnRight()
+end
+--]]

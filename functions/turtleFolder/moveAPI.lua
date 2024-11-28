@@ -1,19 +1,7 @@
 --Movement function tweaks to
 --Save my sanity. Hopefully.
 
-require("dwarfAPI")
-
-turtleForward = turtle.forward
-turtleTurnLeft = turtle.turnLeft
-turtleTurnRight = turtle.turnRight
-turtleUp = turtle.up
-turtleDown = turtle.down
-
-function turtleTurnAround()
-    turtleTurnRight()
-    turtleTurnRight()
-end
-
+ccturtle = turtle
 
 function go(dist,direction,digBool)
     --dist = whole positive number
@@ -25,15 +13,16 @@ function go(dist,direction,digBool)
         num = 1
     end
 
-    turtleDig = turtle.dig
+    turtleMove = ccturtle.forward
+    turtleDig = ccturtle.dig
     if side ~= nil and side ~= "forward" or side ~= "f" then
 
         if string.lower(side) == "left" or string.lower(side) == "l" then
-            turtleTurnLeft()
+            turtle.turnLeft()
         elseif string.lower(side) == "right" or string.lower(side) == "r" then
-            turtleTurnRight()
+            turtle.turnRight()
         elseif string.lower(side) == "back" or string.lower(side) == "b" then
-            turtleTurnAround()
+            turtle.turnRight(); turtleRight()
         elseif string.lower(side) == "up" or string.lower(side) == "u" then
             turtleMove = turtle.up
             turtleDig = turtle.digUp
@@ -65,8 +54,6 @@ end
 -- GPS 
 
 --required by literally anything program i use to move, as if not the track will be lost.
-
-
 --open file currLocation
 --constantly update it with relative position
 --have position be a table {name,x,y,z}

@@ -3,32 +3,6 @@
 ccprint = term.print
 ccwrite = term.write
 
-function nilcheck(var, default)
-    local nilary = {'nil','null','',' '}
-    local falseary = {'false','not','no',false}
-    local trueary = {'t','true','yes',true}
-
-    
-    var=string.lower(tostring(var)) --convert to string to test, and lowercase the string
-    if var==default then
-        return var          --check if var is default
-    end
-
-    for i = 1,4 do
-        
-        if var==nilary or var==nil then
-            return nil          --check if nil
-        elseif var==trueary then
-            return true         --check if true
-        elseif var==falseary then
-            return false        --check if false
-        end
-    end
-       --if none of the above, return var. 
-    return var
-end --Nvm... switch... is really just unneeded to have here.
-
-
 function xOverTime(secs, xPerSec, xTotal)
     --xTotal if u want to find seconds instead of xTotal
     --secs= time waited in sec.
@@ -179,6 +153,34 @@ function montest()
     end
 end
 
+--Input handlers
+
+function nilcheck(var, default)
+    local nilary = {'nil','null','',' '}
+    local falseary = {'false','not','no',false}
+    local trueary = {'t','true','yes',true}
+
+    
+    var=string.lower(tostring(var)) --convert to string to test, and lowercase the string
+    if var==default then
+        return var          --check if var is default
+    end
+
+    for i = 1,4 do
+        
+        if var==nilary or var==nil then
+            return nil          --check if nil
+        elseif var==trueary then
+            return true         --check if true
+        elseif var==falseary then
+            return false        --check if false
+        end
+    end
+       --if none of the above, return var. 
+    return var
+end --Nvm... switch... is really just unneeded to have here.
+
+
 
 function errcheck(value, defVal, conform, die)
     --value = var to be checked
@@ -230,6 +232,31 @@ function errcheck(value, defVal, conform, die)
 end 
 -- i know this was sposed to be really helpful with error handlin, and more so debugging, but idk what i wanted to make so...
 -- Hi me, now i do. :D
+
+--This.
+--This is going to be my BEST function yet....
+function conformSide(side)
+
+    side = errcheck(side, "string")
+
+    --could make the side it sets a setting?... eh
+    if side == "right" or side == "r" or side == "east" side == "ri" then
+        return "right"
+    elseif side == "left" or side == "l" or side == "west" or side == "le" then
+        return "left"
+    elseif side == "front" or side == "f" or side == "forwards" or side == "straight" or side == "ahead" or side == "screen" or side =="fr" then
+        return "front"
+    elseif side == "back" or side == "b" or side == "behind" or side == "backwards" then
+        return "back"
+    elseif side == "top" or side == "t" or side == "up" or side == "sky" then
+        return "top"
+    elseif side == "down" or side == "d" or side == "under" or side == "below" then
+        return "down"
+    else
+        error("Not a side! got: "..side, 1)
+    end
+    
+end
 
 function detectSystem(printBool)
 

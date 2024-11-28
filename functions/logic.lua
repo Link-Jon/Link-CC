@@ -243,23 +243,57 @@ function detectSystem(printBool)
     temp = string.gsub(temp,"CraftOS ","")
     temp = tonumber(temp)
 
+    --lots of settings n stuff
+    settings.define("sys.tweaked", {
+        description = "Weither computercraft is :tweaked or not. Also shows weither pre 1.9 or not, because of that.",
+        default = nil
+    })
+    settings.define("sys.turtle",{
+        description = "Weither or not the current computer is a turtle",
+        default = false,
+        type = "boolean"
+    })
+    settings.define("sys.pocket", {
+        description = "Weither or not the current computer is a pocket computer",
+        default = false,
+        type = "boolean"
+    })
+    settings.define("sys.command", {
+        description = "Weither or not the current computer is command computer",
+        default = false,
+        type = "boolean"
+    })
+    settings.define("sys.advanced", {
+        description = "Weither or not the current computer is an advanced computer",
+        default = false,
+        type = "boolean"
+    })
+    settings.define("sys.vers", {
+        description = "Current version of CraftOS"
+        default = temp
+        type = "number"
+    })
+
+    --find and set settings, and return values...
     if temp > 1.79 then
-        longModname = "using computercraft tweaked (with "..os.version()
-        modname = "t"
+        longModname = "using computercraft tweaked (with "..os.version()..")"
+        modname = "tw"
+        
     else
-        longModname = "using computercraft (with "..os.version()
+        longModname = "using computercraft (with "..os.version()..")"
         modname = "cc"
+
     end
 
     if turtle then
         longTerminal = "turtle,"
-        terminal = "t"
+        terminal = "tu"
     elseif pocket then
         longTerminal = "pocket computer,"
-        terminal = "p"
+        terminal = "pc"
     else
         longTerminal = "computer,"
-        terminal = "c"
+        terminal = "co"
     end
 
     if parallel then

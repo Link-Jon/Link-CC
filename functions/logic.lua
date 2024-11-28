@@ -13,12 +13,13 @@ function nilcheck(var, default)
 
     for i = 1,4 do
         
-    if var==nilary or var==nil then
-        return nil          --check if nil
-    elseif var==trueary then
-        return true         --check if true
-    elseif var==falseary then
-        return false        --check if false
+        if var==nilary or var==nil then
+            return nil          --check if nil
+        elseif var==trueary then
+            return true         --check if true
+        elseif var==falseary then
+            return false        --check if false
+        end
     end
        --if none of the above, return var. 
     return var
@@ -178,14 +179,21 @@ end
     --actually. i should REALLY just make it work in some way,
     --before asking how it should work if i cannot make a decision on it...
 --err({x,y,z,...})
-function errcheck(value, defVal, defType, conform, die)
+function errcheck(value, defVal, conform, die)
     --value = var to be checked
     --conform = a list of alternitive 'defaults', they are all humanly
         --the same value (like 'f' and 'false' and false) but they are technically different 
-
+    --DefVal = Either the value that is expect, or the the type of value expected.
+        --For simplicity of this function, you can only do one at a time.
+        --(You usually need either or, though. 'type' for nonspecifc, 'value' for specific)
+    
+    --Let nilcheck handle true/false and nil
+    value = nilcheck(value)
     
     --Check default and nil
     if value == defVal then
+        return value, true
+    elseif type(value) == defVal then
         return value, true
     elseif value == nil then
         if die then
@@ -202,23 +210,27 @@ function errcheck(value, defVal, defType, conform, die)
         error("Conform (arg4) must be an array! (Even if an array of 1 value)")
     end
 
-    --should i nilcheck(value)..?
-
     for i,v in pairs(conform) do
         if value == v then
-            returnVal = defVal
-            break
+            return defVal
         end
-
-    if die and returnerVal==nil then
-        error("Expected "..type..", got "..value, 1)
     end
-
+    
+    --99% sure this isnt possible?
+    if die then
+        print("errcheck("..nilcheck(value)", "..defVal..", "..nilcheck(defType)..", "..nilcheck(conform)..", true")
+        error("Expected "..type..", got "..value, 1)
+    else
+        print("We will probably crash soon--")
+        print("errcheck("..nilcheck(value)", "..defVal..", "..nilcheck(defType)..", "..nilcheck(conform)..", false")
+        print("Expected "..type..", got "..value)
+    end
 end 
 -- i know this was sposed to be really helpful with error handlin, and more so debugging, but idk what i wanted to make so...
 -- Hi me, now i do. :D
 
 return { 
+    errcheck = errcheck,
     nilcheck = nilcheck, 
     switch = switch,
     mtext = {

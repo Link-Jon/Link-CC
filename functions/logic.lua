@@ -1,5 +1,8 @@
 --logic. lib? yeh.
 
+ccprint = term.print
+ccwrite = term.write
+
 function nilcheck(var, default)
     local nilary = {'nil','null','',' '}
     local falseary = {'false','not','no',false}
@@ -123,9 +126,9 @@ end
 
 
 --mtext functions. These exist to write to both the monitor AND the main screen at the same time.
-function mprint(str) --for now i will assume i didnt just redirect and print for a reason, but i will come back to this later...
+function print(str) --for now i will assume i didnt just redirect and print for a reason, but i will come back to this later...
                      --currently, just merging files :P (wait does print exist while term=mon? not sure.)
-    if monitors==true then
+    if _MONITORS_==true then
         local loop=loop+1
         local x,y =mon.getCursorPos()
         y=y+1
@@ -136,27 +139,27 @@ function mprint(str) --for now i will assume i didnt just redirect and print for
         end
         mon.setCursorPos(1,y)
         mon.write("\n"..str.."\n")
-        print(str)
+        ccprint(str)
         return
     else
-        print(str)
+        ccprint(str)
         return
     end
 end
 --both works?
-function mwrite(str,scroll)
-    if monitors==true then
+function write(str,scroll)
+    if _MONITORS_==true then
         local temp=term.current()   --save current terminal, dont want to lose it!
-        term.redirect(mon);     write(str)  --redirect and write line
+        term.redirect(mon);     ccwrite(str)  --redirect and write line
         if type(scroll=="number") then
           term.scroll(scroll); end  --scrolls line count 'scroll' (arg2)
 
-        term.redirect(temp);    write(str)
+        term.redirect(temp);    ccwrite(str)
         if type(scroll=="number") then
           term.scroll(scroll); end
         return
     else
-        write(str)
+        ccwrite(str)
         return
     end
 end
@@ -164,21 +167,19 @@ end
 function montest()
     if mon then
         --Maybe better to say 'double the output to the connected monitor'
-        mwrite("Use the connected Monitor?\n Warning: This 'program' is not very well built for a monitor\n (y/n)\n>")
+        write("Use the connected Monitor?\n Warning: This 'program' is not very well built for a monitor\n (y/n)\n>")
         if nilcheck(read(),true)==true then
             _MONITORS_=true
             mon.setTextScale(0.5)
             mon.clear()
             mon.setCursorPos(1,1)
         else
-            mwrite("\nImpromper input or input was no\n")
+            write("\nImpromper input or input was no\n")
         end
     end
 end
 
-    --actually. i should REALLY just make it work in some way,
-    --before asking how it should work if i cannot make a decision on it...
---err({x,y,z,...})
+
 function errcheck(value, defVal, conform, die)
     --value = var to be checked
     --conform = a list of alternitive 'defaults', they are all humanly
@@ -186,6 +187,7 @@ function errcheck(value, defVal, conform, die)
     --DefVal = Either the value that is expect, or the the type of value expected.
         --For simplicity of this function, you can only do one at a time.
         --(You usually need either or, though. 'type' for nonspecifc, 'value' for specific)
+
     
     --Let nilcheck handle true/false and nil
     value = nilcheck(value)
@@ -221,7 +223,7 @@ function errcheck(value, defVal, conform, die)
         print("errcheck("..nilcheck(value)", "..defVal..", "..nilcheck(defType)..", "..nilcheck(conform)..", true")
         error("Expected "..type..", got "..value, 1)
     else
-        print("We will probably crash soon--")
+        print("We will probably crash soon;")
         print("errcheck("..nilcheck(value)", "..defVal..", "..nilcheck(defType)..", "..nilcheck(conform)..", false")
         print("Expected "..type..", got "..value)
     end
@@ -233,9 +235,11 @@ return {
     errcheck = errcheck,
     nilcheck = nilcheck, 
     switch = switch,
-    mtext = {
-        print = mprint,
-        write = mwrite,
+    term = {
+        print = print,
+        write = write,
+        ccprint = ccprint, --Also give the raw CC functions back, just incase for some reason absolutely needed
+        ccwrite = ccwrite,
         montest = montest},
     xOverTime = xOverTime
 }

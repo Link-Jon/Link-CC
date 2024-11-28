@@ -1,0 +1,18 @@
+musicAPI.lua - Does things with dfpwm files.
+
+downloadMusic(filename, userIP, direct)
+    Downloads previously split dfpwm chunks, split with splitMusic()
+    
+    filename = Name of file to download (also what to name the recieved file)
+    userIP = "http://URL" | Path to music folder
+    Expected file location: userIP/filename/filename# || ie: 127.0.0.1/revenge/revenge1 ../revenge2 ..ect
+
+    direct = Boolean. if true, explicitly download the userIP as 
+
+    This is probably wrong, because i added the 'direct' variable
+    ~~This function is rather specific in HOW it downloads files; 
+    Im not sure if it will be of use to others if i dont give you my ip.
+    Technically i could leave my ip here, but that would not only be...
+    anywhere between a waste of my 1mbit/s upload to a complete security risk,
+    and i dont have a static ip, it will change weekly lol.~~
+

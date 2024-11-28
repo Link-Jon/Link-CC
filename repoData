@@ -1,5 +1,35 @@
+--Note to self.
+--Find out how to update this automagically lol
+
 functions = {
-    turtle = {
+
+    --oh hey, turtle folder needs to be renamed from 'turtle' because of turtle.apisd
+    turtleFolder = {
+
+        remoteTurtle = {
+            "controlled.lua"
+            "remote.lua"
+        }
+
+        "dig.lua"
+        "drop.lua"
+        "fuel.lua"
         "moveAPI.lua"
+        "place.lua"
+        "plusTunnel.lua"
+        "select.lua"
+        "staircase.lua"
+        "suck.lua"
+        "walk.lua"
     }
+
+}
+
+return {
+    install = "install.lua"
+    launch = "launch.lua"
+    repoData = "repoData"
+    startup = "startup.lua"
+    functions = functions
+    help = functions
 }

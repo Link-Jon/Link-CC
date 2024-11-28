@@ -1,23 +1,22 @@
 --bit depth = loudness
+--For any case im downloading from my server,
 
 
-function downloadMusic(filename, userIP)
+function downloadMusic(filename, userIP, direct)
 
-    if userIP then
-        settings.set(musicIP = userIP)
+    if http.checkURL(userIP) then
+        settings.set("musicIP", userIP)
         settings.save()
-    elseif not LinkIP then
-        error("No website to download from")
+    elseif settings.get("musicIP") then 
+        print("Invald URL, using previous safe IP")
+        userIP
     end
-    
-    if string.find(filename,".dfpwm") then
-        local a b = string.find(filename,".dfpwm")
-        filename = string.sub(filename,a,b)
-    end
+
+    if not direct then
+        
 
     iter = 0
     max = 50
-
 
     while iter < max do
         res, failmsg, partres = http.get(ip..filename.."/"..filename..iter)

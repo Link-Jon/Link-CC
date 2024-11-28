@@ -1,0 +1,11 @@
+music.lua - Interface for musicAPI.
+
+Usages:
+
+music {http dfpwm file}  
+music {local dfpwm file}
+    Plays the given file
+
+music {local dfpwm file} split
+    Splits the file into chunks, to allow for partial downloads.
+    --even if i have yet to find a use for it unfortunately

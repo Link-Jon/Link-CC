@@ -209,7 +209,7 @@ function errcheck(value, defVal, conform, die)
     end
     
     if conform ~= nil and type(conform) ~= "array" then
-        error("Conform (arg4) must be an array! (Even if an array of 1 value)")
+        conform = {conform}
     end
 
     for i,v in pairs(conform) do

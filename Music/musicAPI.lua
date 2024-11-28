@@ -4,52 +4,61 @@
 
 function downloadMusic(filename, userIP, direct)
 
-    if http.checkURL(userIP) then
-        settings.set("musicIP", userIP)
+    if http.checkURL(userIP) and not direct then
+        settings.set("music.IP", userIP)
         settings.save()
-    elseif settings.get("musicIP") then 
+    elseif settings.get("music.IP") and not direct then 
         print("Invald URL, using previous safe IP")
-        userIP
+        userIP = settings.get("music.IP")
     end
 
-    if not direct then
-        
+        iter = 0
+        max = 50
 
-    iter = 0
-    max = 50
+        while iter < max do
 
-    while iter < max do
-        res, failmsg, partres = http.get(ip..filename.."/"..filename..iter)
+            if direct and filename and not userIP or direct and filename == userIP then
+                fullIP = filename
+            elseif direct and userIP and not filename then
+                fullIP = userIP
+            elseif direct then
+                error("Not sure which one to use")
+            else
+                fullIP = userIP..filename.."/"..filename..iter
+            end
 
-        print("Curr Iter: "..iter)
+            res, failmsg, partres = http.get(fullIP)
 
-        if res == nil and partres == nil then
-            print(failmsg)
-            return false
-        elseif partres then
-            --res = partres
-            print("Only partial http.get recieved?")
-            print(res)
-            print(failmsg)
-            print(partres)
+            print("Curr Iter: "..iter)
+
+            if res == nil and partres == nil then
+                print(failmsg)
+                return false
+            elseif partres then
+                --res = partres
+                print("Only partial http.get recieved?")
+                print(res)
+                print(failmsg)
+                print(partres)
+            end
+
+            if iter == 0 then
+                max = tonumber(res.readLine())
+            end
+            
+            if fs.getFreeSpace(filename) < 128*1028 then
+                print("Hey Link, make this dumb thing")
+                error("out of space, next disk")
+            end
+            fileHandle = fs.open(filename.."dfpwm", "a")
+            fileHandle.write(res.readAll())
+            fileHandle.close()
+            
+            iter = iter + 1
         end
 
-        if iter == 0 then
-            max = tonumber(res.readLine())
-        end
-        
-        if fs.getFreeSpace(filename) < 128*1028 then
-            print("Hey Link, make this dumb thing")
-            error("out of space, next disk")
-        end
-        fileHandle = fs.open(filename.."dfpwm", "a")
-        fileHandle.write(res.readAll())
-        fileHandle.close()
-        
-        iter = iter + 1
-    end
+        return true
 
-    return true
 end
 
 function splitMusic(filename)
@@ -76,26 +85,32 @@ function splitMusic(filename)
     return true
 end
 
-function playMusic(filename, httpURL)
-    print(filename)
-    if not httpURL then
+function playMusic(filename, httpURL, printout)
+    
+    if not httpURL and settings.get("music.IP") then
+        httpURL = settings.get("music.IP")
+    else
+        direct = true
         httpURL = filename
     end
-    filename = string.gsub(filename,".dfpwm","")
     
-    local expect = require("cc.expect")
     local dfpwm = require("cc.audio.dfpwm")
     local speaker = peripheral.find("speaker")
 
-    if fs.exists(filename.."dfpwm") then
+    if fs.exists(filename..".dfpwm") then
+        filename = filename..".dfpwm"
+    end
+
+    if fs.exists(filename) then
         print("Trying to play local "..filename)
-        openFile = fs.open(filename..".dfpwm","r")
+        openFile = fs.open(filename,"r")
         if not openFile then
             print("Failed local play: ")
-            print(filename..".dfpwm"..": "..tostring(fs.exists(filename..".dfpwm")))
+            print(filename..": "..tostring(fs.exists(filename)))
             error(openFile)
         end
     else
+
         string.gsub(httpURL,"HTTPS://", "HTTP://")
         if type(httpURL) == "string" and http.checkURL(httpURL) then
             print("Trying to play remote "..httpURL)
@@ -107,25 +122,31 @@ function playMusic(filename, httpURL)
             end
         end
     end
-            iter = 0
+
+    iter = 0
+
     local decoder = dfpwm.make_decoder()
     
+    if parallel then
+        printData = parallel.waitForAny
+    else
+        printData = print()
+    end
 
     while openFile do
         iter = iter + 1
         chunk = openFile.read(16*1024)
         buffer = decoder(chunk)
-        
-        print(iter)
+
+
         while not speaker.playAudio(buffer) do
             os.pullEvent("speaker_audio_empty")
         end
     end
 end
 
---require("musicAPI"); playMusic("Heavy_Weight")
 return {music = {
     playMusic = playMusic,
     downloadMusic = downloadMusic,
-    splitMusic = splitMusic
-}}
+    splitMusic = splitMusic}
+}

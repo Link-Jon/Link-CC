@@ -21,7 +21,7 @@ end
 --]]
 
 if args[2] == "split" or args[2] == "true" then
-    splitMusic(filename)
+    splitMusic(filename, nilcheck(args[3]))
 else
-    playMusic(filename,args[2], args[3])
+    playMusic(filename, args[2], args[3])
 end

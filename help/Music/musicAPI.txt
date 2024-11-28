@@ -16,3 +16,21 @@ downloadMusic(filename, userIP, direct)
     anywhere between a waste of my 1mbit/s upload to a complete security risk,
     and i dont have a static ip, it will change weekly lol.~~
 
+    Note. Wont download files if you do not have 
+    (128*1028 == 131,584 == 128KB) bytes of storage space free,
+    as this is also the size of the chunk.
+
+splitMusic(filename)
+    Splits a dfpwm file into (128*1028 == 131,584 == 128KB) chunks for partial downloading
+
+    filename = name of file to divide. Will also make a new folder under this name;
+    all the segments/chunks will be placed into filename/filename#
+
+    an extra file will be made at filename/filename0, that will
+    contain the number of chunks that were made.
+    if the last chunk was filename/filename15, filename/filename0 will be 15
+
+playMusic(filename, httpURL)
+    Streams the given dfpwm file
+
+    filename

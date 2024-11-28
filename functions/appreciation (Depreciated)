@@ -1,0 +1,47 @@
+
+--Input Error (Handler).
+--Replaced by errcheck.
+function inErr(user,check)
+    local str=type(user)
+    if str==check then
+        return true
+    end
+    --massive input err checker
+    --could probably be simplified but would lose unique reactions.
+    if str=="string" then
+        printError("Expected "..check..", got string")
+    elseif str=="nil" then
+        printError("Expected "..check..", got nil")
+    elseif str=="bool" then
+        printError("Expected "..check..", got bool")
+    elseif str=="number" then
+        printError("Expected "..check..", got number")
+    elseif str=="table" then
+        printError("Expected "..check..", got table")
+    elseif str=="function" then
+        printError("Expected "..check..", got function")
+    elseif str=="thread" then
+        printError("Expected "..check..", got thread")
+    elseif str=="userdata" then
+        printError("How in the world have you done this? Var was of type userdata, which should be impossible in CraftOS")
+        printError("Expected "..check..", got userdata??")
+    else
+        printError("Something broke with the 'inErr' function.")
+        printError("Expected "..check..", got "..str)
+    end
+    return false
+end
+
+
+--LOLLL look at this code:
+
+function errcheck(value, default, type, conform)
+    --value = var to be checked
+    
+    
+    if type(value) ~= type and default == nil then
+        error("Expected "..type..", got "..value, 1)
+
+end
+--ignore the missing 'end' im trying to use the function type as a variable...
+--bai bai type() checks XD

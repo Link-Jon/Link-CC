@@ -5,18 +5,23 @@ function nilcheck(var, default)
     local falseary = {'false','not','no',false}
     local trueary = {'t','true','yes',true}
 
-    var=string.lower(tostring(var)) --convert to string to test
+    
+    var=string.lower(tostring(var)) --convert to string to test, and lowercase the string
     if var==default then
         return var          --check if var is default
-    elseif var==nilary or var==nil then
+    end
+
+    for i = 1,4 do
+        
+    if var==nilary or var==nil then
         return nil          --check if nil
     elseif var==trueary then
         return true         --check if true
     elseif var==falseary then
         return false        --check if false
-    else    --if none of the above, return var.
-        return var
     end
+       --if none of the above, return var. 
+    return var
 end --Nvm... switch... is really just unneeded to have here.
 
 
@@ -49,6 +54,9 @@ end --How could i have the functionallity of xPerSec implanted into this functio
 --equal is a bool; setup for equal to. if true, then if > or <, it will add (or subtract, depending on comparison direction)
 --1 to num2 to emulate an equal-to. (instead of new inlines for >= and <=) (assumed false)
 
+--This may be able to be made functional with the power of for loops?
+--I'll need to look into this later...
+--for now and as long as it has been here, its been easier to just make the if statement yourself.
 
 --Needs to be updated to use multithreading.
 function switch(num1,num2,arry,act,equal)
@@ -154,6 +162,7 @@ end
 
 function montest()
     if mon then
+        --Maybe better to say 'double the output to the connected monitor'
         mwrite("Use the connected Monitor?\n Warning: This 'program' is not very well built for a monitor\n (y/n)\n>")
         if nilcheck(read(),true)==true then
             _MONITORS_=true
@@ -166,13 +175,48 @@ function montest()
     end
 end
 
+    --actually. i should REALLY just make it work in some way,
+    --before asking how it should work if i cannot make a decision on it...
 --err({x,y,z,...})
-function errcheck(value, type, default) --To be completed :P
-    if type(value) ~= type and default == nil then
+function errcheck(value, defVal, defType, conform, die)
+    --value = var to be checked
+    --conform = a list of alternitive 'defaults', they are all humanly
+        --the same value (like 'f' and 'false' and false) but they are technically different 
+
+    
+    --Check default and nil
+    if value == defVal then
+        return value, true
+    elseif value == nil then
+        if die then
+            print("Errcheck got nil, and 'die' bool was enabled")
+            error("errcheck(nil, "..defVal..", "..nilcheck(defType)..", "..nilcheck(conform)..", true")
+        else
+            print("Warn: Errcheck got nil. ('die' not enabled, continuing)")
+            print("errcheck(nil, "..defVal..", "..nilcheck(defType)..", "..nilcheck(conform)..", false")
+            return value, false
+        end
+    end
+    
+    if conform ~= nil and type(conform) ~= "array" then
+        error("Conform (arg4) must be an array! (Even if an array of 1 value)")
+    end
+
+    --should i nilcheck(value)..?
+
+    for i,v in pairs(conform) do
+        if value == v then
+            returnVal = defVal
+            break
+        end
+
+    if die and returnerVal==nil then
         error("Expected "..type..", got "..value, 1)
+    end
 
-end -- i know this was sposed to be really helpful with error handlin, and more so debugging, but idk what i wanted to make so...
-
+end 
+-- i know this was sposed to be really helpful with error handlin, and more so debugging, but idk what i wanted to make so...
+-- Hi me, now i do. :D
 
 return { 
     nilcheck = nilcheck, 

@@ -231,7 +231,55 @@ end
 -- i know this was sposed to be really helpful with error handlin, and more so debugging, but idk what i wanted to make so...
 -- Hi me, now i do. :D
 
+function detectSystem(printBool)
+
+    if periphemu.create and preiphemu.remove then
+        longModname = "craftospc"
+        modname = "cos-pc"
+    end
+
+    --Get version, remove extra and make it a number
+    temp = os.version()
+    temp = string.gsub(temp,"CraftOS ","")
+    temp = tonumber(temp)
+
+    if temp > 1.79 then
+        longModname = "using computercraft tweaked (with "..os.version()
+        modname = "t"
+    else
+        longModname = "using computercraft (with "..os.version()
+        modname = "cc"
+    end
+
+    if turtle then
+        longTerminal = "turtle,"
+        terminal = "t"
+    elseif pocket then
+        longTerminal = "pocket computer,"
+        terminal = "p"
+    else
+        longTerminal = "computer,"
+        terminal = "c"
+    end
+
+    if parallel then
+        longAdv = "an advanced"
+        adv = true
+    else
+        longAdv = "a normal"
+        adv = false
+    end
+
+    printMsg = "Running on "..longAdv..longTerminal..longModname
+    if printBool then
+        print(printMsg)
+    end
+
+    return adv, terminal, modname, printMsg
+end
+
 return { 
+    detectSystem = detectSystem,
     errcheck = errcheck,
     nilcheck = nilcheck, 
     switch = switch,

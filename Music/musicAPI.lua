@@ -1,8 +1,15 @@
 --bit depth = loudness
 
 
-function downloadMusic(filename)
+function downloadMusic(filename, userIP)
 
+    if userIP then
+        settings.set(musicIP = userIP)
+        settings.save()
+    elseif not LinkIP then
+        error("No website to download from")
+    end
+    
     if string.find(filename,".dfpwm") then
         local a b = string.find(filename,".dfpwm")
         filename = string.sub(filename,a,b)
@@ -10,8 +17,10 @@ function downloadMusic(filename)
 
     iter = 0
     max = 50
+
+
     while iter < max do
-        res, failmsg, partres = http.get("http://69.128.193.179:8080/"..filename.."/"..filename..iter)
+        res, failmsg, partres = http.get(ip..filename.."/"..filename..iter)
 
         print("Curr Iter: "..iter)
 

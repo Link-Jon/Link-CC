@@ -26,7 +26,7 @@ end
 -- I will now need to make a install specifically for minecraft 1.7.10, should i want to keep it
 -- functional...
 
-
+--This now needs to change as im no longer building with my previous mindset of 'CCOSish,'
 local gitlist = {
     ["startup.lua"] = "startup.lua",
     ["wireless.lua"] ="functions/wireless.lua",

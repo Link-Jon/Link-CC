@@ -1,3 +1,12 @@
+
+--Much agree with me...
+--This is both ugly, and now its also somewhat usless do to moreso worried about
+--being actually useful rather than the weird 'family computer' thing
+--i started with.
+
+--Also i think i now know HOW to use the help API, so... lets... gets started with that.
+
+--[[
 function help()
 	--man this is ugly
 	mtext.mprint("license")
@@ -48,3 +57,4 @@ function help()
 	sleep(4)
 end
 --SETUP HELP API!!!
+--]]

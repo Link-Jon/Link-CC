@@ -240,7 +240,7 @@ function conformSide(side)
     side = errcheck(side, "string")
 
     --could make the side it sets a setting?... eh
-    if side == "right" or side == "r" or side == "east" side == "ri" then
+    if side == "right" or side == "r" or side == "east" or side == "ri" then
         return "right"
     elseif side == "left" or side == "l" or side == "west" or side == "le" then
         return "left"
@@ -296,8 +296,8 @@ function detectSystem(printBool)
         type = "boolean"
     })
     settings.define("sys.vers", {
-        description = "Current version of CraftOS"
-        default = temp
+        description = "Current version of CraftOS",
+        default = temp,
         type = "number"
     })
 
@@ -344,6 +344,8 @@ return {
     errcheck = errcheck,
     nilcheck = nilcheck, 
     switch = switch,
+    ccprint = ccprint,
+    ccwrite = ccwrite,
     term = {
         print = print,
         write = write,

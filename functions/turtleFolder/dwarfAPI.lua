@@ -135,7 +135,7 @@ function tree()
 end
 
 return {
-    turtle.dig = dig
+    turtle.dig = dig,
     dig = dig,
     dwarf = {
         dig = dig,

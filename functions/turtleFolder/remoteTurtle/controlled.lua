@@ -1,7 +1,7 @@
 modem = peripheral.find("wireless_modem")
 APIList = {"logic","dwarfAPI"}
 
-if not modem and not then
+if not modem then
     modem = peripheral.find("wireless_modem") --these names may or may not work
 
     if not modem then

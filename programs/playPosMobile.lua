@@ -1,3 +1,7 @@
+--Todo
+--this is literally a copy of playPos.lua but with a few tweaks
+--to ensure everything fits inside the screen
+
 --modem = peripheral.find("modem")
 player = peripheral.find("playerDetector")
 

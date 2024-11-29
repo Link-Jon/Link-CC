@@ -1,3 +1,13 @@
+--Todo
+--Why is this the third time im writing this script.
+--sigh.
+--Anyway, works with controlled.lua to send functions to turtles.
+--more details in controlled.lua.
+
+--... this file is far more completed, too.
+
+
+
 --give turtle enderchest to dump/interact to/with base???
 --very cool, but can do it later...
 --hooks to a turtle using the remoteControl script

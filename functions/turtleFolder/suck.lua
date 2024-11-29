@@ -1,7 +1,16 @@
+--Todo
+--OH hey this one had error lua extention saw.
+-- neat.
+
+--anyway,
+--Completed.
+--Maybe find a way to run 'suck' in shell with suck.lua not in root?
+--These convience functions are nice, but they are filling root fast.
+
 args = {...}
 
 if args[1] == nil then
-    args[1] == "front"
+    args[1] = "front"
 end
 
 if args[2] == nil then
@@ -37,10 +46,9 @@ if block["name"] == "minecraft:chest" then
     local chest = peripheral.wrap(side)
     contents = chest.list
     
-    print()
-
-
-
+    print("Doing todos, not making functions")
+    error("No function to run lol make it urself muahuahua")
+end
 --suck from ground
 while tonumber(args[1]) > 0 do
     sucker()

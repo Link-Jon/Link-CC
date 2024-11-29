@@ -1,3 +1,36 @@
+--Todo
+--I dont think this is feature functional yet,
+--So, that is the goal here. Finish.
+
+--Features needed:
+--Scan the storage area, store the data to a file
+--At any time, even while scanning, accept an item request
+--Every item request should be as follows:
+--itemNames, Array or string (will be converted to array), contains item ID(s) to collect.
+--itemNames = {"modname:block_id","modname:item_id","ect"}
+--itemCount, Array or number (will be converted to array), how many of itemNames[i] to collect.
+--itemCount = {1, 64, 10}
+
+--The turtle *should* be taking from the closest chests, but this will probably be done later
+    --cant you just start searching the array from your location?
+    --shift the array so your location is '0', and then you can count once, and
+    --flip it from positive to negative (with a few tweaks)
+        --Do remember  x*-1 = -x
+
+--Optionally, nameStrict = Bool. If true, then use exact item names.
+--Will be more useful later, as the idea is for nonstrict requests
+--to use more generic name for a particular preset of items.
+
+--Optionally, countStrict = Bool. If true, error() if there is not enough
+--of an item for the request to be fufilled
+
+--Can probably use parallel api to look for multiple items at once.
+--just remember to use waitForAll, as 'any' will quit other threads
+--when one completes
+
+
+
+
 require("logic")
 require("moveAPI")
 require("inventoryAPI")

@@ -1,3 +1,10 @@
+--Todo
+--Make this actually look good, YEESH
+--its technically functional, but it also cannot download music,
+--and.. this...
+--this entire thing is just an absolute mess
+--downvoted, opposite of eyecandy.
+
 require("musicAPI")
 
 args = {...}

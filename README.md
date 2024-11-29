@@ -1,3 +1,6 @@
+--Todo
+--Make actually accurate lol
+--this one kinda sucks
 
 # CC-OSish
 So, this is just an attempt to make some quality of life improvements to CC. thats it really.

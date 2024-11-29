@@ -1,3 +1,13 @@
+--Todo
+--Huh, incomplete scanner function.
+--Infact, i dont have any wireless modem functions?
+--odd.
+--Well there is the chatter and chatlogger but those use chatbox.
+--.. yeah the only one is the remote/controlled that is in progress.
+--Weird.
+--Anyway, this todo is actually to change my OTHER uses of http to use this version...
+--atleast when from github? hmm i really dont know with this file.
+
 --[[
 -- ========== --
 Local Wireless functions
@@ -92,7 +102,7 @@ function ipcheck()
     return ip2, static
 end
 
-
+--[[
 --i dont know if i will keep this because of the fact that i need to maintain it.
 --its not easy to do. at all. its pain. cannot be done automatically i dont think
 function servercheck(dynamic,static)
@@ -113,7 +123,7 @@ function servercheck(dynamic,static)
         mprint("Normal IP: "..dynamic)
         mprint("Static IP: "..static)
     end
-end
+end]]
 
 function time(offset)
     offset=calc.nilcheck(offset)

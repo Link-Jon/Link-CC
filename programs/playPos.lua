@@ -1,3 +1,9 @@
+--Todo
+--*shrug*
+--Dont run if no playerDetector?
+--or... Pause run if its gone?
+--use term if no modem
+
 modem = peripheral.find("modem")
 player = peripheral.find("playerDetector")
 

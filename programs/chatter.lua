@@ -1,3 +1,6 @@
+--Todo
+--see chatLogger.lua
+
 --Stylized for "play.dw20.ca"
 --Requires Advanced Peripherals
 --(Needs a chat box)

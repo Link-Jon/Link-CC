@@ -1,3 +1,10 @@
+--Not completed
+--i only partially rememebr what this was supposed to do either
+--Takes pattern, if details specifies block(s), the only use that block(s)
+--Then, builds pattern.
+--should use moveAPI to help itself know what to do.
+
+
 --[[args = {...}
 require("logic")
 

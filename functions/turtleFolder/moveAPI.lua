@@ -1,7 +1,16 @@
+--Todo
+--Broken.
+--Fix it.
+--...please.
+--i need this to be able to finish the storage hall lol
+
+
 --Movement function tweaks to
 --Save my sanity. Hopefully.
 
-turtle = {}
+ccturtle = turtle
+--maybe ill fix my code.
+--later.
 
 function move(side,dist,digBool)
     --dist = whole positive number

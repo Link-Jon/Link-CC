@@ -1,3 +1,8 @@
+--Todo
+--I dont think this is useful?
+--Ah, unsure of the return {} but
+--this might be because i kept forgetting what the peripheral's 'name' was to call it
+
 --I'll fill this up as a learn of new peripherals.
 
 return {

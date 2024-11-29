@@ -1,7 +1,12 @@
+--Todo
+--Not completed yet. So do that.
+--Honestly i would like to have the recipes stored on git so i can
+--just download the entire folder and define them all.
+--Have a folder per mod. (Yes, link, 'minecraft' is a mod.)
+
 args = {...}
 
 require("recipeHandler")
-
 
 --filename should include .extensions
 --setup to define folders

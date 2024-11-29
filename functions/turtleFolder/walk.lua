@@ -1,3 +1,8 @@
+--Todo
+--wait why doesnt this use moveAPI
+--was it not made yet?
+--past me is annoying.
+
 args = {...}
 
 local how = string.lower(args[1])

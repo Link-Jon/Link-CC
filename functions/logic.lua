@@ -1,3 +1,13 @@
+--Todo
+--Allways growing when it needs to,
+--But it doesnt have any major flaws with it that i can think of.
+
+--i should add the ability to give... hold on --
+--conformSide(side,expect) a second side, which is
+--the side we are looking for. and we can do the if statement
+--inside of conformSide() lol
+
+
 --logic. lib? yeh.
 
 ccprint = term.print

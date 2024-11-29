@@ -1,13 +1,11 @@
+--Todo
+--No idea what to do here, really.
+--Should probably make this look nicer, and generally just... better code.
+
 loop=0
 name="Link"
 print("Initilizing...")
---[[ if os.loadAPI then
-        require = os.loadAPI
-     end --Think it might be simpler to have the table.function set to require if it exists.
 
-90% sure this is attempted compatiblity between CC and CC:T
-Abandoned.
---]]
 
 require(".system/notes")
 print("Directory at '"..notes.dir.."'")

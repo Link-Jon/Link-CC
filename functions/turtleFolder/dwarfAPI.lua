@@ -1,7 +1,12 @@
+--Todo
+--Im pretty sure this isnt functional currently.
+--So... fix it.
+
+
 --Old function just in case
-turtleDig = turtle.dig
-turtleDigUp = turtle.digUp
-turtleDigDown = turtle.digDown
+local turtleDig = turtle.dig
+local turtleDigUp = turtle.digUp
+local turtleDigDown = turtle.digDown
 
 function dig(side, goBack)
     

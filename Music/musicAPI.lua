@@ -1,6 +1,10 @@
+--Todo
+--This is a nightmare, i dont know if i want to touch it.
+--However, i really, REALLY should just to make it MUCH easier to read.
+
+
 --bit depth = loudness
 --For any case im downloading from my server,
-
 
 function downloadMusic(filename, userIP, direct)
 

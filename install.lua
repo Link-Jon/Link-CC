@@ -1,3 +1,12 @@
+--This entire file needs to be redone.
+--... mostly.
+--Needs to get file list from github, anyway, and download that.
+
+--optionally, add a cui to select what to download
+--If selecting something with dependancies, also select those if not allready.
+--sort files, and allow groups of similar ones to be grouped.
+
+
 
 --Will install from branch Master when im done with it.
 --Each release will ALSO get its own install file.

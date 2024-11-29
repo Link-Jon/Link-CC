@@ -1,3 +1,9 @@
+--Todo
+--Not completed, Complete it.
+
+--needs to be able to handle its inventory...
+--put it all away when crafting, then take it back.
+
 --[[
 GOAL. so. ugh.
 ...AUGUGHGHGUAHGHU i dont want to do this

@@ -1,3 +1,8 @@
+--Todo
+--Completed.
+--Maybe find a way to run 'dig' in shell with dig.lua not in root?
+--These convience functions are nice, but they are filling root fast.
+
 --Edit these to change size of
 --dig quarry
 quarryDepth = 50

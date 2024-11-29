@@ -1,3 +1,11 @@
+--Todo...?
+--Why did i make this?
+--Digs a '+' shaped tunnel.
+--???
+--is this even usefull? why isnt this in dig.lua?
+--whatever. im only doing todos for right now
+
+
 args = {...}
 
 require("dwarfAPI")

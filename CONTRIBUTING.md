@@ -1,3 +1,9 @@
+--Todo
+--... probably make this a real document.
+--And... re-add the liscene, that i removed, for some reason.
+--i bet i thought i didnt want/need it.
+--i really, really should have it.
+
 This is very informal. However, it should do the job :P
 
 So, for contributes, its actually very likely that i will accept it.

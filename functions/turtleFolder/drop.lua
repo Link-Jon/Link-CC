@@ -1,3 +1,8 @@
+--Todo
+--Completed.
+--Maybe find a way to run 'drop' in shell with drop.lua not in root?
+--These convience functions are nice, but they are filling root fast.
+
 args = {...}
 
 --[[

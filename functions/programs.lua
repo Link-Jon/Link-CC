@@ -1,3 +1,9 @@
+--Todo
+--Alot of the stuff here is really specific and from when i started making this
+--in tekkit legends. (MC = 1.7.10)
+--So. Not sure what to do with it atm. The user functions are nice though, 
+--and should be upgraded to be actually usable again
+
 --require(".system/notes")
 --logic = require(notes.dir.."logic.lua")
 
@@ -74,7 +80,7 @@ end
 --Basic calculator, 
 --Should be upgraded so it just
 --processes a given  mathematic formula.
-
+    --todo: just... run the input formula with lua?
 function calc()
     mwrite("First number:")
     numa=read()
@@ -125,9 +131,9 @@ function Internet()
     end
 end
 
-function ()
+--function ()
 
-end
+--end
 
 return {
     login = login

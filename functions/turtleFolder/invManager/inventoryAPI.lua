@@ -1,3 +1,6 @@
+--Todo
+--I bet theres more to be added here, but I dont yet know what
+
 require("moveAPI")
 
 function scan(side)

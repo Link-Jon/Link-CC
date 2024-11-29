@@ -1,6 +1,11 @@
+--Todo
+--Completed.
+--Maybe find a way to run 'place' in shell with place.lua not in root?
+--These convience functions are nice, but they are filling root fast.
+
+
+
 args = {...}
-
-
 
 if not args[1] then 
     side = "front"

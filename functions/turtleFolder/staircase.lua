@@ -1,3 +1,6 @@
+--Todo
+--This should probably be inside of dig.lua or dwarfAPI.lua
+
 args = {...}
 
 require("dwarfAPI")

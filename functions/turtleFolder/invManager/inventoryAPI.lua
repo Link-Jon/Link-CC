@@ -10,22 +10,22 @@ function scan(side)
 
     local chest = peripheral.wrap(side)
 
-    if chest == nil or not chest.size then; 
+    if chest == nil or not type(chest) == "table" or not chest.size then; 
         return {name = "void"}, {count = -1} 
     end;
 
     local itemData = chest.list()
     local chestData = {}
     for i = 1,chest.size() do
+        chestData[i] = {name="",count=-1}
         if not itemData[i] then
             chestData[i].name = "empty"
             chestData[i].count = 0
+        else
+            chestData[i].name = itemData[i].name
+            chestData[i].count = itemData[i].count
         end
     end
-    --UGH IM OUT OF TIME.
-    --THIS IS SO GGGGGGGAAAAAAAAAAAAAA
-    --I CANT FINISH THIS
-    
 
     return chestData, itemData
 end

@@ -154,18 +154,32 @@ function initStorage(shape, detectMethod, trapped)
     end
 
     inspectStorage("first run")
-
-
 end
 
 function checkForBounds()
-    method = settings.get("sys.storage.detection.detector")
+    local method = settings.get("sys.storage.detection.type")
+    local direction = settings.get("sys.storage.detection.axis")
+    
+    local axis = direction
 
+    --"x" or "z", which axis we are on
+    axis = string.gsub(axis,"p","")
+    axis = string.gsub(axis,"n","")
+
+    --"p" or "n", if the start pos faced positive or negative
+    --wait shouldnt start be 0?
+    --wait cant we just compare distance between us and start? ughh.
+    direction = string.gsub(direction,"x","")
+    direction = string.gsub(direction,"z","")
+
+    currPos = getLocation(axis)
+
+    --sidenote this only checks if we are current at bounds. not if we are past bounds.
+    --probably will cause problems.
     if method == "totalLength" then
-
         start = settings.get("sys.storage.detection.startPos")
         length = settings.get("sys.storage.detection.totalLength")
-        if x == start or x == length then
+        if currPos == start or currPos == length then
             return true
         else
             return false
@@ -193,6 +207,9 @@ function inspectStorage(details)
     end
     local chestSides = settings.get("sys.storage.chestSides")
     local shape = settings.get("sys.storage.shape")
+    if settings.get("sys.storage.detection.type") == "totalLength" then
+        
+    end
 
     print(textutils.serialize(chestSides))
 
@@ -223,8 +240,11 @@ function inspectStorage(details)
                 print("chest gap currently not implimented")
             end
 
-            if checkForBounds() then 
-                break; else turtle.forward()
+            if checkForBounds() then; break; else; 
+                local moved = turtle.forward()
+                if not moved then; break; end;
+
+
             end
         end
     

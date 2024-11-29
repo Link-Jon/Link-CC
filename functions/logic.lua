@@ -10,8 +10,15 @@
 
 --logic. lib? yeh.
 
-ccprint = term.print
-ccwrite = term.write
+--this, REALLY REALLY has to be done before any of my
+--libraries or apis edit functions. hm.
+
+if not _G.cc then
+    _G.cc = require("computercraftPreserve")
+end
+print(cc)
+--yes, _G.cc. I REALLY WANT THIS TO DO THE THING AAAAAAAAAa
+
 
 function xOverTime(secs, xPerSec, xTotal)
     --xTotal if u want to find seconds instead of xTotal
@@ -47,6 +54,7 @@ end --How could i have the functionallity of xPerSec implanted into this functio
 --for now and as long as it has been here, its been easier to just make the if statement yourself.
 
 --Needs to be updated to use multithreading.
+    --Needs to be made useful lol
 function switch(num1,num2,arry,act,equal)
     types = {type(num1),type(num2),type(arry)}
 
@@ -112,6 +120,11 @@ end
 --mtext functions. These exist to write to both the monitor AND the main screen at the same time.
 function print(str) --for now i will assume i didnt just redirect and print for a reason, but i will come back to this later...
                      --currently, just merging files :P (wait does print exist while term=mon? not sure.)
+
+    if not _G.cc then
+        _G.cc = require("computercraftPreserve")
+    end
+    
     if _MONITORS_==true then
         local loop=loop+1
         local x,y =mon.getCursorPos()
@@ -123,10 +136,10 @@ function print(str) --for now i will assume i didnt just redirect and print for 
         end
         mon.setCursorPos(1,y)
         mon.write("\n"..str.."\n")
-        ccprint(str)
+        cc.print(str)
         return
     else
-        ccprint(str)
+        cc.print(str)
         return
     end
 end
@@ -134,16 +147,16 @@ end
 function write(str,scroll)
     if _MONITORS_==true then
         local temp=term.current()   --save current terminal, dont want to lose it!
-        term.redirect(mon);     ccwrite(str)  --redirect and write line
+        term.redirect(mon);     cc.write(str)  --redirect and write line
         if type(scroll=="number") then
           term.scroll(scroll); end  --scrolls line count 'scroll' (arg2)
 
-        term.redirect(temp);    ccwrite(str)
+        term.redirect(temp);    cc.write(str)
         if type(scroll=="number") then
           term.scroll(scroll); end
         return
     else
-        ccwrite(str)
+        cc.write(str)
         return
     end
 end

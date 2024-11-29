@@ -5,8 +5,15 @@ require("moveAPI")
 
 function scan(side)
 
-    local lookback = look(side)
+    --local lookback = look(side)
+    --wait right i dont need to look at ALL.
+
     local chest = peripheral.wrap(side)
+
+    if chest == nil or not chest.size then; 
+        return {name = "void"}, {count = -1} 
+    end;
+
     local itemData = chest.list()
     local chestData = {}
     for i = 1,chest.size() do
@@ -15,8 +22,10 @@ function scan(side)
             chestData[i].count = 0
         end
     end
-
-    look(lookback)
+    --UGH IM OUT OF TIME.
+    --THIS IS SO GGGGGGGAAAAAAAAAAAAAA
+    --I CANT FINISH THIS
+    
 
     return chestData, itemData
 end

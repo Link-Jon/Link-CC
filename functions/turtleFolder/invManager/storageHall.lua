@@ -35,6 +35,10 @@ require("logic")
 require("moveAPI")
 require("inventoryAPI")
 
+if not _G.cc then
+    _G.cc = require("computercraftPreserve")
+end
+
 --on the first run we need to find out
 --how long the hall is.
 --the hall should be either one sided,
@@ -44,21 +48,9 @@ require("inventoryAPI")
 --begining init.
 function initStorage(shape, detectMethod, trapped)
 
-    hijackTurtleAPI()
+    --hijackTurtleAPI()
     --chestLayout = {"up", "down", "left", "right"}
         --Doesnt need them all; must have one; cannot include more
-
-    if errcheck(shape, "hall",{"halls", "hallway"}) then
-        settings.set("sys.storage.shape","hall")
-    elseif errcheck(shape, "plus",{"+"}) == "plus" then
-        settings.set("sys.storage.shape","plus")
-    else
-        error("Invalid shape, "..shape)
-    end
-
-    if type(detectMethod) ~= "table" then
-        detectMethod = {detectMethod}
-    end
 
 
 
@@ -101,6 +93,21 @@ function initStorage(shape, detectMethod, trapped)
         default = {"left"},
         type = "table"
     })
+
+
+    if errcheck(shape, "hall",{"halls", "hallway"}) then
+        settings.set("sys.storage.shape","hall")
+        settings.set("sys.storage.chestSides",{"left","right"})  
+    elseif errcheck(shape, "plus",{"+"}) == "plus" then
+        settings.set("sys.storage.shape","plus")
+        settings.set("sys.storage.chestSides",{"left","right","down","up"})  
+    else
+        error("Invalid shape, "..shape)
+    end
+
+    if type(detectMethod) ~= "table" then
+        detectMethod = {detectMethod}
+    end
 
 
 
@@ -185,37 +192,41 @@ function inspectStorage(details)
         local moveDist = trapped
     end
     local chestSides = settings.get("sys.storage.chestSides")
-
     local shape = settings.get("sys.storage.shape")
+
+    print(textutils.serialize(chestSides))
 
     if shape == "hall" then
         --collect chest inventories. If no chest where there should be, 
         --and we have some, place em
         --Length detector
         
-        repeat --loop start
         local chestNumber = 1
-        local itemData = {}
-        for key,chestDir in pairs(chestSides) do
 
-            print(turtle)
+        while true do
+            local itemData = {}
+            for key,chestDir in pairs(chestSides) do
 
-            if turtle.detect()==false then; turtle.place(); end
-            chestData, itemData[chestNumber] = scan(chestDir)
-            if chest then; append = "ar"; else append = "w"; end
+                if turtle.detect() == nil then; turtle.place(); end
+                chestData, itemData[chestNumber] = scan(chestDir)
+                if chest then; append = "ar"; else append = "w"; end
 
-            local storageData = fs.open("storageData/chest"..chestNum..append)
-            local temp = textutils.serialize(chestData) 
-            storageData.write("return "..temp)
-            storageData.close()
-            chestNumber = chestNumber+1
+                local storageData = fs.open("storageData/chest"..chestNumber,append)
+                local temp = textutils.serialize(chestData) 
+                storageData.write("return "..temp)
+                storageData.close()
+                print("chest complete: "..chestNumber)
+                chestNumber = chestNumber+1
+            end
+
+            if trapCounter then
+                print("chest gap currently not implimented")
+            end
+
+            if checkForBounds() then 
+                break; else turtle.forward()
+            end
         end
-
-        if trapCounter then
-            print("chest gap currently not implimented")
-        end
-
-        until checkForBounds()
     
     end        
         --merge itemData

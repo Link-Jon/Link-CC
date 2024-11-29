@@ -8,9 +8,52 @@
 --Movement function tweaks to
 --Save my sanity. Hopefully.
 
-ccturtle = turtle
---maybe ill fix my code.
---later.
+if not _G.cc then
+    _G.cc = require("computercraftPreserve")
+end
+
+
+function forward()
+    if cc.turtle.foward() then
+        updateLocation("forward")
+        return true
+    else; return false; end
+end
+
+function turnLeft()
+    if cc.turtle.turnLeft() then
+        updateFacing("left")
+        return true
+    else; return false; end
+end
+
+function turnRight()
+    if cc.turtle.turnRight() then
+        updateFacing("right")
+        return true
+    else; return false; end
+end
+
+function up()
+    if cc.turtle.up() then
+        updateLocation("up")
+        return true
+    else; return false; end
+end
+
+function down()
+    if cc.turtle.down() then
+        updateLocation("down")
+        return true
+    else; return false; end
+end
+
+function back()
+    if cc.turtle.back() then
+        updateLocation("back")
+        return true
+    else; return false; end
+end
 
 function move(side,dist,digBool)
     --dist = whole positive number
@@ -22,8 +65,8 @@ function move(side,dist,digBool)
         num = 1
     end
 
-    local turtleMove = ccturtle.forward
-    local turtleDig = ccturtle.dig
+    local turtleMove = turtle.forward
+    local turtleDig = turtle.dig
     if side ~= nil and side ~= "forward" or side ~= "f" then
 
         if string.lower(side) == "left" or string.lower(side) == "l" then
@@ -65,48 +108,7 @@ end
 --Unsure if this is a good idea, but i will use settings api to do this...
 gpsFilename = "moveGPSstorage.txt"
 
-function forward()
-    if ccturtle.foward() then
-        updateLocation("forward")
-        return true
-    else; return false; end
-end
-
-function turnLeft()
-    if ccturtle.turnLeft() then
-        updateFacing("left")
-        return true
-    else; return false; end
-end
-
-function turnRight()
-    if ccturtle.turnRight() then
-        updateFacing("right")
-        return true
-    else; return false; end
-end
-
-function up()
-    if ccturtle.up() then
-        updateLocation("up")
-        return true
-    else; return false; end
-end
-
-function down()
-    if turtle.down() then
-        updateLocation("down")
-        return true
-    else; return false; end
-end
-
-function back()
-    if turtle.back() then
-        updateLocation("back")
-        return true
-    else; return false; end
-end
-
+--[[
 --https://github.com/fnuecke/lama/blob/master/apis/lama
 --i cannot reassign the turtle api without it being recursive, so i shall use this.
 --very beautiful code, really.
@@ -145,16 +147,19 @@ function hijackTurtleAPI(restore)
     end
 end
 
+this likely wont stay many more commits
+--]]
+
 --[[
 function cardinalConform()
 maybe
 end]]
 
-function initGPS(facingDirection, restore)
+function initGPS(facingDirection)
     --100% for preventing files of coords being lost
     
-    local temp = hijackTurtleAPI(restore)
-    if restore then return temp end
+    --local temp = hijackTurtleAPI(restore)
+    --if restore then return temp end
 
     --set 0,0,0 and direction
     repeat
@@ -211,46 +216,49 @@ function updateLocation(direction)
     
     facing = settings.get("sys.movement.facingStr")
     
+        --which way to go on the axis
     if direction == "forward" then
         inc = 1
     elseif direction == "back" then
         inc = -1
-    elseif direction == "up" then
-        --pos y
+
+
+    elseif direction == "up" then   --Y+1 Pos Update
         y = settings.get("sys.movement.y")
         y = y + 1
         settings.set("sys.movement.y", y)
-        return true
-    elseif direction == "down" then
-        --neg y
+        return y
+
+    elseif direction == "down" then --Y-1 Pos Update
         y = settings.get("sys.movement.y")
         y = y - 1
         settings.set("sys.movement.y", y)
-        return true
+        return y
     else
         error("Incorrect direction "..direction)
     end
     
-    if facing == "north" then
-        --negative z
+
+    if facing == "north" then       --Z-1 Pos Update
         z = settings.get("sys.movement.z")
         z = z - inc
         settings.set("sys.movement.z", z)
-        return true
-    elseif facing == "south" then
-        --positive z
+        return y
+
+    elseif facing == "south" then   --Z+1 Pos Update
+
         z = settings.get("sys.movement.z")
         z = z + inc
         settings.set("sys.movement.z", z)
-        return true
-    elseif facing == "east" then
-        --positive x
+        return y
+
+    elseif facing == "east" then    --X+1 Pos Update
         x = settings.get("sys.movement.x")
         x = x + inc
         settings.set("sys.movement.x", x)
-        return true
-    elseif facing == "west" then
-        --negative x
+        return x
+
+    elseif facing == "west" then    --X-1 Pos Update
         x = settings.get("sys.movement.x")
         x = x - inc
         settings.set("sys.movement.x", x)
@@ -263,7 +271,7 @@ end
 
 function updateFacing(turnDir)
 
-    directions = {north=1, east=2, south=3, west=4}
+    local directions = {north=1, east=2, south=3, west=4}
     
     if turnDir == "left" then
         local selecter = 3
@@ -271,7 +279,7 @@ function updateFacing(turnDir)
         local selecter = 1
     end
 
-    facing = settings.get("sys.movement.facingNum")
+    local facing = settings.get("sys.movement.facingNum")
     facing = facing+directions[turnDir]
     if facing > 4 then facing = facing % 4 end
     settings.set("sys.movement.facingNum", facing)
@@ -279,7 +287,7 @@ function updateFacing(turnDir)
 end
 
 function getLocation(xyz)
-    pos = {x = settings.get("sys.movement.x"), y = settings.get("sys.movement.y"), z = settings.get("sys.movement.z")}
+    local pos = {x = settings.get("sys.movement.x"), y = settings.get("sys.movement.y"), z = settings.get("sys.movement.z")}
     if xyz then
         return pos[xyz]
     else
@@ -310,5 +318,5 @@ end
 return {
     initGPS = initGPS,
     getLocation = getLocation,
-    hijackTurtleAPI = hijackTurtleAPI
+    look = look
 }

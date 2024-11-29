@@ -8,6 +8,7 @@ local turtleDig = turtle.dig
 local turtleDigUp = turtle.digUp
 local turtleDigDown = turtle.digDown
 
+
 function dig(side, goBack)
     
     if side == nil then

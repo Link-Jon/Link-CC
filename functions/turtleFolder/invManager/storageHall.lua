@@ -133,10 +133,6 @@ function initStorage(shape, detectMethod, trapped)
         settings.set("sys.storage.detection.type","blockID")
 
     elseif detectMethod[1] == "length" then
-
-        settings.set("sys.storage.detection.type","totalLength")
-        settings.set("sys.storage.detection.totalLength", detectMethod[2])
-
         
         --local startpos = detectMethod[3] or 1
         local startpos = 0
@@ -144,8 +140,17 @@ function initStorage(shape, detectMethod, trapped)
         --untill the gps can also start in
         --arbitrary locaiton, startpos cannot
 
+        if startpos > detectMethod[2] then
+            print("Start position is larger than length, swapping.")
+            settings.set("sys.storage.detection.totalLength", startpos)
+            startpos = detectMethod[2]
+        else
+            settings.set("sys.storage.detection.totalLength", detectMethod[2])
+        end
+        settings.set("sys.storage.detection.type","totalLength")
+        
+        
         initGPS(direction)
-
         local facing = settings.get("sys.movement.facingStr")
         if facing == "north" then
             settings.set("sys.storage.detection.axis", "z")
@@ -189,18 +194,28 @@ function checkForBounds(reverse)
     while step > 0 do
         if method == "totalLength" then
             local axis = settings.get("sys.storage.detection.axis")
-
             local currPos = getLocation(axis)
-            --sidenote this only checks if we are currently at bounds. not if we are past bounds.
-            --probably will cause problems.
             local start = settings.get("sys.storage.detection.startPos")
             local length = settings.get("sys.storage.detection.totalLength")
 
+            --[[
+            print("axis: "..axis)
+            print("currPos: "..currPos)
+            print("start: "..start)
+            print("length: "..length)
+            sleep(2)
 
-            local currPos = getLocation(axis)
-            if currPos == start or currPos == length then
-                --Handle this?????
+            ahh..... how nice.
+            This doesnt work because the gps inside moveAPI doesnt work
+            Well atleast it makes sense. and will probably be easier to
+            fix... i hope. we will see later.
+            --]]
+
+            if currPos == start and move =="back" or currPos == length and move == "forward" then
+                --if trying to go out of bounds...
+                --if not obvious, start must ALLWAYS be lower than length    
                 return false
+                
             elseif currPos < start or currPos > length then
                 print("currPos: "..currPos.." || start: "..start.." || length: "..length)
                 print("Warning. Out of bounds.")
@@ -226,7 +241,11 @@ function checkForBounds(reverse)
                     return false
                 end
             end
+        else
+            error("unknown detect method "..method)
         end
+
+        sleep(1)
     end
 end
 

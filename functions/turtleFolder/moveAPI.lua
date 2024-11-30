@@ -162,11 +162,17 @@ function initGPS(facingDirection)
     --if restore then return temp end
 
     --set 0,0,0 and direction
-    repeat
+    print(facingDirection)
+    print(facingDirection ~= "north")
+    print(facingDirection ~= "south")
+    print(facingDirection ~= "east") 
+    print(facingDirection ~= "west")
+
+    while facingDirection ~= "north" and facingDirection ~= "south" and facingDirection ~= "east" and facingDirection ~= "west" do
     print("Insert current facing direction")
     print("{north, south, east, west}")
     facingDirection = string.lower(io.read())
-    until facingDirection == "north" or facingDirection == "south" or facingDirection == "east" or facingDirection == "west"
+    end
 
     settings.define("sys.movement.x", {
         description = "X axis location",

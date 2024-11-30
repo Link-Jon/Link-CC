@@ -45,3 +45,42 @@ function search(item, inventory)
     --inventory.getItem()
 
 end
+
+
+function mergeItemData(itemData)
+    --merge a table of itemData, recieved from scan()
+
+    term.clear()
+    term.setCursorPos(1,1)
+    print("Merging Item Data, this may take a moment")
+    local totalItems = {}
+    term.setCursorPos(10,8) --10 over, 8 down
+    term.write(0)
+
+    for chests = 1,#itemData do
+        term.setCursorPos(10,8)
+        term.clearLine()
+        local chestPercent = chests/#itemData*100
+        term.write(chestPercent.."% chests")
+        
+        for slots = 1,#itemData[chests] do
+        
+            term.setCursorPos(10, 10)
+            term.clearLine()
+            local slotPercent = slots/#itemData[chests]*100
+            term.write(slotPercent.."% slots")
+    
+            local name = itemData[chests][slots].name
+            local count = itemData[chests][slots].count
+
+            if totalItems[name] == nil then
+                totalItems[name] = count
+            else
+                totalItems[name] = totalItems[name] + count
+            end
+            
+        end
+    end
+
+    return totalItems
+end

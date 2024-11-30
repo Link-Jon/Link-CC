@@ -2,6 +2,9 @@
 --I dont think this is feature functional yet,
 --So, that is the goal here. Finish.
 
+--ok. So. This will require for the turtle to be ONLY used for this.
+--Caaannot be used for other things...
+
 --Features needed:
 --Scan the storage area, store the data to a file
 --At any time, even while scanning, accept an item request
@@ -61,8 +64,8 @@ function initStorage(shape, detectMethod, trapped)
     --Settings api is a very easy way to store config data for later.
     --For easier access later, i will define all settings i change here...
     --but im probably changing them elsewhere.
-    settings.define("sys.storage.trapped", {
-        description = "Chest spacing",
+    settings.define("sys.storage.step", {
+        description = "Chest spacing; how far to move every time we move",
         default = 1,
         type = "number"
     })
@@ -94,7 +97,7 @@ function initStorage(shape, detectMethod, trapped)
         type = "table"
     })
 
-
+    settings.set("sys.storage.step", trapped)
     if errcheck(shape, "hall",{"halls", "hallway"}) then
         settings.set("sys.storage.shape","hall")
         settings.set("sys.storage.chestSides",{"left","right"})  
@@ -129,89 +132,121 @@ function initStorage(shape, detectMethod, trapped)
         settings.set("sys.storage.detection.blockID", temp["name"])
         settings.set("sys.storage.detection.type","blockID")
 
-    elseif type(detectMethod[1]) == "length" then
+    elseif detectMethod[1] == "length" then
 
         settings.set("sys.storage.detection.type","totalLength")
         settings.set("sys.storage.detection.totalLength", detectMethod[2])
-        if detectMethod[3] then
-            local startpos = detectMethod[3]
-        else
-            local startpos = 1
-        end
+
+        
+        --local startpos = detectMethod[3] or 1
+        local startpos = 0
+        local direction = detectMethod[3]
+        --untill the gps can also start in
+        --arbitrary locaiton, startpos cannot
+
+        initGPS(direction)
 
         local facing = settings.get("sys.movement.facingStr")
         if facing == "north" then
-            settings.set("sys.storage.detection.axis", "pz")
+            settings.set("sys.storage.detection.axis", "z")
         elseif facing == "south" then
-            settings.set("sys.storage.detection.axis", "nz")
+            settings.set("sys.storage.detection.axis", "z")
         elseif facing == "east" then
-            settings.set("sys.storage.detection.axis", "px")
+            settings.set("sys.storage.detection.axis", "x")
         elseif facing == "west" then
-            settings.set("sys.storage.detection.axis", "nx")
+            settings.set("sys.storage.detection.axis", "x")
         end
 
         settings.set("sys.storage.detection.startPos", startpos)
+    else
+        error("Detection method: "..detectMethod[1])
     end
 
     inspectStorage("first run")
+
+    activateStorage()
 end
 
-function checkForBounds()
+
+--seems like current check for bounds SUCKS
+-- i should really make check for bounds handle movement.
+-- should take a number, and go that distance.
+--if negative go backwards.
+function checkForBounds(reverse)
     local method = settings.get("sys.storage.detection.type")
-    local direction = settings.get("sys.storage.detection.axis")
-    
-    local axis = direction
+    local step = settings.get("sys.storage.step")
+    local move = "forward"
 
-    --"x" or "z", which axis we are on
-    axis = string.gsub(axis,"p","")
-    axis = string.gsub(axis,"n","")
+    if step == 0 then
+        --room is probably a one block space, dont move
+        return false, "Step size is 0, wont move."
+    elseif reverse then
+        --make us go in reverse lol
+        move = "back"
+    end
 
-    --"p" or "n", if the start pos faced positive or negative
-    --wait shouldnt start be 0?
-    --wait cant we just compare distance between us and start? ughh.
-    direction = string.gsub(direction,"x","")
-    direction = string.gsub(direction,"z","")
 
-    currPos = getLocation(axis)
+    while step > 0 do
+        if method == "totalLength" then
+            local axis = settings.get("sys.storage.detection.axis")
 
-    --sidenote this only checks if we are current at bounds. not if we are past bounds.
-    --probably will cause problems.
-    if method == "totalLength" then
-        start = settings.get("sys.storage.detection.startPos")
-        length = settings.get("sys.storage.detection.totalLength")
-        if currPos == start or currPos == length then
-            return true
-        else
-            return false
-        end
-    elseif method == "block" then
-        local bool, block turtle.inspectDown()
-        if block == settings.get("sys.storage.detection.blockID") then
-            return true
-        else
-            return false
+            local currPos = getLocation(axis)
+            --sidenote this only checks if we are currently at bounds. not if we are past bounds.
+            --probably will cause problems.
+            local start = settings.get("sys.storage.detection.startPos")
+            local length = settings.get("sys.storage.detection.totalLength")
+
+
+            local currPos = getLocation(axis)
+            if currPos == start or currPos == length then
+                --Handle this?????
+                return false
+            elseif currPos < start or currPos > length then
+                print("currPos: "..currPos.." || start: "..start.." || length: "..length)
+                print("Warning. Out of bounds.")
+                print("Currently turtle cannot fix itself, please help")
+                error("Please place turtle back at the start location")
+                return false
+            else
+                if turtle[move]() then
+                    --i think?
+                    step = step - 1
+                else
+                    --stop trying to move??
+                    return false 
+                end
+            end
+        elseif method == "block" then
+            local bool, block turtle.inspectDown()
+            if block == settings.get("sys.storage.detection.blockID") then
+                if turtle[move]() then
+                    step = step - 1 --i think?
+                else
+                    --stop trying to move??
+                    return false
+                end
+            end
         end
     end
 end
 
 function inspectStorage(details)
     --Rescans entire storage, updates the current data.
-    if first == "first run" then
-        chest = true
+    if details == "first run" then
+        local chest = true
     end
-
-    local trapped = settings.get("sys.storage.trapped")
-    if trapped > 1 then
+--[[
+    local step = settings.get("sys.storage.step")
+    if step > 1 then
         local trapCounter = true
-        local moveDist = trapped
+        local moveDist = step
     end
+    ]]
     local chestSides = settings.get("sys.storage.chestSides")
     local shape = settings.get("sys.storage.shape")
     if settings.get("sys.storage.detection.type") == "totalLength" then
-        
+        local length = settings.get("sys.storage.detection.totalLength")
     end
-
-    print(textutils.serialize(chestSides))
 
     if shape == "hall" then
         --collect chest inventories. If no chest where there should be, 
@@ -221,7 +256,7 @@ function inspectStorage(details)
         local chestNumber = 1
 
         while true do
-            local itemData = {}
+            itemData = {}
             for key,chestDir in pairs(chestSides) do
 
                 if turtle.detect() == nil then; turtle.place(); end
@@ -236,38 +271,54 @@ function inspectStorage(details)
                 chestNumber = chestNumber+1
             end
 
-            if trapCounter then
-                print("chest gap currently not implimented")
-            end
-
-            if checkForBounds() then; break; else; 
-                local moved = turtle.forward()
-                if not moved then; break; end;
-
-
-            end
+            if false == checkForBounds() then; break; else; end
         end
     
     end        
-        --merge itemData
-        print("Merging Item Data, this may take a moment")
-        for i = 1,#itemData do
-            if totalItems[itemData[i].name] == nil then
-                totalItems[itemData[i].name] = itemData.count
-            else
-                totalItems[itemData[i].name] = totalItems[itemData[i].name] + itemData
-            end
-        end
         
 
+    if parallel then
+        
+        print("Advanced turtle! We can move and calculate at the same time...")
 
+        parallel.waitForAll(
+            function()
+                --merge and save data
+                local combinedItems = mergeItemData(itemData)
+                combinedItems = textutils.serialize(combinedItems)
+                local temp = fs.open("storageData/total","w")
+                temp.write("return "..combinedItems)
+                temp.close()
+                print("Scan data saved.")
+
+            end,
+            function()
+                --return to start of hall
+                repeat
+                local temp = checkForBounds(true)
+                until temp == false
+            end
+        )
+    else
+
+        local combinedItems = mergeItemData(itemData)
+        combinedItems = textutils.serialize(combinedItems)
+        local temp = fs.open("storageData/total")
+        temp.write("return "..combinedItems)
+        temp.close()
+        print("Scan data saved.")
+    
+        repeat
+        local temp = checkForBounds(true)
+        until temp == false
+    end
 end
 
 function activeStorage()
     --Actually does the storage stuff
-
-
 end
+
+
 
 return {
     initStorage = initStorage, 

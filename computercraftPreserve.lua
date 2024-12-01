@@ -18,32 +18,31 @@ if cc then return cc end
 --pain.
 
 cc = {
+    turtle = turtle,
+    --in this state, print()
 
-    --turtle functions
-    --Comments note where its reassigned.
-    turtle = {
+    --[[
+    --dwarfAPI
+    turtle.dig = turtle.dig,
+    turtle.digUp = turtle.digUp,
+    turtle.digDown = turtle.digDown,
 
-        --dwarfAPI
-        dig = turtle.dig,
-        digUp = turtle.digUp,
-        digDown = turtle.digDown,
+    --moveAPI
+    turtle.forward = turtle.forward,
+    turtle.turnLeft = turtle.turnLeft,
+    turtle.turnRight = turtle.turnRight,
+    turtle.back = turtle.back,
+    turtle.up = turtle.up,
+    turtle.down = turtle.down,
 
-        --moveAPI
-        forward = turtle.forward,
-        turnLeft = turtle.turnLeft,
-        turnRight = turtle.turnRight,
-        back = turtle.back,
-        up = turtle.up,
-        down = turtle.down,
-
-        detect = turtle.detect,
-        detectUp = turtle.detectUp,
-        detectDown = turtle.detectDown
-    },
+    turtle.detect = turtle.detect,
+    turtle.detectUp = turtle.detectUp,
+    turtle.detectDown = turtle.detectDown,
+    ]]
 
     --logic
     print = print,
-    write = term.write
+    term = term
 }
 
 return cc

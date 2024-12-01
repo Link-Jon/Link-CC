@@ -71,3 +71,67 @@ function turtleTurnAround()
     turtleTurnRight()
 end
 --]]
+
+function move(side,dist,digBool)
+    --dist = whole positive number
+    --side = string, side.
+    
+    --Compatibility with 
+    --turtleForward()
+    if num == nil then
+        num = 1
+    end
+
+    local turtleMove = turtle.forward
+    local turtleDig = turtle.dig
+    if side ~= nil and side ~= "forward" or side ~= "f" then
+
+        if string.lower(side) == "left" or string.lower(side) == "l" then
+            turtle.turnLeft()
+        elseif string.lower(side) == "right" or string.lower(side) == "r" then
+            turtle.turnRight()
+        elseif string.lower(side) == "back" or string.lower(side) == "b" then
+            turtle.turnRight(); turtleRight()
+        elseif string.lower(side) == "up" or string.lower(side) == "u" then
+            turtleMove = turtle.up
+            turtleDig = turtle.digUp
+        elseif string.lower(side) == "down" or string.lower(side) == "d" then
+            turtleMove = turtle.down
+            turtleDig = turtle.digDown
+        end
+    end
+
+    if dist < 0 then
+        print("moveAPI.lua - Warn: function 'forward()' recieved negative distance ")   
+    end
+    
+    while dist > 0.499 do
+            turtleMove()
+        if digBool and turtle.detect() then
+            turtleDig()
+        elseif turtle.detect() then
+            print("Mining disabled, movement stopped")
+            return dist
+            --return remaining distance.
+        end
+        dist = dist-1
+    end
+end
+
+function look(side)
+    side = conformSide(side)
+
+    if side == "front" or side == "up" or side == "down" then
+        return true
+    elseif side == "left" then
+        turtle.turnLeft()
+        return "right"
+    elseif side == "right" then
+        turtle.turnRight()
+        return "left"
+    elseif side == "back" then
+        turtle.turnRight()
+        turtle.turnRight()
+        return "back"
+    end
+end

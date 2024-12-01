@@ -13,12 +13,9 @@
 --this, REALLY REALLY has to be done before any of my
 --libraries or apis edit functions. hm.
 
-if not _G.cc then
-    _G.cc = require("computercraftPreserve")
-end
-print(cc)
---yes, _G.cc. I REALLY WANT THIS TO DO THE THING AAAAAAAAAa
 
+ccprint = print
+ccwrite = write
 
 function xOverTime(secs, xPerSec, xTotal)
     --xTotal if u want to find seconds instead of xTotal
@@ -118,12 +115,10 @@ end
 
 
 --mtext functions. These exist to write to both the monitor AND the main screen at the same time.
-function print(str) --for now i will assume i didnt just redirect and print for a reason, but i will come back to this later...
+--Hey these should be done using settings!
+local function print(str) --for now i will assume i didnt just redirect and print for a reason, but i will come back to this later...
                      --currently, just merging files :P (wait does print exist while term=mon? not sure.)
 
-    if not _G.cc then
-        _G.cc = require("computercraftPreserve")
-    end
     
     if _MONITORS_==true then
         local loop=loop+1
@@ -136,27 +131,27 @@ function print(str) --for now i will assume i didnt just redirect and print for 
         end
         mon.setCursorPos(1,y)
         mon.write("\n"..str.."\n")
-        cc.print(str)
+        ccprint(str)
         return
     else
-        cc.print(str)
+        ccprint(str)
         return
     end
 end
 --both works?
-function write(str,scroll)
+local function write(str,scroll)
     if _MONITORS_==true then
         local temp=term.current()   --save current terminal, dont want to lose it!
-        term.redirect(mon);     cc.write(str)  --redirect and write line
+        term.redirect(mon);     ccwrite(str)  --redirect and write line
         if type(scroll=="number") then
           term.scroll(scroll); end  --scrolls line count 'scroll' (arg2)
 
-        term.redirect(temp);    cc.write(str)
+        term.redirect(temp);    ccwrite(str)
         if type(scroll=="number") then
           term.scroll(scroll); end
         return
     else
-        cc.write(str)
+        ccwrite(str)
         return
     end
 end

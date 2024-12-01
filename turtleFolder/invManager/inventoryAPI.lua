@@ -50,25 +50,28 @@ end
 function mergeItemData(itemData)
     --merge a table of itemData, recieved from scan()
 
-    term.clear()
-    term.setCursorPos(1,1)
+    --term.clear()
+    --term.setCursorPos(1,1)
     print("Merging Item Data, this may take a moment")
     local totalItems = {}
-    term.setCursorPos(10,8) --10 over, 8 down
-    term.write(0)
-
+    --term.setCursorPos(10,8) --10 over, 8 down
+    --term.write(0)
+    print(textutils.serialize(itemData))
+    sleep(2)
     for chests = 1,#itemData do
-        term.setCursorPos(10,8)
-        term.clearLine()
+        --term.setCursorPos(10,8)
+        --term.clearLine()
         local chestPercent = chests/#itemData*100
-        term.write(chestPercent.."% chests")
+        --term.write(chestPercent.."% chests")
+        print(textutils.serialize(itemData[chests]))
         
         for slots = 1,#itemData[chests] do
         
-            term.setCursorPos(10, 10)
-            term.clearLine()
+            
+            --term.setCursorPos(10, 10)
+            --term.clearLine()
             local slotPercent = slots/#itemData[chests]*100
-            term.write(slotPercent.."% slots")
+            --term.write(slotPercent.."% slots")
     
             local name = itemData[chests][slots].name
             local count = itemData[chests][slots].count
@@ -82,5 +85,9 @@ function mergeItemData(itemData)
         end
     end
 
-    return totalItems
+    return {
+        mergeItemData = mergeItemData,
+        search = search,
+        scan = scan
+    }
 end

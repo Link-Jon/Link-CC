@@ -32,15 +32,15 @@
 --when one completes
 
 
-
+--OOOKKAAAY yeah im not going to be added lama any time soon, that will take quite a while to port.
+--soooo for now....
+--moveapi, once again exists lol
+--Alright, lets roll...
 
 require("logic")
 require("moveAPI")
 require("inventoryAPI")
 
-if not _G.cc then
-    _G.cc = require("computercraftPreserve")
-end
 
 --on the first run we need to find out
 --how long the hall is.
@@ -51,11 +51,9 @@ end
 --begining init.
 function initStorage(shape, detectMethod, trapped)
 
-    --hijackTurtleAPI()
+
     --chestLayout = {"up", "down", "left", "right"}
         --Doesnt need them all; must have one; cannot include more
-
-
 
     --trapped = bool, weither or not to expect
     --chest spacing. (False = no trapped chests, chests are every other block.)
@@ -69,25 +67,31 @@ function initStorage(shape, detectMethod, trapped)
         default = 1,
         type = "number"
     })
-    settings.define("sys.storage.detection.type",{
+    settings.define("sys.storage.detector",{
         description = "What detection function to call",
         type = "string"
     })
-    settings.define("sys.storage.detection.blockID", {
+    settings.define("sys.storage.blockID", {
         description = "Block ID to not allow the turtle past",
         default = "minecraft:command_block",
         type = "string"
     })
-    settings.define("sys.storage.detection.totalLength", {
+    settings.define("sys.storage.endPos", {
         description = "Length of hall in blocks",
         default = -1,
         type = "number"
     })
-    settings.define("sys.storage.detection.startPos", {
+    settings.define("sys.storage.startPos", {
         description = "Location of 'start' of hallway",
+        default = 0,
         type = "number"
     })
-    settings.define("sys.storage.detection.axis", {
+    settings.define("sys.storage.currPos", {
+        description = "Current location of turtle.",
+        default = 0,
+        type = "number"
+    })
+    settings.define("sys.storage.axis", {
         description = "The direction going away from the start position, 'positive x' = px, and such",
         type = "string"
     })
@@ -121,16 +125,20 @@ function initStorage(shape, detectMethod, trapped)
         The turtle will use the block id of the block currently underneath itself]])
 
         write("Ready? >")
-        local readjust = nilcheck(io.read())
+        local ready = nilcheck(io.read())
         
-        if readjust == false then
+        if ready == false then
             print("Quitting...")
             return false
         end
 
         local _, temp = turtle.inspectDown()
-        settings.set("sys.storage.detection.blockID", temp["name"])
-        settings.set("sys.storage.detection.type","blockID")
+        settings.set("sys.storage.blockID", temp["name"])
+        settings.set("sys.storage.detector","blockID")
+        settings.set("sys.storage.startPos", 0)
+        settings.set("sys.storage.currPos", 0)
+        settings.set("sys.storage.totalLength",-1)
+
 
     elseif detectMethod[1] == "length" then
         
@@ -141,15 +149,17 @@ function initStorage(shape, detectMethod, trapped)
         --arbitrary locaiton, startpos cannot
 
         if startpos > detectMethod[2] then
-            print("Start position is larger than length, swapping.")
-            settings.set("sys.storage.detection.totalLength", startpos)
-            startpos = detectMethod[2]
-        else
-            settings.set("sys.storage.detection.totalLength", detectMethod[2])
+            print("Start position is larger than length, swapping sign... -1*x")
+            settings.set("sys.storage.totalLength", startpos)
+            startpos = detectMethod[2]*-1
+        elseif detectMethod[2] == 0 then
+            settings.set("sys.storage.step",0)
+            settings.set("sys.storage.totalLength", detectMethod[2])
         end
-        settings.set("sys.storage.detection.type","totalLength")
+        settings.set("sys.storage.detector","totalLength")
         
         
+        --[[
         initGPS(direction)
         local facing = settings.get("sys.movement.facingStr")
         if facing == "north" then
@@ -161,8 +171,8 @@ function initStorage(shape, detectMethod, trapped)
         elseif facing == "west" then
             settings.set("sys.storage.detection.axis", "x")
         end
-
-        settings.set("sys.storage.detection.startPos", startpos)
+        --]]
+        settings.set("sys.storage.startPos", startpos)
     else
         error("Detection method: "..detectMethod[1])
     end
@@ -178,74 +188,90 @@ end
 -- should take a number, and go that distance.
 --if negative go backwards.
 function checkForBounds(reverse)
-    local method = settings.get("sys.storage.detection.type")
-    local step = settings.get("sys.storage.step")
-    local move = "forward"
 
+    local step = settings.get("sys.storage.step")
     if step == 0 then
         --room is probably a one block space, dont move
         return false, "Step size is 0, wont move."
-    elseif reverse then
-        --make us go in reverse lol
-        move = "back"
     end
 
-
     while step > 0 do
-        if method == "totalLength" then
-            local axis = settings.get("sys.storage.detection.axis")
-            local currPos = getLocation(axis)
-            local start = settings.get("sys.storage.detection.startPos")
-            local length = settings.get("sys.storage.detection.totalLength")
 
-            --[[
-            print("axis: "..axis)
-            print("currPos: "..currPos)
-            print("start: "..start)
-            print("length: "..length)
-            sleep(2)
+        local currPos = settings.get("sys.storage.currPos")
+        local startPos = settings.get("sys.storage.startPos")
+        local endPos = settings.get("sys.storage.endPos")
+        local method = settings.get("sys.storage.detector")
+        local move = "forward"
+        local direction = 1
 
-            ahh..... how nice.
-            This doesnt work because the gps inside moveAPI doesnt work
-            Well atleast it makes sense. and will probably be easier to
-            fix... i hope. we will see later.
-            --]]
+        --[[
+        print("step: "..step)
+        print("currPos: "..currPos)
+        print("start: "..startPos)
+        print("end: "..endPos)
+        print("method: "..method)
+        --]]
 
-            if currPos == start and move =="back" or currPos == length and move == "forward" then
-                --if trying to go out of bounds...
-                --if not obvious, start must ALLWAYS be lower than length    
-                return false
-                
-            elseif currPos < start or currPos > length then
-                print("currPos: "..currPos.." || start: "..start.." || length: "..length)
-                print("Warning. Out of bounds.")
-                print("Currently turtle cannot fix itself, please help")
-                error("Please place turtle back at the start location")
-                return false
-            else
-                if turtle[move]() then
-                    --i think?
-                    step = step - 1
-                else
-                    --stop trying to move??
-                    return false 
-                end
-            end
-        elseif method == "block" then
-            local bool, block turtle.inspectDown()
-            if block == settings.get("sys.storage.detection.blockID") then
-                if turtle[move]() then
-                    step = step - 1 --i think?
-                else
-                    --stop trying to move??
+        if method == "blockID" then
+            local bool, block = turtle.inspectDown()
+            print(block.name)
+            if block.name == settings.get("sys.storage.blockID") and currPos > startPos then
+                print("New end pos: currPos")
+                settings.set("sys.storage.endPos", currPos)
+                endPos = currPos
+                if reverse == nil then
                     return false
                 end
             end
-        else
-            error("unknown detect method "..method)
         end
 
-        sleep(1)
+
+        if reverse then
+            --make us go in reverse lol
+            move = "back"
+            direction = -1
+        end
+
+        --print("move: "..move)
+        --print("direction: "..direction)
+
+        if currPos == startPos and reverse then
+            --At start, dont go back
+            return false
+    
+        elseif currPos < startPos then
+            --we are BEFORE the start. Bad.
+            error("Currently before the start pos. Shall decide later if this error stays, or if it will move forward.")
+        end
+
+        if endPos > -1 then
+            if currPos == endPos and not reverse then
+                --At the end, dont continue
+                    return false
+
+            elseif currPos > endPos then
+                --we are AFTER the end. Bad.
+                error("Currently after the end pos. Shall decide later if this error stays, or if it will move back.")
+            end
+        end
+
+        --print("Check complete.")
+        --io.read()
+
+        --Those position check stuff can probably be done better with less if statements...
+        --probably not with less evaluations though.
+
+
+            
+        if turtle[move]() then
+            step = step - 1 --i think?
+            currPos = currPos + direction
+            
+            settings.set("sys.storage.currPos",currPos)
+        else
+            --stop trying to move??
+            return false
+        end
     end
 end
 
@@ -254,7 +280,7 @@ function inspectStorage(details)
     if details == "first run" then
         local chest = true
     end
---[[
+    --[[
     local step = settings.get("sys.storage.step")
     if step > 1 then
         local trapCounter = true
@@ -267,6 +293,7 @@ function inspectStorage(details)
         local length = settings.get("sys.storage.detection.totalLength")
     end
 
+    local itemData = {}
     if shape == "hall" then
         --collect chest inventories. If no chest where there should be, 
         --and we have some, place em
@@ -275,7 +302,7 @@ function inspectStorage(details)
         local chestNumber = 1
 
         while true do
-            itemData = {}
+
             for key,chestDir in pairs(chestSides) do
 
                 if turtle.detect() == nil then; turtle.place(); end
@@ -283,10 +310,10 @@ function inspectStorage(details)
                 if chest then; append = "ar"; else append = "w"; end
 
                 local storageData = fs.open("storageData/chest"..chestNumber,append)
-                local temp = textutils.serialize(chestData) 
+                local temp = textutils.serialize(chestData)
                 storageData.write("return "..temp)
                 storageData.close()
-                print("chest complete: "..chestNumber)
+                print("Chest complete: "..chestNumber)
                 chestNumber = chestNumber+1
             end
 
@@ -295,7 +322,9 @@ function inspectStorage(details)
     
     end        
         
+    --sleep(0) ?
 
+    --[[
     if parallel then
         
         print("Advanced turtle! We can move and calculate at the same time...")
@@ -303,6 +332,9 @@ function inspectStorage(details)
         parallel.waitForAll(
             function()
                 --merge and save data
+                print(itemData)
+                print(textutils.serialize(itemData))
+                sleep(1)
                 local combinedItems = mergeItemData(itemData)
                 combinedItems = textutils.serialize(combinedItems)
                 local temp = fs.open("storageData/total","w")
@@ -318,19 +350,27 @@ function inspectStorage(details)
                 until temp == false
             end
         )
-    else
+    else]]
 
         local combinedItems = mergeItemData(itemData)
         combinedItems = textutils.serialize(combinedItems)
-        local temp = fs.open("storageData/total")
+        local temp = fs.open("storageData/total","w")
         temp.write("return "..combinedItems)
         temp.close()
         print("Scan data saved.")
-    
+
+        --return to start of hall
         repeat
         local temp = checkForBounds(true)
         until temp == false
-    end
+    --end
+end
+
+--Everything above seems complete. mostly. shall see later.
+--Time to make the storage handler.
+
+function resetStorageDetection()
+    --do settings all default, yeah
 end
 
 function activeStorage()

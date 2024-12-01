@@ -72,66 +72,47 @@ function turtleTurnAround()
 end
 --]]
 
-function move(side,dist,digBool)
-    --dist = whole positive number
-    --side = string, side.
-    
-    --Compatibility with 
-    --turtleForward()
-    if num == nil then
-        num = 1
-    end
 
-    local turtleMove = turtle.forward
-    local turtleDig = turtle.dig
-    if side ~= nil and side ~= "forward" or side ~= "f" then
 
-        if string.lower(side) == "left" or string.lower(side) == "l" then
-            turtle.turnLeft()
-        elseif string.lower(side) == "right" or string.lower(side) == "r" then
-            turtle.turnRight()
-        elseif string.lower(side) == "back" or string.lower(side) == "b" then
-            turtle.turnRight(); turtleRight()
-        elseif string.lower(side) == "up" or string.lower(side) == "u" then
-            turtleMove = turtle.up
-            turtleDig = turtle.digUp
-        elseif string.lower(side) == "down" or string.lower(side) == "d" then
-            turtleMove = turtle.down
-            turtleDig = turtle.digDown
-        end
-    end
 
-    if dist < 0 then
-        print("moveAPI.lua - Warn: function 'forward()' recieved negative distance ")   
-    end
-    
-    while dist > 0.499 do
-            turtleMove()
-        if digBool and turtle.detect() then
-            turtleDig()
-        elseif turtle.detect() then
-            print("Mining disabled, movement stopped")
-            return dist
-            --return remaining distance.
-        end
-        dist = dist-1
-    end
-end
+checkForBounds old thingy
+--[[
+        if method == "totalLength" then
+            local axis = settings.get("sys.storage.detection.axis")
+            local currPos = getLocation(axis)
+            local start = settings.get("sys.storage.detection.startPos")
+            local length = settings.get("sys.storage.detection.totalLength")
 
-function look(side)
-    side = conformSide(side)
+            
+            --print("axis: "..axis)
+            --print("currPos: "..currPos)
+            --print("start: "..start)
+            --print("length: "..length)
+            --sleep(2)
 
-    if side == "front" or side == "up" or side == "down" then
-        return true
-    elseif side == "left" then
-        turtle.turnLeft()
-        return "right"
-    elseif side == "right" then
-        turtle.turnRight()
-        return "left"
-    elseif side == "back" then
-        turtle.turnRight()
-        turtle.turnRight()
-        return "back"
-    end
-end
+            --ahh..... how nice.
+            --This doesnt work because the gps inside moveAPI doesnt work
+            --Well atleast it makes sense. and will probably be easier to
+            --fix... i hope. we will see later.
+            
+
+            if currPos == start and move =="back" or currPos == length and move == "forward" then
+                --if trying to go out of bounds...
+                --if not obvious, start must ALLWAYS be lower than length    
+                return false
+                
+            elseif currPos < start or currPos > length then
+                print("currPos: "..currPos.." || start: "..start.." || length: "..length)
+                print("Warning. Out of bounds.")
+                print("Currently turtle cannot fix itself, please help")
+                error("Please place turtle back at the start location")
+                return false
+            else
+                if turtle[move]() then
+                    --i think?
+                    step = step - 1
+                else
+                    --stop trying to move??
+                    return false 
+                end
+            end]]

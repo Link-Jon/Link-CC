@@ -136,9 +136,8 @@ end
 --end
 
 return {
-    login = login
-    timer = timer
-    calc = calc
+    login = login,
+    timer = timer,
+    calc = calc,
     internet = internet
-
 }

@@ -357,6 +357,13 @@ function detectSystem(printBool)
     return adv, terminal, modname, printMsg
 end
 
+--Setup an alias list here..
+--like table.append = table.insert
+--BECAUSE YOU KEEP TRYING TO USE THE DUMB THINGS XD
+
+table.append = table.insert
+
+
 return { 
     detectSystem = detectSystem,
     errcheck = errcheck,
@@ -366,9 +373,12 @@ return {
     ccwrite = ccwrite,
     term = {
         print = print,
-        write = write,
+        write = write, -- i bet if i localized the movement api it would return just fine....
         ccprint = ccprint, --Also give the raw CC functions back, just incase for some reason absolutely needed
         ccwrite = ccwrite,
         montest = montest},
-    xOverTime = xOverTime
+    xOverTime = xOverTime,
+
+    --Aliasi
+    
 }

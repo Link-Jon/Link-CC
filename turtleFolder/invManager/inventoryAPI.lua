@@ -2,6 +2,14 @@
 --I bet theres more to be added here, but I dont yet know what
 
 require("moveAPI")
+settings.define("sys.inv.vers", {
+    description = "Inventory API Savedata version. \n(Aka, inv api version... 'savedata' is entirely redundant lol)\n Should be changed every time save table is changed.",
+    type = "number"
+})
+
+
+local currVers = 1
+settings.set("sys.inv.vers", currVers)
 
 function scan(side)
 
@@ -47,47 +55,67 @@ function search(item, inventory)
 end
 
 
-function mergeItemData(itemData)
+function mergeItemData(itemData, totalItems)
     --merge a table of itemData, recieved from scan()
 
     --term.clear()
     --term.setCursorPos(1,1)
+
     print("Merging Item Data, this may take a moment")
+    --[[
+    local dataVers = settings.get("sys.inv.vers")
+
+    if not totalItems or totalItems.dataVers ~= dataVers then
+        print("Either no previous data provided,")
+        print("Or previous data is on an older version.")
+        print("Starting ")
+    --wait we dont need this, this is used to coalese scandata
+    end
+    ]]
+    
     local totalItems = {}
-    --term.setCursorPos(10,8) --10 over, 8 down
-    --term.write(0)
-    print(textutils.serialize(itemData))
-    sleep(2)
+    
     for chests = 1,#itemData do
-        --term.setCursorPos(10,8)
-        --term.clearLine()
+        term.setCursorPos(10,8)
+        term.clearLine()
         local chestPercent = chests/#itemData*100
-        --term.write(chestPercent.."% chests")
-        print(textutils.serialize(itemData[chests]))
+        term.write(chestPercent.."% chests")
         
         for slots = 1,#itemData[chests] do
-        
-            
-            --term.setCursorPos(10, 10)
-            --term.clearLine()
+            term.setCursorPos(10, 10)
+            term.clearLine()
             local slotPercent = slots/#itemData[chests]*100
-            --term.write(slotPercent.."% slots")
+            term.write(slotPercent.."% slots")
     
             local name = itemData[chests][slots].name
             local count = itemData[chests][slots].count
 
+            local chestname = "chest"..chests
             if totalItems[name] == nil then
-                totalItems[name] = count
+
+                totalItems[name] = {
+                    count = count,
+                    chests = {chests}
+            }
             else
-                totalItems[name] = totalItems[name] + count
-            end
-            
+                totalItems[name].count = totalItems[name].count + count
+                table.insert(totalItems[name].chests, chests)
+            end 
         end
     end
-
-    return {
-        mergeItemData = mergeItemData,
-        search = search,
-        scan = scan
-    }
+    --note to self, for later, 
+    --ensure return variables are the right ones...
+    return totalItems
 end
+
+function formatItemName()
+    print("not yet made, use exact name thank")
+end
+
+
+return {
+    formatItemName = formatItemNamem,
+    mergeItemData = mergeItemData,
+    search = search,
+    scan = scan
+}

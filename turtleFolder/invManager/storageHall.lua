@@ -49,9 +49,13 @@ require("inventoryAPI")
 
 --turtle really, REALLY should be are the start of the hall before
 --begining init.
-function initStorage(shape, detectMethod, trapped)
+function initStorage(detectMethod, chestLayout, trapped)
 
+    if type(chestLayout) == "string" then
+        chestLayout = {chestLayout}
+    end
 
+    local shape = "hall"
     --chestLayout = {"up", "down", "left", "right"}
         --Doesnt need them all; must have one; cannot include more
 
@@ -102,6 +106,7 @@ function initStorage(shape, detectMethod, trapped)
     })
 
     settings.set("sys.storage.step", trapped)
+    --[[
     if errcheck(shape, "hall",{"halls", "hallway"}) then
         settings.set("sys.storage.shape","hall")
         settings.set("sys.storage.chestSides",{"left","right"})  
@@ -110,7 +115,8 @@ function initStorage(shape, detectMethod, trapped)
         settings.set("sys.storage.chestSides",{"left","right","down","up"})  
     else
         error("Invalid shape, "..shape)
-    end
+    end]]
+    settings.set("sys.storage.chestSides", chestLayout)
 
     if type(detectMethod) ~= "table" then
         detectMethod = {detectMethod}
@@ -119,10 +125,12 @@ function initStorage(shape, detectMethod, trapped)
 
 
     --Prep detection
+    
     if detectMethod[1] == "block" then
-        print([[Please replace the block at both ends of the hallway with a different block.
+        --[[
+        print(Please replace the block at both ends of the hallway with a different block.
         It can be anything, it simply helps the turtle stay in bounds.
-        The turtle will use the block id of the block currently underneath itself]])
+        The turtle will use the block id of the block currently underneath itself)
 
         write("Ready? >")
         local ready = nilcheck(io.read())
@@ -130,7 +138,7 @@ function initStorage(shape, detectMethod, trapped)
         if ready == false then
             print("Quitting...")
             return false
-        end
+        end]]
 
         local _, temp = turtle.inspectDown()
         settings.set("sys.storage.blockID", temp["name"])
@@ -138,7 +146,7 @@ function initStorage(shape, detectMethod, trapped)
         settings.set("sys.storage.startPos", 0)
         settings.set("sys.storage.currPos", 0)
         settings.set("sys.storage.totalLength",-1)
-
+        --]]
 
     elseif detectMethod[1] == "length" then
         
@@ -179,7 +187,6 @@ function initStorage(shape, detectMethod, trapped)
 
     inspectStorage("first run")
 
-    activateStorage()
 end
 
 
@@ -289,8 +296,8 @@ function inspectStorage(details)
     ]]
     local chestSides = settings.get("sys.storage.chestSides")
     local shape = settings.get("sys.storage.shape")
-    if settings.get("sys.storage.detection.type") == "totalLength" then
-        local length = settings.get("sys.storage.detection.totalLength")
+    if settings.get("sys.storage.detector") == "totalLength" then
+        local length = settings.get("sys.storage.totalLength")
     end
 
     local itemData = {}
@@ -324,7 +331,7 @@ function inspectStorage(details)
         
     --sleep(0) ?
 
-    --[[
+    
     if parallel then
         
         print("Advanced turtle! We can move and calculate at the same time...")
@@ -332,10 +339,9 @@ function inspectStorage(details)
         parallel.waitForAll(
             function()
                 --merge and save data
-                print(itemData)
-                print(textutils.serialize(itemData))
-                sleep(1)
                 local combinedItems = mergeItemData(itemData)
+                term.setCursorPos(1,12)
+                print("Merged successful")
                 combinedItems = textutils.serialize(combinedItems)
                 local temp = fs.open("storageData/total","w")
                 temp.write("return "..combinedItems)
@@ -350,7 +356,7 @@ function inspectStorage(details)
                 until temp == false
             end
         )
-    else]]
+    else
 
         local combinedItems = mergeItemData(itemData)
         combinedItems = textutils.serialize(combinedItems)
@@ -363,23 +369,104 @@ function inspectStorage(details)
         repeat
         local temp = checkForBounds(true)
         until temp == false
-    --end
+    end
 end
 
 --Everything above seems complete. mostly. shall see later.
 --Time to make the storage handler.
 
-function resetStorageDetection()
-    --do settings all default, yeah
+function requestItem(name, count, maxcount)
+
+    if type(name)=="string" then
+        name = {name}
+    end
+    if type(count)=="number" then
+        count = {count}
+    end
+
+    if maxcount == nil then
+        maxcount = count
+    elseif type(maxcount) == "number" then
+        maxcount = {maxcount}
+    end
+
+    if #name > 16 then
+        error("Too many types of items requested at once")
+    end
+
+    local slots = 0
+    for key, value in pairs(name) do
+    --need to know what the stack size is for the item
+    --then, do count/maxcount. round to ceiling, and add to slots taken...
+    --do this for all items, and if slots is bigger than 16, crash.
+
+        --This may change slightly (not functionally, though)
+        --later if i change the input style to match the saved data better....
+        slots = slots + (count[key]/maxcount[key])
+        slots = math.ceil(slots)
+        if slots > 16 then
+            error("Too many items requested at once (Too big of stacks, probably)")
+        end
+        
+    end
+
+    --ensure request doesnt exceed turtle space limit
+    --have something else handle larger requests...
+    local itemList = require("storageData/total")
+    for i = 1,#name do
+        --name = formatItemName(name)
+        local currItem = itemList[name[i]]
+
+        if not currItem then
+            print("Item not found: "..name[i])
+            return false
+        end
+
+        currItem.chests = table.sort(currItem.chests)
+
+        print(currItem.count)
+        print(textutils.serialise(currItem.chests))
+
+        local chestPerRow = #settings.get("sys.storage.chestSides")
+        print(chestPerRow)
+
+        if currItem.count < count then
+            print(name[i]..": "..currItem.count)
+            error("Not enough items to supply request")
+        end
+
+        for chests = 1,#currItem.chests do
+            local currPos = settings.get("sys.storage.currPos")
+
+            chestLocation = math.floor(currItem.chests[chests]/chestPerRow)
+
+        end
+    end  
+
 end
 
-function activeStorage()
-    --Actually does the storage stuff
+function dumpItems(slots)
+
+    if not slots then
+        slots = range(1,16)
+    elseif type(slots) ~= "array" then
+        slots = {slots}
+    end
+
+    --wait did i save what items can be found in what {chests}?
+    --pretty sure no...
+    --have to add that.
+
+end
+
+function resetStorageDetection()
+    --do settings all default, yeah
 end
 
 
 
 return {
+    inspectStorage = inspectStorage,
     initStorage = initStorage, 
-    activeStorage = activeStorage
+    requestItem = requestItem
 }

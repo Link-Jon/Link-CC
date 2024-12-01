@@ -25,8 +25,8 @@
     --not have '()' in this mode.
 
 
-modem = peripheral.find("wireless_modem")
-APIList = {"logic","dwarfAPI"}
+local modem = peripheral.find("modem")
+local APIList = {"logic","dwarfAPI"}
 
 if not modem then
     modem = peripheral.find("wireless_modem") --these names may or may not work
@@ -38,17 +38,46 @@ end
 
 modem.open(55)
 
-repeat
+while reply ~= 54 do
     event, side, channel, reply, msg, dist = os.pullEvent("modem_message")
-until reply == 54 and msg == "turtleping"
+    if msg ~= "turtleping binary" and msg ~= "turtleping table" then
+        reply = 0
+    end
+end
+
+local lastConifg = settings.get("sys.remote.function")
+local configBin = string.find(msg, "binary")
+local configStr = string.find(msg, "table") 
+
+if configBin or lastConfig == "binary" then
+    --load binary strings...
+    luaMagic = loadstring
+    settings.set("sys.remote.function", "binary")
+elseif configStr or lastConfig == "table" then
+    luaMagic = function(input)
+        return _G[input]
+    end
+    settings.set("sys.remote.function", "table")
+end
 
 modem.transmit(54, 55, "turtlepong")
 _remoteActive_ = true
+print("Controlled!")
 
-while true do
-    break -- temp ending, remove when making real function
+while _remoteActive_ do
+    -- temp ending, remove when making real function
     --recieve the code, ping that it was recieved,
     --do the code, and every 30 ish seconds send an update to the
     --remote. if we cannot, tell the remote we will ping when done
     --or SOS
+    
+    local event, side, channel, reply, msg, dist = os.pullEvent("modem_message")
+    if reply == 54 then
+        modem.transmit(54,55, msg)
+        local temp = luaMagic(msg)
+        var1, var2, var3, var4, var5 = temp()
+        modem.transmit(54,55, {var1, var2, var3, var4, var5})
+    end
+    --waiting...
+
 end

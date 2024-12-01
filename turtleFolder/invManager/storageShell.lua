@@ -11,7 +11,7 @@ end
 while true do
 
     term.set()
-    term.write()s
+    term.write()
     print("Welcome! What would you like to do?")
     print("request items; scan inventory; re-init; help")
     print("request | scan | init | help")

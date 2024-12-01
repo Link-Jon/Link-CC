@@ -12,7 +12,7 @@
 --very cool, but can do it later...
 --hooks to a turtle using the remoteControl script
 
-modem = peripheral.find("ender_modem")
+modem = peripheral.find("modem")
 
 if not modem then
     print("Warning! no ender modem found, range will be EXTREMELY limited.")
@@ -48,7 +48,7 @@ print("Received a reply: " .. tostring(message))
 modem.open(54)
 
 while event == nil do
-    modem.transmit(55, 54, "turtleping")
+    modem.transmit(55, 54, "turtleping table")
 
     --ping for turtle every 15 seconds
     parallel.waitForAny(
@@ -77,15 +77,22 @@ while _remoteActive_ do
     --]]
 SOS = parallel.waitForAny(
     function() --This is always going to be an SOS call from the turtle
-        event, side, channel, reply, msg, dist = os.pullEvent("modem_message")
-        return msg
+        while true do
+            event, side, channel, reply, msg, dist = os.pullEvent("modem_message")
+            print("Got msg: "..msg)
+            if string.sub(msg,1,3) == "SOS" then
+                return msg
+            end
+        end
     end,
 
     function()
         term.write("CC> ")
         functionToSend = io.read()
-        
-        modem.send(functionToSend)
+        x = string.find(functionToSend,"(")
+        y = string.find(functionToSend,")")
+        functionToSend = string.sub(functionToSend,x,y)
+        modem.transmit(functionToSend)
         return nil
     end)
     

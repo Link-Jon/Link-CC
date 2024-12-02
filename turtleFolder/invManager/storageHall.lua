@@ -221,7 +221,6 @@ function checkForBounds(reverse)
 
         if method == "blockID" then
             local bool, block = turtle.inspectDown()
-            print(block.name)
             if block.name == settings.get("sys.storage.blockID") and currPos > startPos then
                 print("New end pos: currPos")
                 settings.set("sys.storage.endPos", currPos)
@@ -297,7 +296,7 @@ function inspectStorage(details)
     local chestSides = settings.get("sys.storage.chestSides")
     local shape = settings.get("sys.storage.shape")
     if settings.get("sys.storage.detector") == "totalLength" then
-        local length = settings.get("sys.storage.totalLength")
+        local length = settings.get("sys.storage.endPos")
     end
 
     local itemData = {}
@@ -334,8 +333,6 @@ function inspectStorage(details)
     
     if parallel then
         
-        print("Advanced turtle! We can move and calculate at the same time...")
-
         parallel.waitForAll(
             function()
                 --merge and save data
@@ -360,8 +357,14 @@ function inspectStorage(details)
 
         local combinedItems = mergeItemData(itemData)
         combinedItems = textutils.serialize(combinedItems)
+        local nameList = {}
+        local i = 1
+        for key,value in pairs(combinedItems) do
+            nameList[i] = key
+            i = i + 1
+        end
         local temp = fs.open("storageData/total","w")
-        temp.write("return "..combinedItems)
+        temp.write("return "..combinedItems..", "..nameList)
         temp.close()
         print("Scan data saved.")
 
@@ -461,6 +464,15 @@ end
 
 function resetStorageDetection()
     --do settings all default, yeah
+        settings.set("sys.storage.blockID", nil)
+        settings.set("sys.storage.detector",nil)
+        settings.set("sys.storage.startPos", 0)
+        settings.set("sys.storage.currPos", 0)
+        settings.set("sys.storage.totalLength",-1)
+        settings.set("sys.storage.chestSides", nil)
+        settings.set("sys.storage.shape", nil)
+        
+
 end
 
 

@@ -15,12 +15,7 @@
 modem = peripheral.find("modem")
 
 if not modem then
-    print("Warning! no ender modem found, range will be EXTREMELY limited.")
-    modem = peripheral.find("wireless_modem") --these names may or may not work
-
-    if not modem then
-        error("No wireless modem detected.")
-    end
+    error("No wireless modem detected.")
 end
 
 --lets go.
@@ -45,6 +40,29 @@ until channel == 43
 print("Received a reply: " .. tostring(message))
 ]]
 
+args = {...}
+
+if args[1] == "quarry" then
+    print("Viewing quarry..")
+    sleep(0.5)
+    while true do
+        modem.open(100)
+        term.clear()
+        print(modem)
+        event, side, channel, reply, msg, dist = os.pullEvent("modem_message")
+        
+        term.clear()
+        term.setCursorPos(1,1)
+        term.write("depth: "..msg.depth)
+        term.setCursorPos(1,2)
+        term.write("row: "..msg.row)
+        term.setCursorPos(1,3)
+        term.write("column: "..msg.column)
+        local depth = msg.depth
+
+    
+    end
+end
 modem.open(54)
 
 while event == nil do

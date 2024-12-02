@@ -23,6 +23,8 @@
 args = {...}
 if args[1] == "v" then
     verbose = true
+elseif args[1] == "storage" then
+    storage = true
 end
 
 function printVerbose(str)

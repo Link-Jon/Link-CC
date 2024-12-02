@@ -9,7 +9,7 @@ local turtleDigUp = turtle.digUp
 local turtleDigDown = turtle.digDown
 
 
-function dig(side, goBack)
+local function dig(side, goBack)
     
     if side == nil then
         side = "front"
@@ -19,18 +19,18 @@ function dig(side, goBack)
 
     if side == "front" or side == "foward" or side == "f" then
         while turtle.detect() do
-            turtleDig()
+            return turtleDig()
         end
     elseif side == "top" or side == "up" or side == "t" then
         while turtle.detectUp() do
-            turtleDigUp()
+            return turtleDigUp()
         end
     elseif side == "down" or side == "below" or side == "d" then
-        turtleDigDown()    
+        return turtleDigDown()    
     elseif side == "left" or side == "l" then
         turtle.turnLeft()
         while turtle.detect() do
-            turtle.dig()
+            return turtle.dig()
         end
         if goBack then
             turtle.turnRight()
@@ -38,7 +38,7 @@ function dig(side, goBack)
     elseif side == "right" or side == "r" then
         turtle.turnRight()
         while turtle.detect() do
-            turtle.dig()
+            return turtle.dig()
         end
         if goBack then
             turtle.turnLeft()
@@ -47,7 +47,7 @@ function dig(side, goBack)
         turtle.turnRight()
         turtle.turnRight()
         while turtle.detect() do
-            turtle.dig()
+            return turtle.dig()
         end
         if goBack then
             turtle.turnRight()
@@ -56,7 +56,9 @@ function dig(side, goBack)
     end
 end
 
-function quarry(dist, lengthSet)
+local function quarry(dist, lengthSet)
+
+    modem = peripheral.find("modem")
 
     term.clear()
     term.setCursorPos(1,1)
@@ -66,9 +68,18 @@ function quarry(dist, lengthSet)
     term.setCursorPos(1,3)
     term.write("column: "..1)
 
+    if modem then
+        modem.transmit(100,1,{depth=1,row=1,column=1})
+    end
+
+    local depthLast, rowLast, columnLast
+    
     for depth = 1, dist do -- dist
+        depthLast = depth
         for row = 1, 1+lengthSet do -- row
+            rowLast = row
             for column = 1, lengthSet do -- column
+                columnLast = column
             --SIMPLE VERS, NEEDS UPDATE TO USE GPS
                 turtle.dig()
                 turtle.forward()
@@ -76,6 +87,10 @@ function quarry(dist, lengthSet)
                 term.setCursorPos(1, 3) --var tracker
                 term.clearLine()
                 term.write("column: "..column)
+                
+                if modem then
+                    modem.transmit(100,1,{depth=depthLast, row=rowLast, column=columnLast})
+                end
             end
 
             if doTurn == turtle.turnLeft or doTurn == nil then
@@ -92,31 +107,40 @@ function quarry(dist, lengthSet)
             term.setCursorPos(1, 2) --var tracker
             term.clearLine()
             term.write("row: "..row)
+            if modem then
+                modem.transmit(100,1,{depth=depthLast, row=rowLast, column=columnLast})
+            end
         end
 
-            turtle.digDown()
-            turtle.down()
-            --realign to hole
-            doTurn()
-            doTurn()
-            doTurn()
+        turtle.digDown()
+        turtle.down()
+        --realign to hole
+        doTurn()
+        doTurn()
+        doTurn()
 
-            term.setCursorPos(1, 1) --var tracker
-            term.clearLine()
-            term.write("depth: "..depth)
+        term.setCursorPos(1, 1) --var tracker
+        term.clearLine()
+        term.write("depth: "..depth)
+        if modem then
+            modem.transmit(100,1,{depth=depthLast, row=rowLast, column=columnLast})
+        end
 
     end
 
     for depth = 1, dist do
+        if turtle.detectUp() then
+            turtle.digUp()
+        end
         turtle.up()
-    end 
+    end
 
     return true
 end
 
 
 
-function tree()
+local function tree()
     if turtle.detect() then
         turtle.dig()
         turtle.forward()
@@ -140,11 +164,10 @@ function tree()
     end
 end
 
-return {
+dwarf = {
     dig = dig,
-    dwarf = {
-        dig = dig,
-        tree = tree,
-        quarry = quarry
-    }
+    tree = tree,
+    quarry = quarry
 }
+
+return dwarf

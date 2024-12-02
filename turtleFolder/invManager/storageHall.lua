@@ -211,7 +211,7 @@ function checkForBounds(reverse)
         local move = "forward"
         local direction = 1
 
-        --[[
+        ---[[
         print("step: "..step)
         print("currPos: "..currPos)
         print("start: "..startPos)
@@ -226,6 +226,7 @@ function checkForBounds(reverse)
                 settings.set("sys.storage.endPos", currPos)
                 endPos = currPos
                 if reverse == nil then
+                    print("Movement Stopped, at end")
                     return false
                 end
             end
@@ -243,8 +244,8 @@ function checkForBounds(reverse)
 
         if currPos == startPos and reverse then
             --At start, dont go back
+            print("At start, dont go back")
             return false
-    
         elseif currPos < startPos then
             --we are BEFORE the start. Bad.
             error("Currently before the start pos. Shall decide later if this error stays, or if it will move forward.")
@@ -252,8 +253,9 @@ function checkForBounds(reverse)
 
         if endPos > -1 then
             if currPos == endPos and not reverse then
+                print("At end, dont pass")
                 --At the end, dont continue
-                    return false
+                return false
 
             elseif currPos > endPos then
                 --we are AFTER the end. Bad.
@@ -272,14 +274,17 @@ function checkForBounds(reverse)
         if turtle[move]() then
             step = step - 1 --i think?
             currPos = currPos + direction
-            
+            print("Moved")
             settings.set("sys.storage.currPos",currPos)
         else
+            print("move() failed, stopping")
             --stop trying to move??
             return false
         end
     end
-end
+end    
+
+
 
 function inspectStorage(details)
     --Rescans entire storage, updates the current data.
@@ -289,7 +294,7 @@ function inspectStorage(details)
     --[[
     local step = settings.get("sys.storage.step")
     if step > 1 then
-        local trapCounter = true
+        local trapCounter = trueterm.clearLine()
         local moveDist = step
     end
     ]]
@@ -300,34 +305,33 @@ function inspectStorage(details)
     end
 
     local itemData = {}
-    if shape == "hall" then
-        --collect chest inventories. If no chest where there should be, 
-        --and we have some, place em
-        --Length detector
-        
-        local chestNumber = 1
 
-        while true do
-
-            for key,chestDir in pairs(chestSides) do
-
-                if turtle.detect() == nil then; turtle.place(); end
-                chestData, itemData[chestNumber] = scan(chestDir)
-                if chest then; append = "ar"; else append = "w"; end
-
-                local storageData = fs.open("storageData/chest"..chestNumber,append)
-                local temp = textutils.serialize(chestData)
-                storageData.write("return "..temp)
-                storageData.close()
-                print("Chest complete: "..chestNumber)
-                chestNumber = chestNumber+1
-            end
-
-            if false == checkForBounds() then; break; else; end
-        end
+    --collect chest inventories. If no chest where there should be, 
+    --and we have some, place em
+    --Length detector
     
-    end        
-        
+    local chestNumber = 1
+
+    while true do
+
+        for key,chestDir in pairs(chestSides) do
+
+            if turtle.detect() == nil then; turtle.place(); end
+            chestData, itemData[chestNumber] = scan(chestDir)
+            if chest then; append = "ar"; else append = "w"; end
+
+            local storageData = fs.open("storageData/chest"..chestNumber,append)
+            local temp = textutils.serialize(chestData)
+            storageData.write("return "..temp)
+            storageData.close()
+            print("Chest complete: "..chestNumber)
+            chestNumber = chestNumber+1
+        end
+
+        if false == checkForBounds() then; break; else; end
+    end
+
+    
     --sleep(0) ?
 
     

@@ -357,6 +357,8 @@ function detectSystem(printBool)
     return adv, terminal, modname, printMsg
 end
 
+function nop(input) return input end
+
 --Setup an alias list here..
 --like table.append = table.insert
 --BECAUSE YOU KEEP TRYING TO USE THE DUMB THINGS XD

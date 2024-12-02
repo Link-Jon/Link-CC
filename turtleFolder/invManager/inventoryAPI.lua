@@ -76,17 +76,12 @@ function mergeItemData(itemData, totalItems)
     local totalItems = {}
     
     for chests = 1,#itemData do
-        term.setCursorPos(10,8)
-        term.clearLine()
+
         local chestPercent = chests/#itemData*100
-        term.write(chestPercent.."% chests")
+
         
         for slots = 1,#itemData[chests] do
-            term.setCursorPos(10, 10)
-            term.clearLine()
             local slotPercent = slots/#itemData[chests]*100
-            term.write(slotPercent.."% slots")
-    
             local name = itemData[chests][slots].name
             local count = itemData[chests][slots].count
 

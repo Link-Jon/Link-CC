@@ -62,29 +62,50 @@ local vsync = 6
 local hsync = 5
 
 --request button
-next, id = ui.define({
+hsync, id = ui.define({
     id = "request", type = "button", 
-    text = "request", pos = {vsync, hsync},
+    text = "request", pos = {hsync, vsync},
 
-    action = ui.itemMenu, 
+    action = ui.itemMenu,
+    near = {id = "request", right = "scan"}
 })
 --{5,BL},"request", {id= "request", right = "scan"}, ui.itemMenu)
 
 --seperator left
-next, id = ui.define.reusable({})
+hsync, id = ui.define({
+    id = "seperator", type = "both",
+    text = " | ", pos = { left = {hsync, vsync}}
+})
 --"seperator", " | ",{left = {next, BL}}, "left")
 
 --scan button
-next, id = ui.define.button()
+hsync, id = ui.define({
+    id = "scan", type = "button"
+    text = "rescan", pos = {hsync, vsync}
+
+    action = inspectStorage,
+    near = {id = "scan", left = "request", right = "init"}
+})
 --{next, BL},"rescan", {id= "scan", left = "request", right = "init"}, inspectStorage)
 
 --seperator right
-next, id = ui.define.reusable()
+hsync, id = ui.define({
+    id = "seperator", type = "pos",
+    pos = {right = {hsync, vsync}
+})
 --"seperator", nil, {right = {next, BL}}, "right")
 
 --init button
-next, id = ui.define.button()
+hsync, id = ui.define({)) to}}
+    id = "init", type = "button",
+    text = "init", pos = {hsync, vsync},
+
+    action = ui.initPrep,
+    near = {id = "init", left = "scan"}
+})
 --{next, BL}, "init", {id= "init", left = "scan"}, ui.initPrep)
+
+--------
 
 --next = ui.text({next, BL}," | ")
 --actually, lemmie just make this a second row...

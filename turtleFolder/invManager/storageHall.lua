@@ -185,6 +185,7 @@ function initStorage(detectMethod, chestLayout, trapped)
         error("Detection method: "..detectMethod[1])
     end
 
+    settings.save()
     inspectStorage("first run")
 
 end
@@ -341,14 +342,21 @@ function inspectStorage(details)
             function()
                 --merge and save data
                 local combinedItems = mergeItemData(itemData)
-                term.setCursorPos(1,12)
-                print("Merged successful")
-                combinedItems = textutils.serialize(combinedItems)
+                local serialCombinedItems = textutils.serialize(combinedItems)
+                local nameList = {}
+                local i = 1
+                for key,value in pairs(combinedItems) do
+                    nameList[i] = key
+                    print(key)
+                    i = i + 1
+                end
+                nameList = textutils.serialise(nameList)
                 local temp = fs.open("storageData/total","w")
-                temp.write("return "..combinedItems)
+                temp.write("mainList = "..serialCombinedItems.."\n")
+                temp.write("nameList = "..nameList.."\n")
+                temp.write("return {mainList, nameList}")
                 temp.close()
                 print("Scan data saved.")
-
             end,
             function()
                 --return to start of hall
@@ -365,8 +373,10 @@ function inspectStorage(details)
         local i = 1
         for key,value in pairs(combinedItems) do
             nameList[i] = key
+            print(key)
             i = i + 1
         end
+        nameList = textutils.serialise(nameList)
         local temp = fs.open("storageData/total","w")
         temp.write("return "..combinedItems..", "..nameList)
         temp.close()

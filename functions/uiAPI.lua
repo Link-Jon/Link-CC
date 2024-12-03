@@ -18,8 +18,6 @@ settings.define("sys.storage.ui.selected", {
 })--this probably wont be used much except as a backup
 
 allText = {}
-allButtons = {}
-reusableText = {}
 textStyle = "default"
 
 function ui.test()
@@ -85,20 +83,130 @@ end
 
 --Oh great.
 --My old code is annoying me so bad, i made these seperators, and
--- am about to unify ALL my ui.define and ui.draw functions.
+--Iam about to unify ALL my ui.define and ui.draw functions.
 --Once again i say, i am the most annoying person i know lol
 
 
-function ui.define.text(location, text, id, style)
+-------ui.define-------
 
-    if not text then
-        text = id
+--[[
+id = {
+    id = id,
+    type = "button" || "text" || "scrPos" || "rawText" 
+    text = "string"
+    pos = {x, y} or "pos name"
+    action = function()
+    near = {up = nil, down = nil, left = nil, right = nil}
+    }
+]]
+--next = {x,y} or "pos name"
+function ui.define.text(id, next)
+
+    --this does not seem nessicary.
+    --why did i jsut do this?
+    local textID = id.id
+    local type = id.type
+    local text = id.text
+    local pos = id.pos
+
+
+    if id.type == "text" then
+        
+    
+
+        if not text then
+            text = id
+        end
+        allText[id] = {location = location, id = id, text = text}
+        local endPos = location[1] + #text
+
+
+--function reusable(id, text, posList, nextInput)
+    
+    --if scrPos, save id.pos
+    --if rawText, save id.text
+    --if both, save both seperately?
+        --do not replace 'text' with both, thanks. ~past Link
+
+    elseif id.type == "scrPos" or id.type == "rawText" then
+        if allText[id] then
+            id = allText[id]
+            --if theres more positions to add to the list, do it now
+            if posList then
+                for key,value in pairs(posList) do
+                    if id["pos"][key] ~= nil then
+                        printError("id = "..id.."; key = "..key.."; Saved Value = "..id["pos"][key])
+                        error("location allText[id][key] is not nil!")
+                    end
+
+                    id["pos"][key] = value
+                end
+            end
+
+            --all the below must be done after defining new positions, 
+            --as we may (probably) be trying to call them
+
+            --Text is already defined, we can instead use this to be a nicer way of using
+            --'nextInput'
+            if text ~= nil then
+                nextInput = text
+            end
+            
+            --uses 'nextInput' to return a 'next' value like the other
+            --text define/draw functions...
+            if nextInput then
+                next = id["pos"][nextInput][1]
+                next = next+#id.text
+            end
+
+            return next
+        else
+            allText[id] = {
+                id = id,
+                text = text,
+                pos = pos
+            }
+            if nextInput then
+                id = allText[id]
+                next = id["pos"][nextInput][1]
+            next = next+#id.text
+            end
+            return next, id
+            
+        end
+
+
+--function button(startPos, text, near, action, key)
+    elseif id.type == "button" then
+        local id = near.id
+        if not allText[id] then
+            allText[id] = {id = near.id}
+            allText[id].text = text
+            allText[id].pos = startPos
+            allText[id].near = near
+            if type(action) == "function" then
+                allText[id].action = action
+            elseif action == nil then
+                action = function(); print("Button not setup"); end
+            end
+
+            local endPos = startPos[1] + #text
+            return endPos, id
+        else
+            vprint("Attempted to redefine button "..id)
+            return 0, "false"
+        end
+        --else if key do function on that key press?
+
     end
-    allText[id] = {location = location, id = id, text = text}
-    local endPos = location[1] + #text
-    return endPos, id
 end
 
+
+--------ui.draw--------
+
+
+--id = text id
+--location = {x,y}
 function ui.draw.text(id, location)
 
     local text = allText[id]
@@ -116,57 +224,10 @@ function ui.draw.text(id, location)
     return endPos
 end
 
-function ui.define.reusable(id, text, posList, nextInput)
-    
-    if reusableText[id] then
-        id = reusableText[id]
-        --if theres more positions to add to the list, do it now
-        if posList then
-            for key,value in pairs(posList) do
-                if id["posList"][key] ~= nil then
-                    printError("id = "..id.."; key = "..key.."; Saved Value = "..id["posList"][key])
-                    error("location reusableText[id][key] is not nil!")
-                end
-
-                id["posList"][key] = value
-            end
-        end
-
-        --all the below must be done after defining new positions, 
-        --as we may (probably) be trying to call them
-
-        --Text is already defined, we can instead use this to be a nicer way of using
-        --'nextInput'
-        if text ~= nil then
-            nextInput = text
-        end
-        
-        --uses 'nextInput' to return a 'next' value like the other
-        --text define/draw functions...
-        if nextInput then
-            next = id["posList"][nextInput][1]
-            next = next+#id.text
-        end
-
-        return next
-    else
-        reusableText[id] = {
-            id = id,
-            text = text,
-            posList = posList
-        }
-        if nextInput then
-            id = reusableText[id]
-            next = id["posList"][nextInput][1]
-        next = next+#id.text
-        end
-        return next, id
-        
-    end
-end
-
+--id = text id
+--location = "location name"
 function ui.draw.reusable(id, location)
-    local text = reusableText[id]
+    local text = allText[id]
     local loc = text.posList[location]
 
     term.setCursorPos(loc[1],loc[2])
@@ -177,52 +238,6 @@ function ui.draw.reusable(id, location)
 end
 
 
-function ui.define.button(startPos, text, near, action, key)
-    
-
-    term.clear()
-    term.setCursorPos(1,1)
-
-    local id = near.id
-    if not allButtons[id] then
-        allButtons[id] = {id = near.id}
-        allButtons[id].text = text
-        allButtons[id].pos = startPos
-        allButtons[id].near = near
-        if type(action) == "function" then
-            allButtons[id].action = action
-        elseif action == nil then
-            action = function()
-                        print("Button not setup")
-                    end
-            --[[
-            ui.define.text(startPos,id,text)
-            allButtons[id] = nil
-            return endPos,id, "text"
-            vprint("No valid function defined for button "..id)
-            vprint("Probably fine in a dev environment.")
-            vprint("Garrenteed bug if it is not, open an issue if so.")
-
-            vprint("...also you've no idea how much time i made myself waste")
-            vprint("by redefining non-function buttons to text...")
-        else
-            print(type(action))
-            error("Action must be a single function or nil")
-            do something like...
-            function(); return function(with, args); end
-        ]]
-        end
-
-        local endPos = startPos[1] + #text
-        return endPos, id
-    else
-        vprint("Attempted to redefine button "..id)
-        return 0, "false"
-    end
-    --else if key do function on that key press?
-
-end
-
 function ui.draw.button(buttonID, selected)
     
     selected = settings.get("sys.storage.ui.selected")
@@ -231,8 +246,8 @@ function ui.draw.button(buttonID, selected)
     else
         selected = false
     end
-    local text = allButtons[buttonID].text
-    local startPos = allButtons[buttonID].pos
+    local text = allText[buttonID].text
+    local startPos = allText[buttonID].pos
 
     if selected then
         currStyle = "blink"
@@ -252,6 +267,21 @@ function ui.draw.button(buttonID, selected)
 end
 
 
+
+function ui.define.page(name,desc,text,buttons)
+    --Makes a 'page' using the name + description,
+    --and letting the user select the buttons
+
+    errcheck(name,"string",nil,true)
+    if errcheck(desc,"string") then; desc = {desc}; end
+    errcheck(desc,"table",nil,true)
+
+    term.clear()
+end
+
+function ui.draw.page(name, redraw)
+
+end
 
 --===================--
 ---End text handlers---
@@ -304,7 +334,7 @@ function ui.selector(buttonID, selectCoroutine)
     end
 
     
-    local buttonData = allButtons[buttonID]
+    local buttonData = allText[buttonID]
     local nearButtons = buttonData.near
     term.setCursorPos(1,13)
     write(buttonID)
@@ -327,29 +357,29 @@ function ui.selector(buttonID, selectCoroutine)
         settings.set("sys.storage.ui.selected", nearButtons.up)
         selectedButton = nearButtons.up
         buttonID = nearButtons.up
-        buttonData = allButtons[buttonID]
-        nearButtons = allButtons[buttonID].near
+        buttonData = allText[buttonID]
+        nearButtons = allText[buttonID].near
 
     elseif (input == keys.s or input == keys.down) and nearButtons.down ~= nil then
         settings.set("sys.storage.ui.selected", nearButtons.down)
         selectedButton = nearButtons.down
         buttonID = nearButtons.down
-        buttonData = allButtons[buttonID]
-        nearButtons = allButtons[buttonID].near
+        buttonData = allText[buttonID]
+        nearButtons = allText[buttonID].near
 
     elseif (input == keys.a or input == keys.left) and nearButtons.left ~= nil then
         settings.set("sys.storage.ui.selected", nearButtons.left)
         selectedButton = nearButtons.left
         buttonID = nearButtons.left
-        buttonData = allButtons[buttonID]
-        nearButtons = allButtons[buttonID].near
+        buttonData = allText[buttonID]
+        nearButtons = allText[buttonID].near
 
     elseif (input == keys.d or input == keys.right) and nearButtons.right ~= nil then
         settings.set("sys.storage.ui.selected", nearButtons.right)
         selectedButton = nearButtons.right
         buttonID = nearButtons.right
-        buttonData = allButtons[buttonID]
-        nearButtons = allButtons[buttonID].near
+        buttonData = allText[buttonID]
+        nearButtons = allText[buttonID].near
 
     elseif input == keys.backspace then
         local currMenu = settings.get("sys.storage.ui.menu")
@@ -375,7 +405,7 @@ function ui.highlightSelected(buttonID)
             buttonID = settings.get("sys.storage.ui.selected")
             sleep(0.5)
         elseif buttonID ~= "none" then
-            buttonData = allButtons[buttonID]
+            buttonData = allText[buttonID]
             
             
             ui.style.highlight()
@@ -396,21 +426,6 @@ function ui.highlightSelected(buttonID)
 end]]
 
 
-
-function ui.define.page(name,desc,text,buttons)
-    --Makes a 'page' using the name + description,
-    --and letting the user select the buttons
-
-    errcheck(name,"string",nil,true)
-    if errcheck(desc,"string") then; desc = {desc}; end
-    errcheck(desc,"table",nil,true)
-
-    term.clear()
-end
-
-function ui.draw.page(name, redraw)
-
-end
 
 function ui.itemMenu()
     local itemData = require("storageData/total")

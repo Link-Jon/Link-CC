@@ -54,18 +54,37 @@ ui.define.text({3,2},"Welcome! What would you like to do?","welcomemsg")
 ui.draw.text("welcomemsg")
 --write("request items; scan inventory; re-init; help\n")
 
-local BL = 6 --BL, button line
+--Im 99% sure my use is not the same
+--as normal v/h sync, but
+--these two keep track of current cursor pos
+--to help in locating the next screen object  
+local vsync = 6 
+local hsync = 5
 
 --request button
-next, id = ui.define.button({5,BL},"request", {id= "request", right = "scan"}, ui.itemMenu)
+next, id = ui.define({
+    id = "request", type = "button", 
+    text = "request", pos = {vsync, hsync},
+
+    action = ui.itemMenu, 
+})
+--{5,BL},"request", {id= "request", right = "scan"}, ui.itemMenu)
+
 --seperator left
-next, id = ui.define.reusable("seperator", " | ",{left = {next, BL}}, "left")
+next, id = ui.define.reusable({})
+--"seperator", " | ",{left = {next, BL}}, "left")
+
 --scan button
-next, id = ui.define.button({next, BL},"rescan", {id= "scan", left = "request", right = "init"}, inspectStorage)
+next, id = ui.define.button()
+--{next, BL},"rescan", {id= "scan", left = "request", right = "init"}, inspectStorage)
+
 --seperator right
-next, id = ui.define.reusable("seperator", nil, {right = {next, BL}}, "right")
+next, id = ui.define.reusable()
+--"seperator", nil, {right = {next, BL}}, "right")
+
 --init button
-next, id = ui.define.button({next, BL}, "init", {id= "init", left = "scan"}, ui.initPrep)
+next, id = ui.define.button()
+--{next, BL}, "init", {id= "init", left = "scan"}, ui.initPrep)
 
 --next = ui.text({next, BL}," | ")
 --actually, lemmie just make this a second row...

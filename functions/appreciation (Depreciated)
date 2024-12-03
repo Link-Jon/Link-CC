@@ -77,42 +77,89 @@ end
 
 checkForBounds old thingy
 --[[
-        if method == "totalLength" then
-            local axis = settings.get("sys.storage.detection.axis")
-            local currPos = getLocation(axis)
-            local start = settings.get("sys.storage.detection.startPos")
-            local length = settings.get("sys.storage.detection.totalLength")
+if method == "totalLength" then
+    local axis = settings.get("sys.storage.detection.axis")
+    local currPos = getLocation(axis)
+    local start = settings.get("sys.storage.detection.startPos")
+    local length = settings.get("sys.storage.detection.totalLength")
 
-            
-            --print("axis: "..axis)
-            --print("currPos: "..currPos)
-            --print("start: "..start)
-            --print("length: "..length)
-            --sleep(2)
+    
+    --print("axis: "..axis)
+    --print("currPos: "..currPos)
+    --print("start: "..start)
+    --print("length: "..length)
+    --sleep(2)
 
-            --ahh..... how nice.
-            --This doesnt work because the gps inside moveAPI doesnt work
-            --Well atleast it makes sense. and will probably be easier to
-            --fix... i hope. we will see later.
-            
+    --ahh..... how nice.
+    --This doesnt work because the gps inside moveAPI doesnt work
+    --Well atleast it makes sense. and will probably be easier to
+    --fix... i hope. we will see later.
+    
 
-            if currPos == start and move =="back" or currPos == length and move == "forward" then
-                --if trying to go out of bounds...
-                --if not obvious, start must ALLWAYS be lower than length    
-                return false
-                
-            elseif currPos < start or currPos > length then
-                print("currPos: "..currPos.." || start: "..start.." || length: "..length)
-                print("Warning. Out of bounds.")
-                print("Currently turtle cannot fix itself, please help")
-                error("Please place turtle back at the start location")
-                return false
-            else
-                if turtle[move]() then
-                    --i think?
-                    step = step - 1
-                else
-                    --stop trying to move??
-                    return false 
-                end
-            end]]
+    if currPos == start and move =="back" or currPos == length and move == "forward" then
+        --if trying to go out of bounds...
+        --if not obvious, start must ALLWAYS be lower than length    
+        return false
+        
+    elseif currPos < start or currPos > length then
+        print("currPos: "..currPos.." || start: "..start.." || length: "..length)
+        print("Warning. Out of bounds.")
+        print("Currently turtle cannot fix itself, please help")
+        error("Please place turtle back at the start location")
+        return false
+    else
+        if turtle[move]() then
+            --i think?
+            step = step - 1
+        else
+            --stop trying to move??
+            return false 
+        end
+    end]]
+
+function ui.define.button(startPos, text, near, action, key)
+    
+
+    --button
+    term.clear()
+    term.setCursorPos(1,1)
+
+    local id = near.id
+    if not allButtons[id] then
+        allButtons[id] = {id = near.id}
+        allButtons[id].text = text
+        allButtons[id].pos = startPos
+        allButtons[id].near = near
+        if type(action) == "function" then
+            allButtons[id].action = action
+        elseif action == nil then
+            action = function()
+                        print("Button not setup")
+                    end
+            --[[
+            ui.define.text(startPos,id,text)
+            allButtons[id] = nil
+            return endPos,id, "text"
+            vprint("No valid function defined for button "..id)
+            vprint("Probably fine in a dev environment.")
+            vprint("Garrenteed bug if it is not, open an issue if so.")
+
+            vprint("...also you've no idea how much time i made myself waste")
+            vprint("by redefining non-function buttons to text...")
+        else
+            print(type(action))
+            error("Action must be a single function or nil")
+            do something like...
+            function(); return function(with, args); end
+        ]]
+        end
+
+        local endPos = startPos[1] + #text
+        return endPos, id
+    else
+        vprint("Attempted to redefine button "..id)
+        return 0, "false"
+    end
+    --else if key do function on that key press?
+
+end

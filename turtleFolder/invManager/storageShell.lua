@@ -61,7 +61,7 @@ next, id = ui.define.button({5,BL},"request", {id= "request", right = "scan"}, u
 --seperator left
 next, id = ui.define.reusable("seperator", " | ",{left = {next, BL}}, "left")
 --scan button
-next, id = ui.define.button({next, BL},"scan", {id= "scan", left = "request", right = "init"}, inspectStorage)
+next, id = ui.define.button({next, BL},"rescan", {id= "scan", left = "request", right = "init"}, inspectStorage)
 --seperator right
 next, id = ui.define.reusable("seperator", nil, {right = {next, BL}}, "right")
 --init button

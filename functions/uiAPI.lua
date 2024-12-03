@@ -78,6 +78,17 @@ function ui.style.default(location, text)
     end]]
 end
 
+
+--===================--
+-----Text handlers-----
+--===================--
+
+--Oh great.
+--My old code is annoying me so bad, i made these seperators, and
+-- am about to unify ALL my ui.define and ui.draw functions.
+--Once again i say, i am the most annoying person i know lol
+
+
 function ui.define.text(location, text, id, style)
 
     if not text then
@@ -166,34 +177,6 @@ function ui.draw.reusable(id, location)
 end
 
 
---settings.set("sys.storage.ui.buttons")
---require("keys")
-
-function ui.center(middle, text, right)
-
-    local median = table.length(text)
-
-    if type(middle) == table then
-        middle = middle[1]
-    end
-    --to find the start location...
-    --i need to go half text to the left of the midpoint
-        middle = middle - median/2
-
-    if middle < 1 then 
-        return false, "text too big"
-    else
-        return middle
-    end
-
-    
-end
-
---startpos = {x,y}
---id = "{"id","text"} --text = "string"
---near = {left = button, right = button ...}
---action = function()
---key = "string" for keys[string] or keys.abc
 function ui.define.button(startPos, text, near, action, key)
     
 
@@ -267,6 +250,41 @@ function ui.draw.button(buttonID, selected)
     return endPos
 
 end
+
+
+
+--===================--
+---End text handlers---
+--===================--
+
+--settings.set("sys.storage.ui.buttons")
+--require("keys")
+
+function ui.center(middle, text, right)
+
+    local median = table.length(text)
+
+    if type(middle) == table then
+        middle = middle[1]
+    end
+    --to find the start location...
+    --i need to go half text to the left of the midpoint
+        middle = middle - median/2
+
+    if middle < 1 then 
+        return false, "text too big"
+    else
+        return middle
+    end
+
+    
+end
+
+--startpos = {x,y}
+--id = "{"id","text"} --text = "string"
+--near = {left = button, right = button ...}
+--action = function()
+--key = "string" for keys[string] or keys.abc
 
 function ui.selector(buttonID, selectCoroutine)
     --should probably be run explicitly as a coroutine
@@ -433,7 +451,7 @@ function ui.itemMenu()
             if indexPosition + 10 > #itemList then
                 indexPosition = 1
             else
-                indexPosition = indexPosition + 10
+                indexPosition = indexPosition + 10  
             end
         end
 
@@ -450,10 +468,19 @@ function ui.itemMenu()
                 down = nameList[i-1]
             else
                 up = nameList[i+1]
-                down = nameList[i-1]
+                down = nameList[i-1]        
             end
 
-            local next = ui.define.button({1,i}, nameList[i], itemList[nameList[i].count], {requestMenuItem, nameList[i], itemList[nameList[i]].count})
+            local id = {id = itemList[nameList[i]], up = itemList[nameList[i+1]], down = itemList[nameList[i-1]]}
+
+            if id.up == nil then
+                id.up = itemList[nameList[i]]
+            elseif id.down == nil then
+                id.down = itemList[nameList[i]]
+            end
+
+            --dunno how i want to be doing this...
+            local next = ui.define.button({1,i}, nameList[i], {}, {requestMenuItem, nameList[i], itemList[nameList[i]].count})
             
             --itemcount button
             next = ui.define.button({next,i}, nameList[i].."Count", itemList[nameList[i]].count)

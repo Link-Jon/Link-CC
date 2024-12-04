@@ -173,6 +173,7 @@ function play(filename, httpURL, printout)
         chunk = openFile.read(16*1024)
         buffer = decoder(chunk)
 
+        print(iter)
         while not speaker.playAudio(buffer) do
             os.pullEvent("speaker_audio_empty")
         end

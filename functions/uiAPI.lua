@@ -1,5 +1,19 @@
 require("logic")
 
+--also btw, i would like to have a
+--uiEdittor, that allows someone to craft a ui 
+--without much knowledge of lua or cc
+
+--the hardest part will actually be allowing them 
+--to have a menu inside of a menu... at all.
+--as my current idea basically splits the screen in two
+--there will be an editting toolbar that takes up
+--the last three rows of the screen,
+--and a button that can make the toolbar switch to the top
+--(or come back down)
+--toolbar actually does the editting to the selected element
+
+
 revKeys = {}
 for key,value in pairs(keys) do
     revKeys[value] = key
@@ -17,7 +31,24 @@ settings.define("sys.storage.ui.selected", {
     type = "string"
 })--this probably wont be used much except as a backup
 
-allText = {}
+
+posData = {}
+textData = {}
+buttonData = {}
+
+--i need a real format for saving data.
+--[[
+scrData = {
+    pos = {
+        id = {pos,data}
+    }
+    text = {
+        id = {textdata}
+    }
+}
+
+]]
+
 textStyle = "default"
 
 function ui.test()
@@ -88,182 +119,146 @@ end
 
 
 -------ui.define-------
-
 --[[
 id = {
-    id = id,
-    type = "button" || "text" || "scrPos" || "rawText" 
+    id = "stringID",
+
+    pos = {x, y} or "pos name" or {name = {x,y}, name1 = {x1,y1}, ect}
+    
     text = "string"
-    pos = {x, y} or "pos name"
+    style = "style format"
+
     action = function()
     near = {up = nil, down = nil, left = nil, right = nil}
     }
+
 ]]
+
 --next = {x,y} or "pos name"
-function ui.define.text(id, next)
+function ui.define(id, next)
 
-    --this does not seem nessicary.
-    --why did i jsut do this?
     local textID = id.id
-    local type = id.type
-    local text = id.text
-    local pos = id.pos
 
+    if scrData[id] then
+        vprint("Warning, redefining textID: "..textID)
+    end
 
-    if id.type == "text" then
-        
-    
-
-        if not text then
-            text = id
-        end
-        allText[id] = {location = location, id = id, text = text}
-        local endPos = location[1] + #text
-
-
---function reusable(id, text, posList, nextInput)
-    
-    --if scrPos, save id.pos
-    --if rawText, save id.text
-    --if both, save both seperately?
-        --do not replace 'text' with both, thanks. ~past Link
-
-    elseif id.type == "scrPos" or id.type == "rawText" then
-        if allText[id] then
-            id = allText[id]
-            --if theres more positions to add to the list, do it now
-            if posList then
-                for key,value in pairs(posList) do
-                    if id["pos"][key] ~= nil then
-                        printError("id = "..id.."; key = "..key.."; Saved Value = "..id["pos"][key])
-                        error("location allText[id][key] is not nil!")
-                    end
-
-                    id["pos"][key] = value
-                end
-            end
-
-            --all the below must be done after defining new positions, 
-            --as we may (probably) be trying to call them
-
-            --Text is already defined, we can instead use this to be a nicer way of using
-            --'nextInput'
-            if text ~= nil then
-                nextInput = text
-            end
-            
-            --uses 'nextInput' to return a 'next' value like the other
-            --text define/draw functions...
-            if nextInput then
-                next = id["pos"][nextInput][1]
-                next = next+#id.text
-            end
-
-            return next
+    --If given position data..
+    if id.pos then
+        if not posData[textID] then
+            posData[textID] = id.pos
         else
-            allText[id] = {
-                id = id,
-                text = text,
-                pos = pos
-            }
-            if nextInput then
-                id = allText[id]
-                next = id["pos"][nextInput][1]
-            next = next+#id.text
-            end
-            return next, id
             
+                --printError("Error saving "..value)
+            --printError("id = "..id.."; key = "..key.."; Saved Value = "..scrData.pos[textID][key])
+            --error("location scrData[id][key] is not nil!")
+
+            -- FIND A WAY TO SAVE MULTIPLE POSITIONS AT A TIME
+            posData[textID] = id.pos            
         end
 
+        if not next then; next = id.pos[1]; end --Prep for next
+    end
 
---function button(startPos, text, near, action, key)
-    elseif id.type == "button" then
-        local id = near.id
-        if not allText[id] then
-            allText[id] = {id = near.id}
-            allText[id].text = text
-            allText[id].pos = startPos
-            allText[id].near = near
-            if type(action) == "function" then
-                allText[id].action = action
-            elseif action == nil then
-                action = function(); print("Button not setup"); end
-            end
+    --If given text data...
+    if id.text then
+        if not id.style then ; 
+            id.style = "default"; 
+        end --Set Style
 
-            local endPos = startPos[1] + #text
-            return endPos, id
+        textData[textID] = {text = id.text, style = id.style}
+    end
+
+    if id.near or id.action then
+        if not id.style then; id.style = "button"; end --Set Style
+        buttonData[textID] = {id = textID,}
+
+        if not id.near then --Enforce id.near
+            id.near = {id = textID} 
+            vprint(textID.." has no id.near!")
+        end
+
+        if type(action) == "function" then --Enforce id.action
+            buttonData[textID].action = action
+        elseif action == nil then
+            action = function(); print("Button not setup"); sleep(1); end
         else
-            vprint("Attempted to redefine button "..id)
-            return 0, "false"
+            error(textID.." button's action is not a function, but also not nil")
         end
-        --else if key do function on that key press?
 
     end
+
+    --give end location
+    if id.text then; next = next+#id.text; end
+    return next
 end
 
 
 --------ui.draw--------
-
-
 --id = text id
---location = {x,y}
-function ui.draw.text(id, location)
+--location = {x,y} or location = "pos name"
+function ui.draw(textID, location)
 
-    local text = allText[id]
-    
-    if location then
-       text.location = location 
+    local id = scrData[textID]
+
+    if id.type == "text" then
+        ui.style.default()
+        term.setCursorPos(id.location[1],id.location[2])
+        term.write(id.text)
+
+        ui.style.default()
+
+        local endPos = id.location[1] + #id
+        return endPos
+
+
+    --id = text id
+    --location = "location name"
+    --function ui.draw.reusable(id, location)
+    elseif id.type == "raw" then
+        local text = scrData.raw[textID]
+        
+        local loc = location
+        if type(location) == "string" then
+            loc = scrData.pos[location]
+        end
+
+        term.setCursorPos(loc[1],loc[2])
+        term.write(id.text)
+
+        local endPos = loc[1] + #text
+        return endPos
+
+
+    --function ui.draw.button(buttonID, selected)
+    elseif id.type == "button" then
+        buttonID = id.id
+        selected = settings.get("sys.storage.ui.selected")
+
+        if selected == buttonID then
+            currStyle = "blink"
+        else
+            currStyle = false
+        end
+
+        local text = scrData[buttonID].text
+        local startPos = scrData[buttonID].pos
+
+        if selected then
+            currStyle = "blink"
+        elseif nearSelected then
+            currStyle = "highlight"
+        else
+            currStyle = "button"
+        end
+
+        ui.style[currStyle]()
+        term.setCursorPos(startPos[1],startPos[2])
+        term.write(text)
+        ui.style.default()
+        local endPos = startPos[1] + #text
+        return endPos
     end
-    ui.style.default()
-    term.setCursorPos(text.location[1],text.location[2])
-    term.write(text.text)
-
-    ui.style.default()
-
-    local endPos = text.location[1] + #text
-    return endPos
-end
-
---id = text id
---location = "location name"
-function ui.draw.reusable(id, location)
-    local text = allText[id]
-    local loc = text.posList[location]
-
-    term.setCursorPos(loc[1],loc[2])
-    term.write(text.text)
-
-    local endPos = loc[1] + #text
-    return endPos
-end
-
-
-function ui.draw.button(buttonID, selected)
-    
-    selected = settings.get("sys.storage.ui.selected")
-    if selected == buttonID then
-        selected = true
-    else
-        selected = false
-    end
-    local text = allText[buttonID].text
-    local startPos = allText[buttonID].pos
-
-    if selected then
-        currStyle = "blink"
-    elseif nearSelected then
-        currStyle = "highlight"
-    else
-        currStyle = "button"
-    end
-
-    ui.style[currStyle]()
-    term.setCursorPos(startPos[1],startPos[2])
-    term.write(text)
-    ui.style.default()
-    local endPos = startPos[1] + #text
-    return endPos
-
 end
 
 
@@ -334,7 +329,7 @@ function ui.selector(buttonID, selectCoroutine)
     end
 
     
-    local buttonData = allText[buttonID]
+    local buttonData = scrData[buttonID]
     local nearButtons = buttonData.near
     term.setCursorPos(1,13)
     write(buttonID)
@@ -357,29 +352,29 @@ function ui.selector(buttonID, selectCoroutine)
         settings.set("sys.storage.ui.selected", nearButtons.up)
         selectedButton = nearButtons.up
         buttonID = nearButtons.up
-        buttonData = allText[buttonID]
-        nearButtons = allText[buttonID].near
+        buttonData = scrData[buttonID]
+        nearButtons = scrData[buttonID].near
 
     elseif (input == keys.s or input == keys.down) and nearButtons.down ~= nil then
         settings.set("sys.storage.ui.selected", nearButtons.down)
         selectedButton = nearButtons.down
         buttonID = nearButtons.down
-        buttonData = allText[buttonID]
-        nearButtons = allText[buttonID].near
+        buttonData = scrData[buttonID]
+        nearButtons = scrData[buttonID].near
 
     elseif (input == keys.a or input == keys.left) and nearButtons.left ~= nil then
         settings.set("sys.storage.ui.selected", nearButtons.left)
         selectedButton = nearButtons.left
         buttonID = nearButtons.left
-        buttonData = allText[buttonID]
-        nearButtons = allText[buttonID].near
+        buttonData = scrData[buttonID]
+        nearButtons = scrData[buttonID].near
 
     elseif (input == keys.d or input == keys.right) and nearButtons.right ~= nil then
         settings.set("sys.storage.ui.selected", nearButtons.right)
         selectedButton = nearButtons.right
         buttonID = nearButtons.right
-        buttonData = allText[buttonID]
-        nearButtons = allText[buttonID].near
+        buttonData = scrData[buttonID]
+        nearButtons = scrData[buttonID].near
 
     elseif input == keys.backspace then
         local currMenu = settings.get("sys.storage.ui.menu")
@@ -405,7 +400,7 @@ function ui.highlightSelected(buttonID)
             buttonID = settings.get("sys.storage.ui.selected")
             sleep(0.5)
         elseif buttonID ~= "none" then
-            buttonData = allText[buttonID]
+            buttonData = scrData[buttonID]
             
             
             ui.style.highlight()

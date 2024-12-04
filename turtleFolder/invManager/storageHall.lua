@@ -49,7 +49,9 @@ require("inventoryAPI")
 
 --turtle really, REALLY should be are the start of the hall before
 --begining init.
-function initStorage(detectMethod, chestLayout, trapped)
+local storage = {}
+
+function storage.initStorage(detectMethod, chestLayout, trapped)
 
     if type(chestLayout) == "string" then
         chestLayout = {chestLayout}
@@ -186,7 +188,7 @@ function initStorage(detectMethod, chestLayout, trapped)
     end
 
     settings.save()
-    inspectStorage("first run")
+    storage.inspect("first run")
 
 end
 
@@ -195,7 +197,7 @@ end
 -- i should really make check for bounds handle movement.
 -- should take a number, and go that distance.
 --if negative go backwards.
-function checkForBounds(reverse)
+function storage.checkForBounds(reverse)
 
     local step = settings.get("sys.storage.step")
     if step == 0 then
@@ -287,7 +289,7 @@ end
 
 
 
-function inspectStorage(details)
+function storage.inspect(details)
     --Rescans entire storage, updates the current data.
     if details == "first run" then
         local chest = true
@@ -329,7 +331,7 @@ function inspectStorage(details)
             chestNumber = chestNumber+1
         end
 
-        if false == checkForBounds() then; break; else; end
+        if false == storage.checkForBounds() then; break; else; end
     end
 
     
@@ -384,7 +386,7 @@ function inspectStorage(details)
 
         --return to start of hall
         repeat
-        local temp = checkForBounds(true)
+        local temp = storage.checkForBounds(true)
         until temp == false
     end
 end
@@ -392,7 +394,7 @@ end
 --Everything above seems complete. mostly. shall see later.
 --Time to make the storage handler.
 
-function requestItem(name, count, maxcount)
+function storage.requestItem(name, count, maxcount)
 
     if type(name)=="string" then
         name = {name}
@@ -462,19 +464,67 @@ function requestItem(name, count, maxcount)
 
 end
 
-function dumpItems(slots)
+function storage.scan(side)
 
-    if not slots then
-        slots = range(1,16)
-    elseif type(slots) ~= "array" then
-        slots = {slots}
+    --local lookback = look(side)
+    --wait right i dont need to look at ALL.
+
+    local chest = peripheral.wrap(side)
+
+    if chest == nil or not type(chest) == "table" or not chest.size then; 
+        return {name = "void"}, {count = -1} 
+    end;
+
+    local itemData = chest.list()
+    local chestData = {}
+    for i = 1,chest.size() do
+        chestData[i] = {name="",count=-1}
+        if not itemData[i] then
+            chestData[i].name = "empty"
+            chestData[i].count = 0
+        else
+            chestData[i].name = itemData[i].name
+            chestData[i].count = itemData[i].count
+        end
     end
 
-    --wait did i save what items can be found in what {chests}?
-    --pretty sure no...
-    --have to add that.
-
+    return chestData, itemData
 end
+
+function mergeItemData(itemData, totalItems)
+    --merge a table of itemData, recieved from scan()
+
+    --term.clear()
+    --term.setCursorPos(1,1)
+
+    print("Merging Item Data, this may take a moment")
+    local totalItems = {}
+    
+    for chests = 1,#itemData do
+        local chestPercent = chests/#itemData*100
+        for slots = 1,#itemData[chests] do
+            local slotPercent = slots/#itemData[chests]*100
+            local name = itemData[chests][slots].name
+            local count = itemData[chests][slots].count
+
+            local chestname = "chest"..chests
+            if totalItems[name] == nil then
+                --if we havent seen this item before
+                totalItems[name] = {
+                    count = count,
+                    chests = {chests}
+                }
+            else
+                totalItems[name].count = totalItems[name].count + count
+                table.insert(totalItems[name].chests, chests)
+            end 
+        end
+    end
+    --note to self, for later, 
+    --ensure return variables are the right ones...
+    return totalItems
+end
+
 
 function resetStorageDetection()
     --do settings all default, yeah

@@ -48,10 +48,10 @@ term.clear()
 term.setCursorPos(1,1)
 
 ui.define.text({1,1},"-----------Storage Manager------------","minititle")
-ui.draw.text("minititle")
+ui.draw("minititle")
 
 ui.define.text({3,2},"Welcome! What would you like to do?","welcomemsg")
-ui.draw.text("welcomemsg")
+ui.draw("welcomemsg")
 --write("request items; scan inventory; re-init; help\n")
 
 --Im 99% sure my use is not the same
@@ -63,47 +63,61 @@ local hsync = 5
 
 --request button
 hsync, id = ui.define({
-    id = "request", type = "button", 
-    text = "request", pos = {hsync, vsync},
+    id = "request", 
+    type = "button", 
+
+    text = "request", 
+    pos = {hsync, vsync},
 
     action = ui.itemMenu,
     near = {id = "request", right = "scan"}
 })
---{5,BL},"request", {id= "request", right = "scan"}, ui.itemMenu)
+
 
 --seperator left
 hsync, id = ui.define({
-    id = "seperator", type = "both",
-    text = " | ", pos = { left = {hsync, vsync}}
+    id = "seperator", 
+    save = "both",
+
+    text = " | ", 
+    pos = { left = {hsync, vsync}}
 })
---"seperator", " | ",{left = {next, BL}}, "left")
+
 
 --scan button
 hsync, id = ui.define({
-    id = "scan", type = "button"
-    text = "rescan", pos = {hsync, vsync}
+    id = "scan", 
+    type = "button",
+
+    text = "rescan", 
+    pos = {hsync, vsync},
 
     action = inspectStorage,
     near = {id = "scan", left = "request", right = "init"}
 })
---{next, BL},"rescan", {id= "scan", left = "request", right = "init"}, inspectStorage)
+
 
 --seperator right
 hsync, id = ui.define({
-    id = "seperator", type = "pos",
-    pos = {right = {hsync, vsync}
+    id = "seperator", 
+    type = "pos",
+
+    pos = {right = {hsync, vsync}},
 })
---"seperator", nil, {right = {next, BL}}, "right")
+
 
 --init button
-hsync, id = ui.define({)) to}}
-    id = "init", type = "button",
-    text = "init", pos = {hsync, vsync},
+hsync, id = ui.define({
+    id = "init", 
+    type = "button",
+
+    text = "init", 
+    pos = {hsync, vsync},
 
     action = ui.initPrep,
     near = {id = "init", left = "scan"}
 })
---{next, BL}, "init", {id= "init", left = "scan"}, ui.initPrep)
+
 
 --------
 
@@ -117,7 +131,7 @@ loadtime = 100*(os.time() - startload)
 loadtime = math.floor(loadtime)
 loadticks = loadtime/5
 print("Load: "..loadtime.."ms  ||  "..loadticks.."ticks")
-sleep(0)
+sleep(1)
 
 
 function mainMenu(redraw)

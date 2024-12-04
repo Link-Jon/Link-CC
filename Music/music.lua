@@ -5,7 +5,8 @@
 --this entire thing is just an absolute mess
 --downvoted, opposite of eyecandy.
 
-require("musicAPI")
+
+local music = require("musicAPI")
 
 args = {...}
 filename = string.gsub(args[1]," ","_")
@@ -13,11 +14,10 @@ if fs.exists(args[1]..".dfpwm") and not fs.exists(filename..".dfpwm") then
     print(filename)
     fs.copy(args[1]..".dfpwm", filename..".dfpwm")
 end
---[[
-if not fs.exists(filename)  args[2] == nil or not string.find(filename)then
 
-    args[2] = "Link's old IP"..filename.."/"..filename..".dfpwm"
-    elseif not http.checkURL(args[2]) then
+if not fs.exists(filename) and args[2] == nil then
+    args[2] = musicIP..filename.."/"..filename..".dfpwm"
+elseif not http.checkURL(args[2]) then
     printerr("invalid URL:")
     error(args[2])
 end
@@ -28,7 +28,7 @@ end
 --]]
 
 if args[2] == "split" or args[2] == "true" then
-    splitMusic(filename, nilcheck(args[3]))
+    music.split(filename, nilcheck(args[3]))
 else
-    playMusic(filename, args[2], args[3])
+    music.play(filename, args[2], args[3])
 end

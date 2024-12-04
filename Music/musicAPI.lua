@@ -6,7 +6,7 @@
 --bit depth = loudness
 --For any case im downloading from my server,
 
-function downloadMusic(filename, userIP, direct)
+function download(filename, userIP, direct)
 
     if http.checkURL(userIP) and not direct then
         settings.set("music.IP", userIP)
@@ -65,7 +65,7 @@ function downloadMusic(filename, userIP, direct)
 
 end
 
-function splitMusic(filename)
+function split(filename)
 
     --copy source file into host folder!!!
     if string.find(filename,".dfpwm") then
@@ -89,11 +89,12 @@ function splitMusic(filename)
     return true
 end
 
-function playMusic(filename, httpURL, printout)
-    
+function play(filename, httpURL, printout)
+
     if not httpURL and settings.get("music.IP") then
         httpURL = settings.get("music.IP")
-    else
+        print("reset http")
+    elseif not httpURL then
         direct = true
         httpURL = filename
     end
@@ -127,14 +128,44 @@ function playMusic(filename, httpURL, printout)
         end
     end
 
+
+
     iter = 0
 
     local decoder = dfpwm.make_decoder()
-    
+    term.clear()
     if parallel then
-        printData = parallel.waitForAny
-    else
-        printData = print()
+        --[[
+        function printData(iter, data)
+            parallel.waitForAny(
+            function()
+                while true do
+                term.clear()
+                term.setCursorPos(1,1)
+                print("chunk: "..iter)
+                term.setCursorPos(1,2)
+                data = textutils.serialise(data)
+                data = string.gsub(data," ","")
+                print(data)
+                sleep(0.25)
+                end
+            end,
+
+            function()
+                while not speaker.playAudio(data) do
+                    os.pullEvent("speaker_audio_empty")
+                    break
+                end
+            end
+            )
+        end]]
+    else --if not parallel
+        function printData(iter, data)
+            print("chunk "..iter)
+            while not speaker.playAudio(data) do
+                os.pullEvent("speaker_audio_empty")
+            end
+        end
     end
 
     while openFile do
@@ -142,15 +173,13 @@ function playMusic(filename, httpURL, printout)
         chunk = openFile.read(16*1024)
         buffer = decoder(chunk)
 
-
         while not speaker.playAudio(buffer) do
             os.pullEvent("speaker_audio_empty")
         end
     end
 end
 
-return {music = {
-    playMusic = playMusic,
-    downloadMusic = downloadMusic,
-    splitMusic = splitMusic}
-}
+return {
+    play = play,
+    download = download,
+    split = split}

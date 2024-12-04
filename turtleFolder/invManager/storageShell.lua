@@ -1,13 +1,14 @@
+startload = os.clock()
 local args = {...}
 local modem = peripheral.wrap("modem")
 if modem then modem.open(220) end
 
 function vprint(str) do end end
     -- so vprint is a REAL function, even when not verbose.
-require("storageHall")
+storage = require("storageHall")
 
 if args[1] == "scan" then
-    inspectStorage()
+    storage.inspectStorage()
 
     function vprint(text)
         term.setTextColor(2^6)
@@ -43,14 +44,20 @@ local len = 0
 
 --Main Menu
 
-startload = os.time()
+
 term.clear()
 term.setCursorPos(1,1)
 
-ui.define.text({1,1},"-----------Storage Manager------------","minititle")
+ui.define({
+    pos = {1,1},
+    text = "-----------Storage Manager------------",
+    id = "minititle"})
 ui.draw("minititle")
 
-ui.define.text({3,2},"Welcome! What would you like to do?","welcomemsg")
+ui.define({
+    pos = {3,2},
+    text = "Welcome! What would you like to do?",
+    id = "welcomemsg"})
 ui.draw("welcomemsg")
 --write("request items; scan inventory; re-init; help\n")
 
@@ -62,11 +69,12 @@ local vsync = 6
 local hsync = 5
 
 --request button
-hsync, id = ui.define({
+hsync = ui.define({
     id = "request", 
-    type = "button", 
 
-    text = "request", 
+    text = "request",
+    style = "button",
+
     pos = {hsync, vsync},
 
     action = ui.itemMenu,
@@ -75,48 +83,54 @@ hsync, id = ui.define({
 
 
 --seperator left
-hsync, id = ui.define({
-    id = "seperator", 
-    save = "both",
+hsync = ui.define({
+    id = "sepLeft", 
 
+    style = "seperator",
     text = " | ", 
-    pos = { left = {hsync, vsync}}
+    pos = {hsync, vsync}
 })
 
 
 --scan button
-hsync, id = ui.define({
+hsync = ui.define({
     id = "scan", 
-    type = "button",
 
     text = "rescan", 
+    style = "button",
+
     pos = {hsync, vsync},
 
-    action = inspectStorage,
+    action = storage.inspectStorage,
     near = {id = "scan", left = "request", right = "init"}
 })
 
 
 --seperator right
-hsync, id = ui.define({
-    id = "seperator", 
-    type = "pos",
+hsync = ui.define({
+    id = "sepRight", 
 
-    pos = {right = {hsync, vsync}},
+    style = "seperator",
+    text = " | ",
+    pos = {hsync, vsync}
 })
 
 
 --init button
-hsync, id = ui.define({
+hsync = ui.define({
     id = "init", 
-    type = "button",
 
     text = "init", 
+    style = "button",
+
     pos = {hsync, vsync},
 
     action = ui.initPrep,
     near = {id = "init", left = "scan"}
 })
+
+
+--maybe make
 
 
 --------
@@ -127,15 +141,15 @@ hsync, id = ui.define({
 
 --next = ui.button({next, BL+2},"help", {id= "help", up = "request"}, helpShell)
 --next = ui.text({next, BL+2}," | ")
-loadtime = 100*(os.time() - startload)
-loadtime = math.floor(loadtime)
-loadticks = loadtime/5
-print("Load: "..loadtime.."ms  ||  "..loadticks.."ticks")
+term.clear()
+term.setCursorPos(1,1)
+
+loadtime = os.clock() - startload
+print("Load: "..loadtime.."ms  ||  "..(loadtime*20).."ticks")
 sleep(1)
 
 
 function mainMenu(redraw)
-
 
     --after seeing this i now see i really really need to make something to
     --just kinda... handle this. aka, make an actual api?
@@ -155,30 +169,32 @@ function mainMenu(redraw)
     end
 
     if redraw.text then
-        ui.draw.text("minititle")
-        ui.draw.text("welcomemsg")
+        ui.draw("minititle")
+        ui.draw("welcomemsg")
     end
 
     if redraw.button then
-        ui.draw.button("request")
-        ui.draw.button("scan")
-        ui.draw.button("init")
+        ui.draw("request")
+        ui.draw("scan")
+        ui.draw("init")
     end
     
     if redraw.reuse then
-        ui.draw.reusable("seperator","left")
-        ui.draw.reusable("seperator","right")
+        ui.draw("sepLeft")
+        ui.draw("sepRight")
     end
 
 end
+
+settings.set("sys.storage.ui.menu","main")
+settings.set("sys.storage.ui.selected", "request")
 
 mainMenu("all")
 
 --select = coroutine.create(ui.selector)
 --highlighter = coroutine.wrap(ui.highlightSelected)
 --highlighter()
-settings.set("sys.storage.ui.menu","main")
-settings.set("sys.storage.ui.selected", "request")
+
 while true do
     --Selects buttons, and pushes them
     

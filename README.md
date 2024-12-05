@@ -26,7 +26,8 @@ Note: if i end up doing a quick bugfix because something in master is broken, it
 
 ~ I dont want to refer to this as an OS, its not. but its also a bit more than just a library... so i dont know.
 ~~ If you need to use an event in your code, either use rawBack() (same as os.pullEventRaw()) or check the near the top of startup
-
+This is completely wrong now.
+this will need to be changed once the great organization is done.
 Use 'pastebin get 7W48dz3c install' in a CC computer and it will get the five of the 10 files: 
 startup
 http (as https)

@@ -5,7 +5,7 @@ if modem then modem.open(220) end
 
 function vprint(str) do end end
     -- so vprint is a REAL function, even when not verbose.
-storage = require("storageHall")
+local storage = require("storageHall")
 
 if args[1] == "scan" then
     storage.inspectStorage()
@@ -52,13 +52,11 @@ ui.define({
     pos = {1,1},
     text = "-----------Storage Manager------------",
     id = "minititle"})
-ui.draw("minititle")
 
 ui.define({
     pos = {3,2},
     text = "Welcome! What would you like to do?",
     id = "welcomemsg"})
-ui.draw("welcomemsg")
 --write("request items; scan inventory; re-init; help\n")
 
 --Im 99% sure my use is not the same
@@ -78,7 +76,7 @@ hsync = ui.define({
     pos = {hsync, vsync},
 
     action = ui.itemMenu,
-    near = {id = "request", right = "scan"}
+    near = {id = "request", right = "scan", down = "quit"}
 })
 
 
@@ -102,7 +100,7 @@ hsync = ui.define({
     pos = {hsync, vsync},
 
     action = storage.inspectStorage,
-    near = {id = "scan", left = "request", right = "init"}
+    near = {id = "scan", left = "request", right = "init", down = "quit"}
 })
 
 
@@ -126,13 +124,21 @@ hsync = ui.define({
     pos = {hsync, vsync},
 
     action = ui.initPrep,
-    near = {id = "init", left = "scan"}
+    near = {id = "init", left = "scan", down = "quit"}
 })
 
 
---maybe make
+ui.define({
+    id = "quit",
 
+    text = "quit",
+    style = "button",
 
+    pos = {posData["scan"][1], (vsync + 3)},
+
+    action = function(); quit = true end;
+    near = {id = "quit", up = "scan", left = "request", right = "init"}
+})
 --------
 
 --next = ui.text({next, BL}," | ")
@@ -143,13 +149,8 @@ hsync = ui.define({
 --next = ui.text({next, BL+2}," | ")
 term.clear()
 term.setCursorPos(1,1)
-
-loadtime = os.clock() - startload
-print("Load: "..loadtime.."ms  ||  "..(loadtime*20).."ticks")
-sleep(1)
-
-
 function mainMenu(redraw)
+
 
     --after seeing this i now see i really really need to make something to
     --just kinda... handle this. aka, make an actual api?
@@ -161,6 +162,7 @@ function mainMenu(redraw)
     --probllly ui.draw.redraw lol
 
     if redraw == "all" then
+        term.clear()
         redraw = {
             text = true,
             button = true,
@@ -177,6 +179,7 @@ function mainMenu(redraw)
         ui.draw("request")
         ui.draw("scan")
         ui.draw("init")
+        ui.draw("quit")
     end
     
     if redraw.reuse then
@@ -187,7 +190,7 @@ function mainMenu(redraw)
 end
 
 settings.set("sys.storage.ui.menu","main")
-settings.set("sys.storage.ui.selected", "request")
+settings.set("sys.storage.ui.selected", {id = "request", right = "scan", down = "quit"})
 
 mainMenu("all")
 
@@ -197,8 +200,21 @@ mainMenu("all")
 
 while true do
     --Selects buttons, and pushes them
-    
     ui.selector()
-    sleep(0)
-    
+
+    local menu = settings.get("sys.storage.ui.menu")
+    if menu == "main" then
+        mainMenu("all")
+    elseif menu == "requestMenu" then
+        ui.itemMenu()
+    end
+
+    if quit then; 
+        term.clear()
+        term.setCursorPos(1,1)
+        term.setTextColour(colours.white)
+        term.setBackgroundColour(colours.black)
+        break; 
+    end
+
 end

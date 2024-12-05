@@ -380,7 +380,9 @@ function storage.inspect(details)
         end
         nameList = textutils.serialise(nameList)
         local temp = fs.open("storageData/total","w")
-        temp.write("return "..combinedItems..", "..nameList)
+        temp.write("mainList = "..combinedItems.."\n")
+        temp.write("nameList = "..nameList.."\n")
+        temp.write("return mainList, nameList")
         temp.close()
         print("Scan data saved.")
 
@@ -541,8 +543,4 @@ end
 
 
 
-return {
-    inspectStorage = inspectStorage,
-    initStorage = initStorage, 
-    requestItem = requestItem
-}
+return storage

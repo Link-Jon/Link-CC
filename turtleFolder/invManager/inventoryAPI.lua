@@ -30,13 +30,19 @@ end
 
 
 
-function formatItemName()
-    print("not yet made, use exact name thank")
+function formatItemName(name)
+
+    --ill probably use tables for the names later,
+    --if i do end up with name overlap...
+    --meh
+
+    name = string.gsub(name,"%a+:","")
+    return name
 end
 
 
 return {
-    formatItemName = formatItemNamem,
+    formatItemName = formatItemName,
     mergeItemData = mergeItemData,
     search = search,
     scan = scan

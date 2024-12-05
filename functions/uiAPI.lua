@@ -1,5 +1,5 @@
 require("logic")
-
+local inv = require("inventoryAPI")
 --also btw, i would like to have a
 --uiEdittor, that allows someone to craft a ui 
 --without much knowledge of lua or cc
@@ -19,23 +19,18 @@ for key,value in pairs(keys) do
     revKeys[value] = key
 end
 
-local ui = {
-    style = {},
-    define = {},
-    draw = {}
-}
+local ui = {style = {}}
 --sigh. okay, lets go...
 
 settings.define("sys.storage.ui.selected", {
-    description = "Currently highlighted button",
-    type = "string"
+    description = "Currently highlighted button(s)",
 })--this probably wont be used much except as a backup
 
 
 posData = {}
 textData = {}
 buttonData = {}
-
+currPos = {1,1}
 
 
 textStyle = "default"
@@ -54,37 +49,21 @@ function ui.test()
     --io.read()
 end
 
-function ui.style.highlight()
-    term.setBackgroundColor(colours.black)
-    term.setTextColour(colours.yellow)
-    textStyle = "highlight"
+
+
+style ={
+    default = {colours.white, colours.black},
+    highlight = {colours.yellow, colours.black},
+    blink = {colours.orange, colours.blue},
+    button = {colours.brown, colours.black},
+    seperator = {colours.lightGrey, colours.black},
+    list = {colours.cyan, colours.black}
+}
+
+function ui.setStyle(styleset)
+    term.setTextColour(styleset[1])
+    term.setBackgroundColour(styleset[2])
 end
-
-function ui.style.blink()
-    term.setBackgroundColor(colours.lightBlue)
-    term.setTextColour(colours.orange)
-    textStyle = "blink"
-end
-
-function ui.style.button()
-    term.setTextColour(colours.brown)
-    term.setBackgroundColor(colours.black)
-    textStyle = "button"
-end
-
-function ui.style.default()
-    term.setTextColour(colours.white)
-    term.setBackgroundColor(colours.black)
-    textStyle = "default"
-end
-
-function ui.style.seperator()
-    term.setTextColour(colours.lightGrey)
-    term.setBackgroundColor(colours.black)
-    textStyle = "seperator"
-end
-
-
 --===================--
 -----Text handlers-----
 --===================--
@@ -137,11 +116,9 @@ function ui.define(id, next)
         if textData[textID] then
             vprint("Warning, redefining textID: "..textID)
         end
-        if not id.style then ; 
-            id.style = "default"; 
-        end --Set Style
 
-        textData[textID] = {text = id.text, style = id.style}
+        textData[textID] = {text = id.text}
+        if id.style then; textData[textID].style = id.style; end
     end
 
     if id.near or id.action then
@@ -159,10 +136,10 @@ function ui.define(id, next)
             buttonData[textID].near = id.near
         end
         
-        if type(action) == "function" then --Enforce id.action
-            buttonData[textID].action = action
-        elseif action == nil then
-            action = function(); print("Button not setup"); sleep(1); end
+        if type(id.action) == "function" then --Enforce id.action
+            buttonData[textID].action = id.action
+        elseif id.action == nil then
+            id.action = function(); print("Button not setup"); sleep(1); end
         else
             error(textID.." button's action is not a function, but also not nil")
         end
@@ -180,43 +157,58 @@ end
 --------ui.draw--------
 --id = text id
 --location = {x,y} or location = "pos name"
-function ui.draw(textID, location)
+function ui.draw(textID, location, drawBool)
 
+    if drawBool == false then
+        return false
+    end
     local id = {text = textData[textID], pos = posData[textID], button = buttonData[textID]}
     selected = settings.get("sys.storage.ui.selected")
 
-    if selected == textID then
+    local currStyle = "default"
+
+    if selected.id == textID then
         currStyle = "blink"
-    elseif nearButton then
+    elseif selected.right == textID or selected.left == textID or selected.down == textID or selected.up == textID then
         currStyle = "highlight"
-    end
-
-    if currStyle == nil and id.text.style then
+    elseif currStyle == "default" and id.text.style then
         currStyle = id.text.style
-    elseif currStyle == nil then
-        vprint(textID.." using default")
-        currStyle = "default"
     end
 
-    local pos = 0
-    if location and type(location) == "sting" then
+    local pos = id.pos
+    if type(location) == "string" then
         pos = posData[location]
-    elseif location and type(location) == "table" then
+    elseif type(location) == "table" then
         pos = location
-    else
-        pos = id.pos
     end
 
 
-    ui.style[currStyle]()
+    --why do you not work.
+    --please. pleeeeeaaasssssse
+    --wonder if i should... 'remake' this...
+    --... so that everything is more organized...
+    --probably.
+    if location == nil then; location = "nil"; end
+    if type(pos) == "table" then; pos = textutils.serialise(pos); end
+    ui.write(pos.." = pos || location = "..location)
+    sleep(1)
+    ui.write(" || id = "..textID)
+    sleep(1)
+    ui.setStyle(style[currStyle])
     term.setCursorPos(pos[1], pos[2])
     term.write(id.text.text)
-    ui.style.default()
-    local next = id.pos[1] + #id.text.text
+    ui.setStyle(style.default)
+    local next = pos[1] + #id.text.text
     return next
 
 end
 
+function ui.write(string)
+    local x,y = term.getCursorPos()
+    term.setCursorPos(1,13)
+    term.write(string)
+    term.setCursorPos(x,y)
+end
 
 --[[
 function ui.define.page(name,desc,text,buttons)
@@ -261,36 +253,50 @@ function ui.center(middle, text, right)
     
 end
 
+function ui.menuSelect(menuID)
+
+    local menu = settings.get("sys.storage.ui.menu")
+
+    if menu == "main" then
+        return mainMenu
+    elseif menu == "requestMenu" then
+        return ui.itemMenu
+    end
+
+end
+
 --startpos = {x,y}
 --id = "{"id","text"} --text = "string"
 --near = {left = button, right = button ...}
 --action = function()
 --key = "string" for keys[string] or keys.abc
 
-function ui.selector(buttonID, selectCoroutine)
-    --should probably be run explicitly as a coroutine
+
+function ui.selector(buttonID)
+
+    menu = ui.menuSelect()
     
     if buttonID ~= nil and buttonID ~= "none" then
         selectedButton = buttonID
-        settings.set("sys.storage.ui.selected", buttonID)
+        settings.set("sys.storage.ui.selected", buttonData[buttonID].near)
     elseif selectedButton then
         buttonID = selectedButton
+    elseif buttonID == "wait" then
+        return false, "waiting"
     else
         buttonID = settings.get("sys.storage.ui.selected")
-        if buttonID == "none" then
+        if buttonID == "nil" then
             printError("Button id is 'none', im probably dead; ui.selector")
-        else
-            settings.set("sys.storage.ui.selected", buttonID)
+        --else
+        --    settings.set("sys.storage.ui.selected", [buttonID])
         end
     end
 
-    
+    if type(buttonID) == "table" then
+        buttonID = buttonID.id
+    end
     local currButton = buttonData[buttonID]
-    local nearButtons = currButton.near
-
-    term.setCursorPos(1,13)
-    term.clearLine()
-    write(buttonID)
+    local near = currButton.near
 
     --parallel.waitForAny(
     --input handler
@@ -303,42 +309,46 @@ function ui.selector(buttonID, selectCoroutine)
         currButton.action()
         --or,draw.page...
 
-    elseif (input == keys.w or input == keys.up) and nearButtons.up ~= nil then
-        settings.set("sys.storage.ui.selected", nearButtons.up)
-        selectedButton = nearButtons.up
-        buttonID = nearButtons.up
+    elseif (input == keys.w or input == keys.up) and near.up ~= nil then
+        selectedButton = near.up
+        buttonID = near.up
         currButton = buttonData[buttonID]
-        nearButtons = buttonData[buttonID].near
+        near = buttonData[buttonID].near
+        settings.set("sys.storage.ui.selected", near)
+        
 
-    elseif (input == keys.s or input == keys.down) and nearButtons.down ~= nil then
-        settings.set("sys.storage.ui.selected", nearButtons.down)
-        selectedButton = nearButtons.down
-        buttonID = nearButtons.down
+    elseif (input == keys.s or input == keys.down) and near.down ~= nil then
+        selectedButton = near.down
+        buttonID = near.down
         currButton = buttonData[buttonID]
-        nearButtons = buttonData[buttonID].near
+        near = buttonData[buttonID].near
+        settings.set("sys.storage.ui.selected", near)
+        
 
-    elseif (input == keys.a or input == keys.left) and nearButtons.left ~= nil then
-        settings.set("sys.storage.ui.selected", nearButtons.left)
-        selectedButton = nearButtons.left
-        buttonID = nearButtons.left
+    elseif (input == keys.a or input == keys.left) and near.left ~= nil then
+        selectedButton = near.left
+        buttonID = near.left
         currButton = buttonData[buttonID]
-        nearButtons = buttonData[buttonID].near
+        near = buttonData[buttonID].near
+        settings.set("sys.storage.ui.selected", near)
+        
 
-    elseif (input == keys.d or input == keys.right) and nearButtons.right ~= nil then
-        settings.set("sys.storage.ui.selected", nearButtons.right)
-        selectedButton = nearButtons.right
-        buttonID = nearButtons.right
+    elseif (input == keys.d or input == keys.right) and near.right ~= nil then
+        selectedButton = near.right
+        buttonID = near.right
         currButton = buttonData[buttonID]
-        nearButtons = buttonData[buttonID].near
+        near = buttonData[buttonID].near
+        settings.set("sys.storage.ui.selected", near)
+        
 
     elseif input == keys.backspace then
         local currMenu = settings.get("sys.storage.ui.menu")
-        if currMenu == "" then
+        if currMenu == "main" then
             return "exit"
         end
     end
 
-    mainMenu({button = true})
+
     --else backspace and a previous menu?
     --end
     --end,
@@ -349,41 +359,16 @@ function ui.selector(buttonID, selectCoroutine)
     sleep(0.2)
 end
 
---[[
-function ui.highlightSelected(buttonID)
-
-        if not buttonID then
-            buttonID = settings.get("sys.storage.ui.selected")
-            sleep(0.5)
-        elseif buttonID ~= "none" then
-            buttonData = buttonData[buttonID]
-            
-            
-            ui.style.highlight()
-            term.setCursorPos(buttonData.pos[1],buttonData.pos[2])
-            term.write(buttonData.text)
-            
-            sleep(0.5)
-            
-            ui.style.blink()
-            term.setCursorPos(buttonData.pos[1],buttonData.pos[2])
-            term.write(buttonData.text)
-            ui.style.default()
-            sleep(0.5)
-        else
-            sleep(1)
-        end
-
-end]]
-
-
 
 function ui.itemMenu()
+    settings.set("sys.storage.ui.menu", "requestList")
     local itemData = require("storageData/total")
+    local scrollDist = 10
+        --How many lines to scroll each tiem we scroll
     local itemList = itemData[1]
     local nameList = itemData[2]
         --Complete item list of what we own.
-    local x, maxPosition = term.getSize()
+    local termX, termY = term.getSize()
         --The range of the screen
     local selectedPosition = 1
         --Selected vertical position
@@ -396,66 +381,122 @@ function ui.itemMenu()
 
     --this will probably end badly but what if i load the entire list first?
     --Then use term.scroll?
+
+    --hm. can i define the list, then use
+    --another for loop to draw 'chunks' of it..? 
+    --I should be able to... we shall see.
+    local hsync = 1
+    local vsync = 1
+    ui.write("Loading menu...")
+    for i = 1,#nameList do
+        ui.write("Loading menu... %"..((i/#nameList)))
+        --name button
+        local near = {index = i, id = nameList[i], up = nameList[i-1], down = nameList[i+1]}
+
+        if near.up == nil then
+            near.up = itemList[nameList[i]]
+        elseif near.down == nil then
+            near.down = itemList[nameList[i]]
+        end
+
+        --dunno how i want to be doing this...
+        ui.define({
+            id = nameList[i],
+            text = string.gsub(nameList[i],"%a+:",""),
+            near = near,
+            action = function()
+                    requestMenuItem(near.id)
+                    end})
+        
+        ui.define({
+            id = nameList[i].."count",
+            text = tostring(itemList[nameList[i]].count)})
+
+        if termY <= i then
+            ui.define({
+                id = "countPos"..i,
+                pos = {1, i}
+            })
+            ui.define({
+                id = "itemPos"..i,
+                pos = {7, i}
+            })
+        end
+        --itemcount button
+        
+        --next = ui.define({
+        --    id = nameList[i].."max", 
+        --    text = itemList[nameList[i]].count})
+        
+        --Chests // Stacks
+        --ui.define.button
+    end
+
+    settings.set("sys.storage.ui.selected", buttonData[nameList[1]].near)
+    sleep() --avoid 'too long without yeild'
+
+    local first = true
     while true do
 
-        --take input
-        
+        local near = settings.get("sys.storage.ui.selected")
+        selectedPosition = near.index
         local screenChanged = false
-
-        if selectedPosition < 5 then
-            --top of screen
-            screenChanged = true
-            if 1 > indexPosition - 10 then
-                indexPosition = 1
-            else
-                indexPosition = indexPosition - 10
+        if first == false then
+            
+            if selectedPosition < 5 and indexPosition > 1 then
+                --top of screen
+                screenChanged = true
+                if 1 >= indexPosition - scrollDist then
+                    indexPosition = 1
+                else
+                    indexPosition = indexPosition - scrollDist
+                end
+            
+            elseif selectedPosition >= termY-5 and termY ~= #itemList then
+                --Bottom of screen
+                screenChanged = true
+                if indexPosition + scrollDist >= #itemList then
+                    indexPosition = #itemList+termY
+                else
+                    indexPosition = indexPosition + scrollDist  
+                end
             end
-        
-        elseif selectedPosition > maxPosition-5 then
-            --Bottom of screen
+        else
+            first = false
             screenChanged = true
-            if indexPosition + 10 > #itemList then
-                indexPosition = 1
-            else
-                indexPosition = indexPosition + 10  
+        end
+
+        if screenChanged then
+            --Draw list
+
+            for i = indexPosition,(indexPosition+termY) do
+                ui.draw(nameList[i].."count", "countPos"..i)
+                ui.draw(nameList[i], "itemPos"..i)
+                
+                vsync = vsync + 1
+                hsync = 1
             end
         end
 
-        --ui.drawRequestMenu()--?
-        --maybe that idea of defining a preserved location,
-        --and being able to put whatever text whenever was a great idea...
-        for i = indexPosition,maxPosition do
-            --name button
-            if maxPosition == i+1 or maxPosition == i then
-                down = nil
-                up = nameList[i+1]
-            elseif indexPosition == i-1 or indexPosition == i then
-                up = nil
-                down = nameList[i-1]
-            else
-                up = nameList[i+1]
-                down = nameList[i-1]        
-            end
+        if nameList then
+            ui.draw(nameList[near.index].."count", "countPos"..near.index)
+            ui.draw(nameList[near.index], "itemPos"..near.index)
 
-            local id = {id = itemList[nameList[i]], up = itemList[nameList[i+1]], down = itemList[nameList[i-1]]}
+            ui.draw(nameList[near.index+1].."count", "countPos"..near.index+1)
+            ui.draw(nameList[near.index+1], "itemPos"..near.index+1)
 
-            if id.up == nil then
-                id.up = itemList[nameList[i]]
-            elseif id.down == nil then
-                id.down = itemList[nameList[i]]
-            end
+            ui.draw(nameList[near.index+2].."count", "countPos"..near.index+2)
+            ui.draw(nameList[near.index+2], "itemPos"..near.index+2)
 
-            --dunno how i want to be doing this...
-            local next = ui.define.button({1,i}, nameList[i], {}, {requestMenuItem, nameList[i], itemList[nameList[i]].count})
-            
-            --itemcount button
-            next = ui.define.button({next,i}, nameList[i].."Count", itemList[nameList[i]].count)
-            
-            --Chests // Stacks
-            --ui.define.button
+            ui.draw(nameList[near.index-1].."count", "countPos"..near.index-1)
+            ui.draw(nameList[near.index-1], "itemPos"..near.index-1)
+
+            ui.draw(nameList[near.index-2].."count", "countPos"..near.index-2)
+            ui.draw(nameList[near.index-2], "itemPos"..near.index-2)
         end
-        
 
+        ui.selector()
+ 
     end
 end
 
@@ -464,10 +505,9 @@ function ui.requestMenuItem(currItem, maxCount)
     --Show the total amount you have.
     -- use + and - or left and right arrows to change request amount
     --shift for 64 per click, ctrl for 32, alt for 16
-
+    local item_picker = window.create(term.current(),29,1,39,13)
     local multiplier = 1
     local itemCount = 1
-
 
     if input == keys.leftAlt or input == keys.rightAlt then
         multiplier = 16

@@ -17,7 +17,7 @@
 ccprint = print
 ccwrite = write
 
-function xOverTime(secs, xPerSec, xTotal)
+local function xOverTime(secs, xPerSec, xTotal)
     --xTotal if u want to find seconds instead of xTotal
     --secs= time waited in sec.
     --xPerSec= how much x you get each sec.
@@ -52,7 +52,7 @@ end --How could i have the functionallity of xPerSec implanted into this functio
 
 --Needs to be updated to use multithreading.
     --Needs to be made useful lol
-function switch(num1,num2,arry,act,equal)
+local function switch(num1,num2,arry,act,equal)
     types = {type(num1),type(num2),type(arry)}
 
     if types[1] == "table" and types[2]=="number" and (types[3] == "table" or types[3] == "function") or types[1]=="table" and types[2] == "string" and (types[3] == "table" or types[3] == "function") then
@@ -156,7 +156,7 @@ local function write(str,scroll)
     end
 end
 
-function montest()
+local function montest()
     if mon then
         --Maybe better to say 'double the output to the connected monitor'
         write("Use the connected Monitor?\n Warning: This 'program' is not very well built for a monitor\n (y/n)\n>")
@@ -173,7 +173,7 @@ end
 
 --Input handlers
 
-function nilcheck(var, default)
+local function nilcheck(var, default)
     local nilary = {'nil','null','',' '}
     local falseary = {'false','not','no',false}
     local trueary = {'t','true','yes',true}
@@ -200,7 +200,7 @@ end --Nvm... switch... is really just unneeded to have here.
 
 
 
-function errcheck(value, defVal, conform, die)
+local function errcheck(value, defVal, conform, die)
     --value = var to be checked
     --conform = a list of alternitive 'defaults', they are all humanly
         --the same value (like 'f' and 'false' and false) but they are technically different 
@@ -253,7 +253,7 @@ end
 
 --This.
 --This is going to be my BEST function yet....
-function conformSide(side)
+local function conformSide(side)
 
     side = errcheck(side, "string")
 
@@ -276,7 +276,7 @@ function conformSide(side)
     
 end
 
-function detectSystem(printBool)
+local function detectSystem(printBool)
 
     if periphemu.create and preiphemu.remove then
         longModname = "craftospc"
@@ -365,6 +365,11 @@ function nop(input) return input end
 
 table.append = table.insert
 
+term.print = print
+term.write = write -- i bet if i localized the movement api it would return just fine....
+term.ccprint = ccprint --Also give the raw CC functions back, just incase for some reason absolutely needed
+term.ccwrite = ccwrite
+term.montest = montest
 
 return { 
     detectSystem = detectSystem,
@@ -373,14 +378,7 @@ return {
     switch = switch,
     ccprint = ccprint,
     ccwrite = ccwrite,
-    term = {
-        print = print,
-        write = write, -- i bet if i localized the movement api it would return just fine....
-        ccprint = ccprint, --Also give the raw CC functions back, just incase for some reason absolutely needed
-        ccwrite = ccwrite,
-        montest = montest},
     xOverTime = xOverTime,
 
-    --Aliasi
-    
+    --Aliasi   
 }

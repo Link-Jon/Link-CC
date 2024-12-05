@@ -72,7 +72,7 @@ while true do
         brackets  = "[]"
         bracketColor = "&8" --same as normal color codes, but with &
         
-        All together:
+        --All together:
         chat.sendMessage(premsg..msg, prefix, brackets, bracketColor)
         --[[
         i dont use 'distance' but its just how close do

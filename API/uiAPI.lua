@@ -224,7 +224,14 @@ function ui.loadPage(pageID)
         pageID = settings.get("sys.ui.page")
     end
 
+    if path == nil then
+        path = {}
+    end
+
     if UIpageList[pageID] ~= nil then
+        table.insert(path,pageID)
+        settings.set("sys.ui.pagePath", path)
+        settings.set("sys.ui.page", pageID)
         return UIpageList[pageID]
 
     elseif fs.isDir(pageID) then
@@ -245,16 +252,17 @@ function ui.loadPage(pageID)
             sleep(1)
         end
 
-        path = settings.get("sys.ui.pagePath")
-        path = table.insert(path, findStart)
+        settings.set("sys.ui.page", findStart)
+        table.insert(path,findStart)
         settings.set("sys.ui.pagePath", path)
         return UIpageList[findStart]
 
     elseif fs.exists(pageID) or fs.exists(pageID..".lua") then
         UIpageList[pageID] = require(pageID)
         settings.set("sys.ui.page", pageID)
+        table.insert(path,pageID)
+        settings.set("sys.ui.pagePath", path)
         return UIpageList[pageID]
-
     else
         error("Cannot load "..pageID.." as it does not exist")
     end
@@ -312,9 +320,8 @@ function ui.selector(buttonID)
     if type(buttonID) == "table" then; buttonID = buttonID.id; end
     local currButton = UIbuttonData[buttonID]
     local near = currButton.near
-    ui.write(textutils.serialise(near))
+    ui.write(page.name)
     local event, input, held = os.pullEvent("key")
-    print(input)
     
     if input == keys.enter or input == keys.numPadEnter then
         --settings.set("sys.ui.selected", "none")

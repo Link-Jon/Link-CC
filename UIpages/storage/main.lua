@@ -3,11 +3,6 @@ local storage = require("storageHall")
 local ui = require("uiAPI")
 
 local function define()
-    local next = 1
-    local len = 0
-
-    term.clear()
-    term.setCursorPos(1,1)
 
     ui.define({
         pos = {1,1},
@@ -37,7 +32,11 @@ local function define()
         pos = {hsync, vsync},
 
         action = function() settings.set("sys.ui.page","requestList") end,
-        near = {id = "request", right = "scan", down = "quit"}
+        near = {
+            id = "request",
+            right = "scan",
+            down = "quit"
+        }
     })
 
 
@@ -53,15 +52,20 @@ local function define()
 
     --scan button
     hsync = ui.define({
-        id = "scan", 
+        id = "scan",
 
-        text = "rescan", 
+        text = "rescan",
         style = "button",
 
         pos = {hsync, vsync},
 
         action = storage.inspectStorage,
-        near = {id = "scan", left = "request", right = "init", down = "quit"}
+        near = {
+            id = "scan",
+            left = "request",
+            right = "init",
+            down = "quit"
+        }
     })
 
 
@@ -77,15 +81,19 @@ local function define()
 
     --init button
     hsync = ui.define({
-        id = "init", 
+        id = "init",
 
-        text = "init", 
+        text = "init",
         style = "button",
 
         pos = {hsync, vsync},
 
         action = ui.initPrep,
-        near = {id = "init", left = "scan", down = "quit"}
+        near = {
+            id = "init",
+            left = "scan",
+            down = "quit"
+        }
     })
 
 
@@ -95,10 +103,19 @@ local function define()
         text = "quit",
         style = "button",
 
-        pos = {posData["scan"][1], (vsync + 3)},
+        pos = {UIposData["scan"][1], (vsync + 3)},
 
-        action = function(); quit = true end;
-        near = {id = "quit", up = "scan", left = "request", right = "init"}
+        action = function(); 
+            local path = settings.get("sys.ui.pagePath")
+            path = table.remove(path)
+            settings.set("sys.ui.pagePath", path)
+        end,
+        near = {
+            id = "quit",
+            up = "scan",
+            left = "request",
+            right = "init"
+        }
     })
 end
 
@@ -106,7 +123,7 @@ end
 
 local function draw(redraw)
 
-    if redraw == "all" then
+    if redraw == "all" or redraw == nil then
         term.clear()
         redraw = {
             text = true,
@@ -114,7 +131,7 @@ local function draw(redraw)
             reuse = true
         }
     elseif type(redraw) == "string" then
-        redraw = {redraw}
+        redraw = {[redraw] = true}
     end
 
     if redraw.text then
@@ -138,9 +155,14 @@ local function draw(redraw)
 end
 
 local main = {
+    name = "storage",
     define = define,
     draw = draw,
-    defaultButton = "request"
+    defaultButton = {
+        id = "request",
+        right = "scan",
+        down = "quit",
+    }
 }
 
 return main

@@ -13,19 +13,31 @@ if not args[1] then
     --make this descriptive please.
 end
 
-ui.loadPage(args[1])
+local currPage = ui.loadPage(args[1])
+settings.set("sys.ui.selected", currPage.defaultButton)
+currPage.define()
+currPage.draw()
+
 
 while true do
+    local prevPage = currPage
+    
     --Selects buttons, and pushes them
     ui.selector()
-    ui.loadPage()
+    currPage = ui.loadPage()
 
-    if quit then; 
+
+    if quit or currPage == "quit" then; 
         term.clear()
         term.setCursorPos(1,1)
         term.setTextColour(colours.white)
         term.setBackgroundColour(colours.black)
         break; 
+    end
+
+    if currPage ~= prevPage then
+        currPage.define()
+        currPage.draw()
     end
 
 end

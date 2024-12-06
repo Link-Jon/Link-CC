@@ -85,7 +85,7 @@ function ui.define(id, next)
 
         --would like to define mutliple at once but...
         --that can happen when i stop redesigning the ui code.
-        if UiposData[textID] then
+        if UIposData[textID] then
             ui.write("Warning, redefining posID: "..textID)
             UIposData[textID] = id.pos
         else
@@ -105,10 +105,12 @@ function ui.define(id, next)
         if id.style then; UItextData[textID].style = id.style; end
     end
 
-    if id.button then --if button
+    if id.near or id.action then --if button
 
         if UIbuttonData[textID] then
             ui.write("Warning, redefining buttonID: "..textID)
+        else
+            UIbuttonData[textID] = {}
         end
 
         if not id.style then; 
@@ -116,13 +118,24 @@ function ui.define(id, next)
             UIscrData[textID].style = "button"
         end --Set Style
         
-        if type(id.button.action) == "function" then --Enforce id.button.action
-            UIbuttonData[textID].action = id.button.action
-        elseif id.button.action == nil then
+        if not id.near then --Enforce id.near
+            UIbuttonData[textID].near = {id = textID} 
+            vprint(textID.." has no id.near!")
+        else
+            UIbuttonData[textID].near = id.near
+        end
+
+        if type(id.action) == "function" then --Enforce id.button.action
+            UIbuttonData[textID].action = id.action
+        elseif id.action == nil then
             UIbuttonData[textID].action = function(); print("Button not setup"); sleep(1); end
         else
             error(textID.." button's action is not a function, but also not nil")
         end
+
+        --add // allow for keyaction
+        --keyaction = {keys.x = function(), keys.y = function(), ect.}
+
     end
 
     --[[
@@ -146,10 +159,9 @@ function ui.draw(textID, posID, drawBool)
     if drawBool == false then
         return false
     end
-    local id = {text = textData[textID], pos = posData[textID], button = buttonData[textID]}
 
-    selected = settings.get("sys.ui.selected")
-
+    local id = {text = UItextData[textID], pos = UIposData[textID]}
+    local selected = settings.get("sys.ui.selected")
     local currStyle = "default"
 
     if selected.id == textID then
@@ -163,7 +175,7 @@ function ui.draw(textID, posID, drawBool)
     local pos = id.pos
     if posID ~= nil and posID ~= textID then
         --if pos name, fetch posData
-        if type(posID) == "string" then; pos = posData[posID];
+        if type(posID) == "string" then; pos = UIposData[posID];
         --Else, raw posData
         elseif type(posID) == "table" then; pos = posID; end
     end
@@ -186,7 +198,7 @@ end
 --if i ever actually need to do this
 --i will probably do it myself.
 function ui.center(middle, text, right)
-    local median = table.length(text)
+    local median = #text
 
     if type(middle) == table then
         middle = middle[1]
@@ -204,8 +216,11 @@ end
 
 function ui.loadPage(pageID)
 
+    local path = settings.get("sys.ui.pagePath")
 
-    if not pageID then
+    if path == {} and pageID == nil then
+        return "quit"
+    elseif pageID == nil then
         pageID = settings.get("sys.ui.page")
     end
 
@@ -213,17 +228,38 @@ function ui.loadPage(pageID)
         return UIpageList[pageID]
 
     elseif fs.isDir(pageID) then
-        UIpageList["main"] = require(args[1].."/main")
+        local unloadedPages = fs.list(pageID)
+        local findStart = false
+        for i = 1, #unloadedPages do
+            unloadedPages[i] = string.gsub(unloadedPages[i],".lua","")
+            UIpageList[unloadedPages[i]] = require(pageID.."."..unloadedPages[i])
+            if unloadedPages[i] == "main" or unloadedPages[i] == "init" then
+                findStart = unloadedPages[i]
+            end
+        end
 
-    elseif fs.exists(pageID) then
+        if not findStart then
+            findStart = unloadedPages[1]
+            print("Warning. Did not find specific 'main' or 'init'")
+            print("Using first loaded...")
+            sleep(1)
+        end
+
+        path = settings.get("sys.ui.pagePath")
+        path = table.insert(path, findStart)
+        settings.set("sys.ui.pagePath", path)
+        return UIpageList[findStart]
+
+    elseif fs.exists(pageID) or fs.exists(pageID..".lua") then
         UIpageList[pageID] = require(pageID)
+        settings.set("sys.ui.page", pageID)
+        return UIpageList[pageID]
 
-    elseif fs.exists(pageID..".lua") then
-        UIpageList[pageID] = require(page)
+    else
         error("Cannot load "..pageID.." as it does not exist")
     end
 
-    return UIpageList[pageID]
+
 end
 --[[
 To be added...
@@ -261,59 +297,72 @@ end]]
 
 function ui.selector(buttonID)
 
-    local page = ui.selectPage()
+    local page = ui.loadPage()
   
     if buttonID ~= nil and buttonID ~= "none" and buttonID ~= "wait" then
-        settings.set("sys.ui.selected", buttonData[buttonID])
+        settings.set("sys.ui.selected", UIbuttonData[buttonID].near)
     else
         buttonID = settings.get("sys.ui.selected")
     end
     
     if buttonID == "wait" or buttonID == "none" then
-        return false, "waiting"
+        return "waiting"
     end
 
     if type(buttonID) == "table" then; buttonID = buttonID.id; end
-    local currButton = buttonData[buttonID]
+    local currButton = UIbuttonData[buttonID]
+    local near = currButton.near
+    ui.write(textutils.serialise(near))
     local event, input, held = os.pullEvent("key")
+    print(input)
     
     if input == keys.enter or input == keys.numPadEnter then
-        settings.set("sys.ui.selected", "none")
-        currButton.action()
+        --settings.set("sys.ui.selected", "none")
+        local succ, why = pcall(currButton.action)
+        if not succ then; ui.write(why); end
 
-    elseif (input == keys.w or input == keys.up) and currButton.up ~= nil then
-        buttonID = currButton.up
-        currButton = buttonData[buttonID]
-        settings.set("sys.ui.selected", currButton)
-        
+    elseif (input == keys.w or input == keys.up) and near.up ~= nil then
+        buttonID = near.up
+        currButton = UIbuttonData[buttonID]
+        near = UIbuttonData[buttonID].near
+        settings.set("sys.ui.selected", near)
+        page.draw("button")
 
-    elseif (input == keys.s or input == keys.down) and currButton.down ~= nil then
-        buttonID = currButton.down
-        currButton = buttonData[buttonID]
-        settings.set("sys.ui.selected", currButton)
-        
 
-    elseif (input == keys.a or input == keys.left) and currButton.left ~= nil then
-        buttonID = currButton.left
-        currButton = buttonData[buttonID]
-        settings.set("sys.ui.selected", currButton)
-        
+    elseif (input == keys.s or input == keys.down) and near.down ~= nil then
+        buttonID = near.down
+        currButton = UIbuttonData[buttonID]
+        near = UIbuttonData[buttonID].near
+        settings.set("sys.ui.selected", near)
+        page.draw("button")
 
-    elseif (input == keys.d or input == keys.right) and currButton.right ~= nil then
-        buttonID = currButton.right
-        currButton = buttonData[buttonID]
-        settings.set("sys.ui.selected", currButton)
+
+    elseif (input == keys.a or input == keys.left) and near.left ~= nil then
+        buttonID = near.left
+        currButton = UIbuttonData[buttonID]
+        near = UIbuttonData[buttonID].near
+        settings.set("sys.ui.selected", near)
+        page.draw("button")
+
+
+    elseif (input == keys.d or input == keys.right) and near.right ~= nil then
+        buttonID = near.right
+        currButton = UIbuttonData[buttonID]
+        near = UIbuttonData[buttonID].near
+        settings.set("sys.ui.selected", near)
+        page.draw("button")
         
 
     elseif input == keys.backspace then
-        local pagePath = settings.get("sys.ui.pagePath")
+        --[[local pagePath = settings.get("sys.ui.pagePath")
         if #pagePath > 1 then
             pagePath = table.remove(pagePath)
-        else
+        else]]
             return "exit"
-        end
+        --end
     end
 
     sleep(0.1)
 end
 
+return ui

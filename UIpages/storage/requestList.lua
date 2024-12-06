@@ -1,6 +1,16 @@
 local function define()
-    settings.set("sys.ui.page", "requestList")
-    local itemList, nameList = require("storageData/total")
+    
+    local status, itemList, nameList = pcall(require,"storageData/total")
+    
+    if status == false then
+        term.setTextColor(colours.red)
+        ui.write("You need to scan before you can request items!")
+        term.setTextColor(colours.white)
+        local path = settings.get("sys.ui.pagePath")
+        path = table.remove(path)
+        settings.set("sys.ui.pagePath", path)
+    end
+
         --Complete item list of what we own.
     local termX, termY = term.getSize()
         --The range of the screen
@@ -55,7 +65,7 @@ local function define()
     settings.set("sys.ui.selected", buttonData[nameList[1]])
 end
 
-local function draw()
+local function draw(redraw)
     local hsync = 1
     local vsync = 1
 
@@ -71,76 +81,83 @@ local function draw()
     --Current position in the list
     --(Technically, the index position is at the top of the screen)
 
-    local first = true
-    while true do
+    if redraw == "all" or redraw == nil then
+        term.clear()
+        redraw = {
+            text = true,
+            button = true,
+            reuse = true
+        }
+    elseif type(redraw) == "string" then
+        redraw = {redraw}
+    end
 
-        local near = settings.get("sys.ui.selected")
-        selectedPosition = near.index
-        local screenChanged = false
-        if first == false then
-            
-            if selectedPosition < 5 and indexPosition > 1 then
-                --top of screen
-                screenChanged = true
-                if 1 >= indexPosition - scrollDist then
-                    indexPosition = 1
-                else
-                    indexPosition = indexPosition - scrollDist
-                end
-            
-            elseif selectedPosition >= termY-5 and termY ~= #itemList then
-                --Bottom of screen
-                screenChanged = true
-                if indexPosition + scrollDist >= #itemList then
-                    indexPosition = #itemList+termY
-                else
-                    indexPosition = indexPosition + scrollDist  
-                end
-            end
-        else
-            first = false
+
+
+    local near = settings.get("sys.ui.selected")
+    selectedPosition = near.index
+    local screenChanged = false
+    if first == false then
+
+        if selectedPosition < 5 and indexPosition > 1 then
+            --top of screen
             screenChanged = true
-        end
+            if 1 >= indexPosition - scrollDist then
+                indexPosition = 1
+            else
+                indexPosition = indexPosition - scrollDist
+            end
 
-        if screenChanged then
-            --Draw list
-
-            for i = indexPosition,(indexPosition+termY) do
-                ui.draw(nameList[i].."count", "countPos"..i)
-                ui.draw(nameList[i], "itemPos"..i)
-                
-                vsync = vsync + 1
-                hsync = 1
+        elseif selectedPosition >= termY-5 and termY ~= #itemList then
+            --Bottom of screen
+            screenChanged = true
+            if indexPosition + scrollDist >= #itemList then
+                indexPosition = #itemList+termY
+            else
+                indexPosition = indexPosition + scrollDist  
             end
         end
+    else
+        first = false
+        screenChanged = true
+    end
 
-        if nameList then
-            ui.draw(nameList[near.index].."count", "countPos"..near.index)
-            ui.draw(nameList[near.index], "itemPos"..near.index)
 
-            ui.draw(nameList[near.index+1].."count", "countPos"..near.index+1)
-            ui.draw(nameList[near.index+1], "itemPos"..near.index+1)
+    if screenChanged or redraw.text then
+        --Draw list
 
-            ui.draw(nameList[near.index+2].."count", "countPos"..near.index+2)
-            ui.draw(nameList[near.index+2], "itemPos"..near.index+2)
-
-            ui.draw(nameList[near.index-1].."count", "countPos"..near.index-1)
-            ui.draw(nameList[near.index-1], "itemPos"..near.index-1)
-
-            ui.draw(nameList[near.index-2].."count", "countPos"..near.index-2)
-            ui.draw(nameList[near.index-2], "itemPos"..near.index-2)
+        for i = indexPosition,(indexPosition+termY) do
+            ui.draw(nameList[i].."count", "countPos"..i)
+            ui.draw(nameList[i], "itemPos"..i)
         end
+    end
 
-        ui.selector()
- 
+    if redraw.button then
+        ui.draw(nameList[near.index].."count", "countPos"..near.index)
+        ui.draw(nameList[near.index], "itemPos"..near.index)
+
+        ui.draw(nameList[near.index+1].."count", "countPos"..near.index+1)
+        ui.draw(nameList[near.index+1], "itemPos"..near.index+1)
+
+        ui.draw(nameList[near.index+2].."count", "countPos"..near.index+2)
+        ui.draw(nameList[near.index+2], "itemPos"..near.index+2)
+
+        ui.draw(nameList[near.index-1].."count", "countPos"..near.index-1)
+        ui.draw(nameList[near.index-1], "itemPos"..near.index-1)
+
+        ui.draw(nameList[near.index-2].."count", "countPos"..near.index-2)
+        ui.draw(nameList[near.index-2], "itemPos"..near.index-2)
     end
 end
 
-function requestItem(currItem, maxCount)
+local function requestItem(currItem, maxCount)
     --Highlight the amount that is going to be requested.
     --Show the total amount you have.
     -- use + and - or left and right arrows to change request amount
     --shift for 64 per click, ctrl for 32, alt for 16
+
+    --... lets just hijack the selector, and not use ui.selector...
+    --atleast for this...
 
     prevTerm = term.current()
     local item_picker = window.create(term.current(),29,1,10,13)
@@ -167,9 +184,12 @@ function requestItem(currItem, maxCount)
     elseif input == keys.enter or input == keys.numPadEnter or input == keys.space then
         request(currItem,count)
     end
-    
 
 end
 
-
-return storageRequest
+return {
+    name = "requestList",
+    define = define,
+    draw = draw,
+    requestItem = requestItem
+}

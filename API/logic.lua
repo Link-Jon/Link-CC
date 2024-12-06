@@ -13,10 +13,6 @@
 --this, REALLY REALLY has to be done before any of my
 --libraries or apis edit functions. hm.
 
-
-ccprint = print
-ccwrite = write
-
 local function xOverTime(secs, xPerSec, xTotal)
     --xTotal if u want to find seconds instead of xTotal
     --secs= time waited in sec.
@@ -36,8 +32,7 @@ local function xOverTime(secs, xPerSec, xTotal)
         local xTotal=xPerSec*secs
         return xTotal
     end
-end --How could i have the functionallity of xPerSec implanted into this function...?
-
+end --How could i have the functionallity of xPerSec implanted into this function...
 
 
 --act is how to compare num1 and 2.
@@ -52,6 +47,7 @@ end --How could i have the functionallity of xPerSec implanted into this functio
 
 --Needs to be updated to use multithreading.
     --Needs to be made useful lol
+
 local function switch(num1,num2,arry,act,equal)
     types = {type(num1),type(num2),type(arry)}
 
@@ -113,15 +109,14 @@ local function switch(num1,num2,arry,act,equal)
     end
 end
 
+--[[
 
 --mtext functions. These exist to write to both the monitor AND the main screen at the same time.
 --Hey these should be done using settings!
 local function print(str) --for now i will assume i didnt just redirect and print for a reason, but i will come back to this later...
                      --currently, just merging files :P (wait does print exist while term=mon? not sure.)
-
-    
     if _MONITORS_==true then
-        local loop=loop+1
+        local loop=loop+1 --????
         local x,y =mon.getCursorPos()
         y=y+1
         if loop==5 then
@@ -171,6 +166,9 @@ local function montest()
     end
 end
 
+should be moved...
+--]]
+
 --Input handlers
 
 local function nilcheck(var, default)
@@ -197,6 +195,8 @@ local function nilcheck(var, default)
        --if none of the above, return var. 
     return var
 end --Nvm... switch... is really just unneeded to have here.
+
+
 
 
 
@@ -253,6 +253,8 @@ end
 
 --This.
 --This is going to be my BEST function yet....
+
+
 local function conformSide(side, die)
 
     side = errcheck(side, "string")
@@ -277,6 +279,8 @@ local function conformSide(side, die)
     end
     
 end
+
+
 
 local function detectSystem(printBool)
 
@@ -373,11 +377,9 @@ function nop(input) return input end
 
 table.append = table.insert
 
-term.print = print
-term.write = write -- i bet if i localized the movement api it would return just fine....
-term.ccprint = ccprint --Also give the raw CC functions back, just incase for some reason absolutely needed
-term.ccwrite = ccwrite
-term.montest = montest
+--Need to migrate mtext print and write to its own mtext file.
+--sigh. i would like for it do be able to handle double text anywhere...
+
 logic = {
     detectSystem = detectSystem,
     errcheck = errcheck,
@@ -387,4 +389,5 @@ logic = {
     ccwrite = ccwrite,
     xOverTime = xOverTime,
 }
+
 return logic

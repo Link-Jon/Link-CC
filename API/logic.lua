@@ -253,7 +253,7 @@ end
 
 --This.
 --This is going to be my BEST function yet....
-local function conformSide(side)
+local function conformSide(side, die)
 
     side = errcheck(side, "string")
 
@@ -270,8 +270,10 @@ local function conformSide(side)
         return "top"
     elseif side == "down" or side == "d" or side == "under" or side == "below" then
         return "down"
-    else
+    elseif die then
         error("Not a side! got: "..side, 1)
+    else
+        print("conformSide got "..side)
     end
     
 end
@@ -313,11 +315,17 @@ local function detectSystem(printBool)
         default = false,
         type = "boolean"
     })
+
+
     settings.define("sys.vers", {
         description = "Current version of CraftOS",
         default = temp,
         type = "number"
     })
+    settings.define("sys.compType", {
+        description = "What type of computer is running"
+    })
+    --settings.define("sys.")
 
     --find and set settings, and return values...
     if temp > 1.79 then
@@ -370,8 +378,7 @@ term.write = write -- i bet if i localized the movement api it would return just
 term.ccprint = ccprint --Also give the raw CC functions back, just incase for some reason absolutely needed
 term.ccwrite = ccwrite
 term.montest = montest
-
-return { 
+logic = {
     detectSystem = detectSystem,
     errcheck = errcheck,
     nilcheck = nilcheck, 
@@ -379,6 +386,5 @@ return {
     ccprint = ccprint,
     ccwrite = ccwrite,
     xOverTime = xOverTime,
-
-    --Aliasi   
 }
+return logic

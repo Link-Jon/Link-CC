@@ -27,7 +27,7 @@ function craft(product, toMake, recipeNum)
 
     recipe = recipeLookup(product, recipeNum)
 
-    recipe =
+    --recipe = 
 
 end
 

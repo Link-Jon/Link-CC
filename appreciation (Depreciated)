@@ -163,3 +163,47 @@ function ui.define.button(startPos, text, near, action, key)
     --else if key do function on that key press?
 
 end
+
+
+
+--[[
+--Makes neat pattern?    
+elseif side == "quarry" then
+    dist = 50
+    lengthSet = 4
+
+    term.clear()
+    term.setCursorPos(1,1)
+    term.write("depth: "..1)
+    term.setCursorPos(1,2)
+    term.write("row: "..1)
+    term.setCursorPos(1,3)
+    term.write("column: "..1)
+
+    for depth = 1, dist do -- dist
+        for row = 1, 1+lengthSet do -- row
+            for column = 1, lengthSet do -- column
+            --SIMPLE VERS, NEEDS UPDATE TO USE GPS
+                turtle.dig()
+                turtle.forward()
+
+                term.setCursorPos(1, 3) --var tracker
+                term.clearLine()
+                term.write("column: "..column)
+            end
+
+            if doTurn == turtle.turnLeft or doTurn == nil then
+                doTurn = turtle.turnRight
+            else; doTurn = turtle.turnLeft; end
+            
+            if row ~= lengthSet+1 then
+                doTurn()
+                turtle.dig()
+                turtle.forward()
+                doTurn()
+            end
+
+            term.setCursorPos(1, 2) --var tracker
+            term.clearLine()
+            term.write("row: "..row)
+]]

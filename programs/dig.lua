@@ -27,22 +27,23 @@ end
 
 --dist = args[?]
 
---[[
-if side == "vein" then
-local bool, baseOre = turtle.inspect()
 
-turtle.dig()
-turtle.forward()
 
-bool, ore = turtle.inspect()
 
-if ore == baseOre then
---]]
 
 if side == "tree" then
     dwarf.tree()
 elseif side == "quarry" then
     dwarf.quarry(quarryDepth, quarrySize)
+elseif side == "plus" then
+    for i = 1,dist do
+        dig()
+        turtle.forward()
+        dig("left", true)
+        dig("right", true)
+        dig("up")
+        dig("down")
+    end
 else
 
     --generic dig

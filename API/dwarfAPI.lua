@@ -56,6 +56,19 @@ local function dig(side, goBack)
     end
 end
 
+--[[
+vein miner.
+if side == "vein" then
+local bool, baseOre = turtle.inspect()
+
+turtle.dig()
+turtle.forward()
+
+bool, ore = turtle.inspect()
+
+if ore == baseOre then
+--]]
+
 local function quarry(dist, lengthSet)
 
     modem = peripheral.find("modem")

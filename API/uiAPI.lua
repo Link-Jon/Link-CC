@@ -1,55 +1,19 @@
-require("logic")
+local logic = require("logic")
 local inv = require("inventoryAPI")
---also btw, i would like to have a
---uiEdittor, that allows someone to craft a ui 
---without much knowledge of lua or cc
 
---the hardest part will actually be allowing them 
---to have a menu inside of a menu... at all.
---as my current idea basically splits the screen in two
---there will be an editting toolbar that takes up
---the last three rows of the screen,
---and a button that can make the toolbar switch to the top
---(or come back down)
---toolbar actually does the editting to the selected element
-
-
+--allow for key lookup via key number, later.
 revKeys = {}
 for key,value in pairs(keys) do
     revKeys[value] = key
 end
 
-local ui = {style = {}}
---sigh. okay, lets go...
-
-settings.define("sys.storage.ui.selected", {
-    description = "Currently highlighted button(s)",
-})--this probably wont be used much except as a backup
-
-
-posData = {}
-textData = {}
-buttonData = {}
-currPos = {1,1}
-
-
-textStyle = "default"
-
-function ui.test()
-    term.clear()
-    ui.style.button()
-    print("Button looks like this")
-    ui.style.highlight()
-    print("Highlight looks like this")
-    ui.style.blink()
-    print("Highlight flash looks like this")
-    ui.style.default()
-    print("Default")
-    sleep(2)
-    --io.read()
-end
-
-
+local ui = {}
+UIscrData = {}
+UIposData = {}
+UItextData = {}
+UIbuttonData = {}
+UIcurrPos = {1,1}
+UIpageList = {}
 
 style ={
     default = {colours.white, colours.black},
@@ -57,95 +21,115 @@ style ={
     blink = {colours.orange, colours.blue},
     button = {colours.brown, colours.black},
     seperator = {colours.lightGrey, colours.black},
-    list = {colours.cyan, colours.black}
+    list = {colours.cyan, colours.black},
+    curr = "default"
 }
+
+function ui.styleTest()
+    term.clear()
+    for i in style do 
+        ui.style(i)
+        print(i.."looks like this")
+    end
+    sleep(2)
+    --io.read()
+end
+
+
+--Used incase of parallel, as i cant change globals through coroutines (luckily)
+settings.define("sys.ui.selected", {
+    description = "Currently highlighted button(s)",
+    type = "table"
+})
+settings.define("sys.ui.page", {
+    description = "Current page/subpage"
+})
 
 function ui.setStyle(styleset)
     term.setTextColour(styleset[1])
     term.setBackgroundColour(styleset[2])
 end
+
 --===================--
 -----Text handlers-----
 --===================--
 
---Oh great.
---My old code is annoying me so bad, i made these seperators, and
---Iam about to unify ALL my ui.define and ui.draw functions.
---Once again i say, i am the most annoying person i know lol
-
 
 -------ui.define-------
 --[[
+Very simplified from the old implimentation
 id = {
     id = "stringID",
 
-    pos = {x, y} or "pos name" or {name = {x,y}, name1 = {x1,y1}, ect}
+    pos = {x, y} or "pos name",
     
-    text = "string"
-    style = "style format"
+    text = "string",
+    style = "style format",
 
-    action = function()
-    near = {up = nil, down = nil, left = nil, right = nil}
+    button = {
+        id = "stringID",
+        action = function(),
+        up = nil, 
+        down = nil, 
+        left = nil, 
+        right = nil},
     }
-
+next = {x,y} or "pos name"
 ]]
-
---next = {x,y} or "pos name"
 function ui.define(id, next)
-
     local textID = id.id
-    --If given position data..
+    UIscrData[textID] = {id}
+
+
     if id.pos then
 
-        if posData[textID] then
-            vprint("Warning, redefining posID: "..textID)
-            posData[textID] = id.pos
+        --would like to define mutliple at once but...
+        --that can happen when i stop redesigning the ui code.
+        if UiposData[textID] then
+            ui.write("Warning, redefining posID: "..textID)
+            UIposData[textID] = id.pos
         else
-            posData[textID] = id.pos
+            UIposData[textID] = id.pos
         end
-        --theres probably a better way to do this
-        --but for now.. just add it to table.
-        --posData[textID] = table.append(posData[textID], id.pos)
         
         if not next then; next = id.pos[1]; end --Prep for next
     end
 
-    --If given text data...
     if id.text then
 
-        if textData[textID] then
-            vprint("Warning, redefining textID: "..textID)
+        if UItextData[textID] then
+            ui.write("Warning, redefining textID: "..textID)
         end
 
-        textData[textID] = {text = id.text}
-        if id.style then; textData[textID].style = id.style; end
+        UItextData[textID] = {text = id.text}
+        if id.style then; UItextData[textID].style = id.style; end
     end
 
-    if id.near or id.action then
+    if id.button then --if button
 
-        if buttonData[textID] then
-            vprint("Warning, redefining buttonID: "..textID)
+        if UIbuttonData[textID] then
+            ui.write("Warning, redefining buttonID: "..textID)
         end
-        if not id.style then; id.style = "button"; end --Set Style
-        buttonData[textID] = {id = textID}
 
-        if not id.near then --Enforce id.near
-            buttonData[textID].near = {id = textID} 
-            vprint(textID.." has no id.near!")
-        else
-            buttonData[textID].near = id.near
-        end
+        if not id.style then; 
+            UItextData[textID].style = "button"
+            UIscrData[textID].style = "button"
+        end --Set Style
         
-        if type(id.action) == "function" then --Enforce id.action
-            buttonData[textID].action = id.action
-        elseif id.action == nil then
-            id.action = function(); print("Button not setup"); sleep(1); end
+        if type(id.button.action) == "function" then --Enforce id.button.action
+            UIbuttonData[textID].action = id.button.action
+        elseif id.button.action == nil then
+            UIbuttonData[textID].action = function(); print("Button not setup"); sleep(1); end
         else
             error(textID.." button's action is not a function, but also not nil")
         end
-
     end
 
+    --[[
+    hm. id.scroll and id.scrollID?
+    id.scroll = number, location in list
+    id.scrollID = string, all data with this ID scrolls together
+    ]]
     --give end location
     if id.text and next then; 
         next = next+#id.text; 
@@ -157,13 +141,14 @@ end
 --------ui.draw--------
 --id = text id
 --location = {x,y} or location = "pos name"
-function ui.draw(textID, location, drawBool)
+function ui.draw(textID, posID, drawBool)
 
     if drawBool == false then
         return false
     end
     local id = {text = textData[textID], pos = posData[textID], button = buttonData[textID]}
-    selected = settings.get("sys.storage.ui.selected")
+
+    selected = settings.get("sys.ui.selected")
 
     local currStyle = "default"
 
@@ -176,31 +161,19 @@ function ui.draw(textID, location, drawBool)
     end
 
     local pos = id.pos
-    if type(location) == "string" then
-        pos = posData[location]
-    elseif type(location) == "table" then
-        pos = location
+    if posID ~= nil and posID ~= textID then
+        --if pos name, fetch posData
+        if type(posID) == "string" then; pos = posData[posID];
+        --Else, raw posData
+        elseif type(posID) == "table" then; pos = posID; end
     end
 
-
-    --why do you not work.
-    --please. pleeeeeaaasssssse
-    --wonder if i should... 'remake' this...
-    --... so that everything is more organized...
-    --probably.
-    if location == nil then; location = "nil"; end
-    if type(pos) == "table" then; pos = textutils.serialise(pos); end
-    ui.write(pos.." = pos || location = "..location)
-    sleep(1)
-    ui.write(" || id = "..textID)
-    sleep(1)
     ui.setStyle(style[currStyle])
     term.setCursorPos(pos[1], pos[2])
     term.write(id.text.text)
     ui.setStyle(style.default)
     local next = pos[1] + #id.text.text
     return next
-
 end
 
 function ui.write(string)
@@ -210,31 +183,9 @@ function ui.write(string)
     term.setCursorPos(x,y)
 end
 
---[[
-function ui.define.page(name,desc,text,buttons)
-    --Makes a 'page' using the name + description,
-    --and letting the user select the buttons
-
-    errcheck(name,"string",nil,true)
-    if errcheck(desc,"string") then; desc = {desc}; end
-    errcheck(desc,"table",nil,true)
-
-    term.clear()
-end
-
-function ui.draw.page(name, redraw)
-
-end]]
-
---===================--
----End text handlers---
---===================--
-
---settings.set("sys.storage.ui.buttons")
---require("keys")
-
+--if i ever actually need to do this
+--i will probably do it myself.
 function ui.center(middle, text, right)
-
     local median = table.length(text)
 
     if type(middle) == table then
@@ -249,21 +200,57 @@ function ui.center(middle, text, right)
     else
         return middle
     end
-
-    
 end
 
-function ui.menuSelect(menuID)
+function ui.loadPage(pageID)
 
-    local menu = settings.get("sys.storage.ui.menu")
 
-    if menu == "main" then
-        return mainMenu
-    elseif menu == "requestMenu" then
-        return ui.itemMenu
+    if not pageID then
+        pageID = settings.get("sys.ui.page")
     end
 
+    if UIpageList[pageID] ~= nil then
+        return UIpageList[pageID]
+
+    elseif fs.isDir(pageID) then
+        UIpageList["main"] = require(args[1].."/main")
+
+    elseif fs.exists(pageID) then
+        UIpageList[pageID] = require(pageID)
+
+    elseif fs.exists(pageID..".lua") then
+        UIpageList[pageID] = require(page)
+        error("Cannot load "..pageID.." as it does not exist")
+    end
+
+    return UIpageList[pageID]
 end
+--[[
+To be added...
+
+function ui.createPage(name,desc,text,buttons)
+    --Makes a 'page' using the name + description,
+    --and letting the user select the buttons
+
+    errcheck(name,"string",nil,true)
+    if errcheck(desc,"string") then; desc = {desc}; end
+    errcheck(desc,"table",nil,true)
+
+    term.clear()
+end
+
+function ui.page(name, redraw)
+
+    require("name")
+    something.. something
+
+end]]
+
+--===================--
+---End text handlers---
+--===================--
+
+
 
 --startpos = {x,y}
 --id = "{"id","text"} --text = "string"
@@ -274,262 +261,59 @@ end
 
 function ui.selector(buttonID)
 
-    menu = ui.menuSelect()
-    
-    if buttonID ~= nil and buttonID ~= "none" then
-        selectedButton = buttonID
-        settings.set("sys.storage.ui.selected", buttonData[buttonID].near)
-    elseif selectedButton then
-        buttonID = selectedButton
-    elseif buttonID == "wait" then
-        return false, "waiting"
+    local page = ui.selectPage()
+  
+    if buttonID ~= nil and buttonID ~= "none" and buttonID ~= "wait" then
+        settings.set("sys.ui.selected", buttonData[buttonID])
     else
-        buttonID = settings.get("sys.storage.ui.selected")
-        if buttonID == "nil" then
-            printError("Button id is 'none', im probably dead; ui.selector")
-        --else
-        --    settings.set("sys.storage.ui.selected", [buttonID])
-        end
+        buttonID = settings.get("sys.ui.selected")
+    end
+    
+    if buttonID == "wait" or buttonID == "none" then
+        return false, "waiting"
     end
 
-    if type(buttonID) == "table" then
-        buttonID = buttonID.id
-    end
+    if type(buttonID) == "table" then; buttonID = buttonID.id; end
     local currButton = buttonData[buttonID]
-    local near = currButton.near
-
-    --parallel.waitForAny(
-    --input handler
-    --function()
-    --while true do
     local event, input, held = os.pullEvent("key")
     
     if input == keys.enter or input == keys.numPadEnter then
-        --settings.set("sys.storage.ui.selected", "none")
+        settings.set("sys.ui.selected", "none")
         currButton.action()
-        --or,draw.page...
 
-    elseif (input == keys.w or input == keys.up) and near.up ~= nil then
-        selectedButton = near.up
-        buttonID = near.up
+    elseif (input == keys.w or input == keys.up) and currButton.up ~= nil then
+        buttonID = currButton.up
         currButton = buttonData[buttonID]
-        near = buttonData[buttonID].near
-        settings.set("sys.storage.ui.selected", near)
+        settings.set("sys.ui.selected", currButton)
         
 
-    elseif (input == keys.s or input == keys.down) and near.down ~= nil then
-        selectedButton = near.down
-        buttonID = near.down
+    elseif (input == keys.s or input == keys.down) and currButton.down ~= nil then
+        buttonID = currButton.down
         currButton = buttonData[buttonID]
-        near = buttonData[buttonID].near
-        settings.set("sys.storage.ui.selected", near)
+        settings.set("sys.ui.selected", currButton)
         
 
-    elseif (input == keys.a or input == keys.left) and near.left ~= nil then
-        selectedButton = near.left
-        buttonID = near.left
+    elseif (input == keys.a or input == keys.left) and currButton.left ~= nil then
+        buttonID = currButton.left
         currButton = buttonData[buttonID]
-        near = buttonData[buttonID].near
-        settings.set("sys.storage.ui.selected", near)
+        settings.set("sys.ui.selected", currButton)
         
 
-    elseif (input == keys.d or input == keys.right) and near.right ~= nil then
-        selectedButton = near.right
-        buttonID = near.right
+    elseif (input == keys.d or input == keys.right) and currButton.right ~= nil then
+        buttonID = currButton.right
         currButton = buttonData[buttonID]
-        near = buttonData[buttonID].near
-        settings.set("sys.storage.ui.selected", near)
+        settings.set("sys.ui.selected", currButton)
         
 
     elseif input == keys.backspace then
-        local currMenu = settings.get("sys.storage.ui.menu")
-        if currMenu == "main" then
+        local pagePath = settings.get("sys.ui.pagePath")
+        if #pagePath > 1 then
+            pagePath = table.remove(pagePath)
+        else
             return "exit"
         end
     end
 
-
-    --else backspace and a previous menu?
-    --end
-    --end,
-
-    --coolhighlighter
-    --ui.highlightSelected()
-    --)
-    sleep(0.2)
+    sleep(0.1)
 end
 
-
-function ui.itemMenu()
-    settings.set("sys.storage.ui.menu", "requestList")
-    local itemData = require("storageData/total")
-    local scrollDist = 10
-        --How many lines to scroll each tiem we scroll
-    local itemList = itemData[1]
-    local nameList = itemData[2]
-        --Complete item list of what we own.
-    local termX, termY = term.getSize()
-        --The range of the screen
-    local selectedPosition = 1
-        --Selected vertical position
-    local indexPosition = 1
-        --Current position in the list
-        --(Technically, the index position is at the top of the screen)
-
-    term.clear()
-    --ui.draw("tableMenu", itemList)
-
-    --this will probably end badly but what if i load the entire list first?
-    --Then use term.scroll?
-
-    --hm. can i define the list, then use
-    --another for loop to draw 'chunks' of it..? 
-    --I should be able to... we shall see.
-    local hsync = 1
-    local vsync = 1
-    ui.write("Loading menu...")
-    for i = 1,#nameList do
-        ui.write("Loading menu... %"..((i/#nameList)))
-        --name button
-        local near = {index = i, id = nameList[i], up = nameList[i-1], down = nameList[i+1]}
-
-        if near.up == nil then
-            near.up = itemList[nameList[i]]
-        elseif near.down == nil then
-            near.down = itemList[nameList[i]]
-        end
-
-        --dunno how i want to be doing this...
-        ui.define({
-            id = nameList[i],
-            text = string.gsub(nameList[i],"%a+:",""),
-            near = near,
-            action = function()
-                    requestMenuItem(near.id)
-                    end})
-        
-        ui.define({
-            id = nameList[i].."count",
-            text = tostring(itemList[nameList[i]].count)})
-
-        if termY <= i then
-            ui.define({
-                id = "countPos"..i,
-                pos = {1, i}
-            })
-            ui.define({
-                id = "itemPos"..i,
-                pos = {7, i}
-            })
-        end
-        --itemcount button
-        
-        --next = ui.define({
-        --    id = nameList[i].."max", 
-        --    text = itemList[nameList[i]].count})
-        
-        --Chests // Stacks
-        --ui.define.button
-    end
-
-    settings.set("sys.storage.ui.selected", buttonData[nameList[1]].near)
-    sleep() --avoid 'too long without yeild'
-
-    local first = true
-    while true do
-
-        local near = settings.get("sys.storage.ui.selected")
-        selectedPosition = near.index
-        local screenChanged = false
-        if first == false then
-            
-            if selectedPosition < 5 and indexPosition > 1 then
-                --top of screen
-                screenChanged = true
-                if 1 >= indexPosition - scrollDist then
-                    indexPosition = 1
-                else
-                    indexPosition = indexPosition - scrollDist
-                end
-            
-            elseif selectedPosition >= termY-5 and termY ~= #itemList then
-                --Bottom of screen
-                screenChanged = true
-                if indexPosition + scrollDist >= #itemList then
-                    indexPosition = #itemList+termY
-                else
-                    indexPosition = indexPosition + scrollDist  
-                end
-            end
-        else
-            first = false
-            screenChanged = true
-        end
-
-        if screenChanged then
-            --Draw list
-
-            for i = indexPosition,(indexPosition+termY) do
-                ui.draw(nameList[i].."count", "countPos"..i)
-                ui.draw(nameList[i], "itemPos"..i)
-                
-                vsync = vsync + 1
-                hsync = 1
-            end
-        end
-
-        if nameList then
-            ui.draw(nameList[near.index].."count", "countPos"..near.index)
-            ui.draw(nameList[near.index], "itemPos"..near.index)
-
-            ui.draw(nameList[near.index+1].."count", "countPos"..near.index+1)
-            ui.draw(nameList[near.index+1], "itemPos"..near.index+1)
-
-            ui.draw(nameList[near.index+2].."count", "countPos"..near.index+2)
-            ui.draw(nameList[near.index+2], "itemPos"..near.index+2)
-
-            ui.draw(nameList[near.index-1].."count", "countPos"..near.index-1)
-            ui.draw(nameList[near.index-1], "itemPos"..near.index-1)
-
-            ui.draw(nameList[near.index-2].."count", "countPos"..near.index-2)
-            ui.draw(nameList[near.index-2], "itemPos"..near.index-2)
-        end
-
-        ui.selector()
- 
-    end
-end
-
-function ui.requestMenuItem(currItem, maxCount)
-    --Highlight the amount that is going to be requested.
-    --Show the total amount you have.
-    -- use + and - or left and right arrows to change request amount
-    --shift for 64 per click, ctrl for 32, alt for 16
-    local item_picker = window.create(term.current(),29,1,39,13)
-    local multiplier = 1
-    local itemCount = 1
-
-    if input == keys.leftAlt or input == keys.rightAlt then
-        multiplier = 16
-    elseif input == keys.leftCtrl or input == keys.rightCtrl then
-        multiplier = 32
-    elseif input == keys.leftShift or input == keys.rightShift then
-        multiplier = 64
-    end
-    
-    if input == keys.minus or input == keys.left then
-        if itemCount > 1 then
-            itemCount = itemCount - 1
-        end
-    elseif  input == keys.equals or keys.right then
-        if itemCount < maxCount then
-            itemCount = itemCount + 1
-        end
-    elseif input == keys.enter or input == keys.numPadEnter or input == keys.space then
-        request(currItem,count)
-    end
-    
-
-end
-
-return ui

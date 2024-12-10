@@ -2,15 +2,16 @@ local ui = require("uiAPI")
 
 local function define()
     
-    local status, itemList, nameList = pcall(require,"storageData/total")
+    local itemList, nameList = pcall(require,"storageData/total")
     
-    if status == false then
+    if itemList == false then
         term.setTextColor(colours.red)
         ui.write("You need to scan before you can request items!")
         term.setTextColor(colours.white)
         local path = settings.get("sys.ui.pagePath")
-        path = table.remove(path)
+        table.remove(path)
         settings.set("sys.ui.pagePath", path)
+        return false
     end
 
         --Complete item list of what we own.
@@ -71,7 +72,19 @@ local function draw(redraw)
     local hsync = 1
     local vsync = 1
 
-    local itemList, nameList = require("storageData/total")
+    local itemList, nameList = pcall(require,"storageData/total")
+    
+    if itemList == false then
+        term.setTextColor(colours.red)
+        ui.write("You need to scan before you can request items!")
+        term.setTextColor(colours.white)
+
+        local path = settings.get("sys.ui.pagePath")
+        table.remove(path)
+        settings.set("sys.ui.pagePath", path)
+        settings.set("sys.ui.page", path[#path])
+        return false
+    end
     --Complete item list of what we own.
     local termX, termY = term.getSize()
     --The range of the screen

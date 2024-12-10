@@ -1,6 +1,5 @@
-
-local storage = require("storageHall")
 local ui = require("uiAPI")
+local storage = require("storageHall")
 
 local function define()
 
@@ -59,7 +58,7 @@ local function define()
 
         pos = {hsync, vsync},
 
-        action = storage.inspectStorage,
+        action = storage.inspect,
         near = {
             id = "scan",
             left = "request",
@@ -88,7 +87,7 @@ local function define()
 
         pos = {hsync, vsync},
 
-        action = ui.initPrep,
+        action = function() settings.set("sys.ui.page","initSetup") end,
         near = {
             id = "init",
             left = "scan",
@@ -107,8 +106,9 @@ local function define()
 
         action = function(); 
             local path = settings.get("sys.ui.pagePath")
-            path = table.remove(path)
+            table.remove(path)
             settings.set("sys.ui.pagePath", path)
+            quit = true
         end,
         near = {
             id = "quit",

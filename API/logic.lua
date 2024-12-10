@@ -380,13 +380,11 @@ table.append = table.insert
 --Need to migrate mtext print and write to its own mtext file.
 --sigh. i would like for it do be able to handle double text anywhere...
 
-logic = {
+local logic = {
     detectSystem = detectSystem,
     errcheck = errcheck,
     nilcheck = nilcheck, 
     switch = switch,
-    ccprint = ccprint,
-    ccwrite = ccwrite,
     xOverTime = xOverTime,
 }
 

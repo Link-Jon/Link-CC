@@ -177,10 +177,55 @@ local function tree()
     end
 end
 
-dwarf = {
+local function staircase(dist, height)
+    if type(dist) ~= "number" then
+        return false
+    end
+
+    if height == nil then
+        height = 3
+    end
+    --Stair loop
+    while dist > 0 do
+    
+        currHeight = 2
+    
+        dig()
+        turtle.forward()
+        
+        --Dig left side going up
+        turtle.turnLeft()
+        while currHeight < height do
+            dig()
+            dig("up")
+            turtle.up()
+            currHeight = currHeight + 1
+        end
+        dig()
+    
+        --Dig right side going down
+        turtle.turnRight()
+        turtle.turnRight()
+        while currHeight > 1 do
+            dig()
+            turtle.down()
+            currHeight = currHeight - 1
+        end
+    
+        dig()
+        dig("back",true)
+        turtle.turnRight()
+    
+        dist = dist-1
+    end
+    
+end
+
+local dwarf = {
     dig = dig,
     tree = tree,
-    quarry = quarry
+    quarry = quarry,
+    staircase = staircase
 }
 
 return dwarf

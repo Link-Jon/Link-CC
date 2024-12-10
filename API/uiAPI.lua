@@ -78,8 +78,14 @@ next = {x,y} or "pos name"
 ]]
 function ui.define(id, next)
     local textID = id.id
-    UIscrData[textID] = {id}
+    local pageID = settings.get("sys.ui.page")
+    
+    for k,v in pairs(currButton.keyaction) do
 
+        UIpageData[pageID][k] = v
+
+    end 
+    
 
     if id.pos then
 
@@ -154,11 +160,10 @@ end
 --------ui.draw--------
 --id = text id
 --location = {x,y} or location = "pos name"
-function ui.draw(textID, posID, drawBool)
+function ui.draw(textID, posID, textReplace, drawBool)
 
-    if drawBool == false then
-        return false
-    end
+    --if disabled, dont draw.
+    if drawBool == false then; return false;end
 
     local id = {text = UItextData[textID], pos = UIposData[textID]}
     local selected = settings.get("sys.ui.selected")
@@ -179,6 +184,9 @@ function ui.draw(textID, posID, drawBool)
         --Else, raw posData
         elseif type(posID) == "table" then; pos = posID; end
     end
+
+    if textReplace then; id.text.text = textReplace;
+    elseif id.text.text == nil then; id.text.text = "!undefined text!"; end
 
     ui.setStyle(style[currStyle])
     term.setCursorPos(pos[1], pos[2])
@@ -218,7 +226,7 @@ function ui.loadPage(pageID)
 
     local path = settings.get("sys.ui.pagePath")
 
-    if path == {} and pageID == nil then
+    if path == {} and pageID == nil or pageID == "quit" then
         return "quit"
     elseif pageID == nil then
         pageID = settings.get("sys.ui.page")
@@ -252,13 +260,17 @@ function ui.loadPage(pageID)
             sleep(1)
         end
 
+        UIpageData[pageID] = {}
         settings.set("sys.ui.page", findStart)
         table.insert(path,findStart)
         settings.set("sys.ui.pagePath", path)
         return UIpageList[findStart]
 
     elseif fs.exists(pageID) or fs.exists(pageID..".lua") then
+        
         UIpageList[pageID] = require(pageID)
+        UIpageData[pageID] = {}
+        
         settings.set("sys.ui.page", pageID)
         table.insert(path,pageID)
         settings.set("sys.ui.pagePath", path)
@@ -266,8 +278,6 @@ function ui.loadPage(pageID)
     else
         error("Cannot load "..pageID.." as it does not exist")
     end
-
-
 end
 --[[
 To be added...
@@ -306,7 +316,7 @@ end]]
 function ui.selector(buttonID)
 
     local page = ui.loadPage()
-  
+    
     if buttonID ~= nil and buttonID ~= "none" and buttonID ~= "wait" then
         settings.set("sys.ui.selected", UIbuttonData[buttonID].near)
     else
@@ -359,15 +369,20 @@ function ui.selector(buttonID)
         settings.set("sys.ui.selected", near)
         page.draw("button")
         
-
     elseif input == keys.backspace then
         --[[local pagePath = settings.get("sys.ui.pagePath")
         if #pagePath > 1 then
             pagePath = table.remove(pagePath)
         else]]
-            return "exit"
+        return "exit"
         --end
-    end
+
+        --keyactions!
+    else; for k,v in pairs(UIpageData[page.name]) do
+        if k == revKeys[input] then
+            v()
+        end;end
+    end 
 
     sleep(0.1)
 end

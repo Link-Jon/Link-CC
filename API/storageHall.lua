@@ -51,7 +51,7 @@ require("inventoryAPI")
 --begining init.
 local storage = {}
 
-function storage.initStorage(detectMethod, chestLayout, trapped)
+function storage.init(detectMethod, chestLayout, trapped)
 
     if type(chestLayout) == "string" then
         chestLayout = {chestLayout}
@@ -165,6 +165,8 @@ function storage.initStorage(detectMethod, chestLayout, trapped)
         elseif detectMethod[2] == 0 then
             settings.set("sys.storage.step",0)
             settings.set("sys.storage.totalLength", detectMethod[2])
+        else
+            settings.set("sys.storage.totalLength",detectMethod[2])
         end
         settings.set("sys.storage.detector","totalLength")
         
@@ -193,10 +195,7 @@ function storage.initStorage(detectMethod, chestLayout, trapped)
 end
 
 
---seems like current check for bounds SUCKS
--- i should really make check for bounds handle movement.
--- should take a number, and go that distance.
---if negative go backwards.
+
 function storage.checkForBounds(reverse)
 
     local step = settings.get("sys.storage.step")
@@ -314,13 +313,16 @@ function storage.inspect(details)
     --Length detector
     
     local chestNumber = 1
+    if chestSides == nil then
+        error("You need to init storage first!")
+    end
 
     while true do
 
         for key,chestDir in pairs(chestSides) do
 
             if turtle.detect() == nil then; turtle.place(); end
-            chestData, itemData[chestNumber] = scan(chestDir)
+            chestData, itemData[chestNumber] = storage.scan(chestDir)
             if chest then; append = "ar"; else append = "w"; end
 
             local storageData = fs.open("storageData/chest"..chestNumber,append)
@@ -356,14 +358,14 @@ function storage.inspect(details)
                 local temp = fs.open("storageData/total","w")
                 temp.write("mainList = "..serialCombinedItems.."\n")
                 temp.write("nameList = "..nameList.."\n")
-                temp.write("return {mainList, nameList}")
+                temp.write("return mainList, nameList")
                 temp.close()
                 print("Scan data saved.")
             end,
             function()
                 --return to start of hall
                 repeat
-                local temp = checkForBounds(true)
+                local temp = storage.checkForBounds(true)
                 until temp == false
             end
         )
@@ -528,7 +530,7 @@ function mergeItemData(itemData, totalItems)
 end
 
 
-function resetStorageDetection()
+function storage.reset()
     --do settings all default, yeah
         settings.set("sys.storage.blockID", nil)
         settings.set("sys.storage.detector",nil)
@@ -537,7 +539,6 @@ function resetStorageDetection()
         settings.set("sys.storage.totalLength",-1)
         settings.set("sys.storage.chestSides", nil)
         settings.set("sys.storage.shape", nil)
-        
 
 end
 

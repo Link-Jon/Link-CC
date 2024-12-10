@@ -8,8 +8,8 @@
 quarryDepth = 50
 quarrySize = 5
 
-require("dwarfAPI")
-require("logic")
+local dwarf = require("dwarfAPI")
+local logic = require("logic")
 args = {...}
 
 --[[if not args[1] or type(args[1]) ~= "string" then
@@ -19,17 +19,13 @@ end -- makeerrror cehck
 
 
 side = args[1]
-goBack = nilcheck(args[2])
+goBack = logic.nilcheck(args[2])
 
 if not side then
     side = "front"
 end
 
 --dist = args[?]
-
-
-
-
 
 if side == "tree" then
     dwarf.tree()
@@ -44,18 +40,35 @@ elseif side == "plus" then
         dig("up")
         dig("down")
     end
+elseif side == "staircase" then
+    
+    if args[2] == nil or type(tonumber(args[2])) ~= "number" then
+
+    error([[Incorrect usage!
+    dig staircase {distance} [height]
+    
+    Mines a staircase distance 
+    number of blocks down.
+    height is how far the turtle digs up.
+    default 3, range: h>=3
+    ]])
+    else
+        args[2] = tonumber(args[2])
+        args[3] = tonumber(args[3])
+        dwarf.staircase(args[2],args[3])
+    end
 else
 
     --generic dig
     if side == "front" or side == "foward" or side == "f" then
-        turtleDig()
+        turtle.dig()
     elseif side == "top" or side == "up" or side == "t" then
-        turtleDigUp()
+        turtle.digUp()
     elseif side == "down" or side == "below" or side == "d" then
-        turtleDigDown()
+        turtle.digDown()
     elseif side == "left" or side == "l" then
         turtle.turnLeft()
-        turtleDig()
+        turtle.dig()
         if goBack then
             turtle.turnRight()
         end

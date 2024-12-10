@@ -21,36 +21,42 @@ local function define()
     ui.define({
         id = "lengthUP",
 
-        text = "+1",
         pos = {5,5},
 
-        action = function(extra) 
-        
-            if extra == keys.leftShift or extra == keys.rightShift then
-                initLength = initLength + 10
-            elseif extra == keys.leftCtrl or extra == keys.leftCtrl then
-                initLength = initLength + 5
-            else
-                initLength = initLength + 1
-            end
-        
+        action = function(modifier)
+            if not modifier then; modifier = 1; end
+            initLength = initLength + modifier
         end, --increase length var
+
         near = {
             id = "lengthUP",
-            down = "lengthCount",
+            down = "lengthSET",
             right = "confirm"
         }
     })
 
     ui.define({
-        id = "lengthCount",
+        id = "lengthSET",
 
-        text = initLength, --should be current length :/
         pos = {5,7}, 
     
-        action = function() end,
+        action = function()
+            --get number from user
+            repeat
+            ui.draw("lengthSet","Input number")
+            local event, character = os.pullEvent("key")
+            local input = revKeys[key]
+            if string.find(input,"%d") then
+                
+                ui.clear(5,7)
+
+            end
+            until input == "enter" or input == "numPadEnter"
+
+
+        end,
         near = {
-            id = "lengthCount",
+            id = "lengthSET",
             up = "lengthUP",
             down = "lengthDOWN",
             right = "confirm"
@@ -105,14 +111,11 @@ local function draw()
     local sides = textutils.unserialise(input)
     storage.init({"length",length}, sides)
 
-
-    local path = settings.get("sys.ui.pagePath")
-    table.remove(path)
-    settings.set("sys.ui.pagePath", path)
-    settings.set("sys.ui.page", path[#path])
+    ui.prevMenu()
 end
 
 return {
+    name = "initSetup",
     define = define,
     draw = draw,
     defaultButton = "wait"

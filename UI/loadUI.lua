@@ -13,21 +13,22 @@ if not args[1] then
     --make this descriptive please.
 end
 
-local currPage = ui.loadPage(args[1])
-settings.set("sys.ui.selected", currPage.defaultButton)
-currPage.define()
-currPage.draw()
-
+settings.set("sys.ui.menuPath", false)
+local currMenu = ui.loadMenu(args[1])
+settings.set("sys.ui.selected", currMenu.defaultButton)
+currMenu.define()
+currMenu.draw()
+local prevMenu = currMenu
 
 while true do
-    local prevPage = currPage
+    prevMenu = currMenu
     
     --Selects buttons, and pushes them
     ui.selector()
-    currPage = ui.loadPage()
+    currMenu = ui.loadMenu()
 
 
-    if quit or currPage == "quit" then; 
+    if quit or currMenu == "quit" then; 
         term.clear()
         term.setCursorPos(1,1)
         term.setTextColour(colours.white)
@@ -35,9 +36,23 @@ while true do
         break; 
     end
 
-    if currPage ~= prevPage then
-        currPage.define()
-        currPage.draw()
+    if currMenu.name ~= prevMenu.name then
+        term.clear()
+        term.setCursorPos(1,1)
+        local succ, why = pcall(currMenu.define)
+        local defined = "false"
+        if succ then
+            defined = "true"
+            succ, why = pcall(currMenu.draw)
+        end
+
+        if not succ then
+            term.clear()
+            term.setCursorPos(1,1)
+            write("Failed to load "..currMenu.name.." || defined? "..defined.."Error:")
+            printError(why)
+            break
+        end
     end
 
 end

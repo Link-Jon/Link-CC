@@ -12,8 +12,9 @@ UIscrData = {}
 UIposData = {}
 UItextData = {}
 UIbuttonData = {}
+UImenuData = {}
 UIcurrPos = {1,1}
-UIpageList = {}
+UImenuList = {}
 
 style ={
     default = {colours.white, colours.black},
@@ -41,8 +42,8 @@ settings.define("sys.ui.selected", {
     description = "Currently highlighted button(s)",
     type = "table"
 })
-settings.define("sys.ui.page", {
-    description = "Current page/subpage"
+settings.define("sys.ui.menu", {
+    description = "Current menu/submenu"
 })
 
 function ui.setStyle(styleset)
@@ -78,13 +79,13 @@ next = {x,y} or "pos name"
 ]]
 function ui.define(id, next)
     local textID = id.id
-    local pageID = settings.get("sys.ui.page")
-    
-    for k,v in pairs(currButton.keyaction) do
+    local menuID = settings.get("sys.ui.menu")
 
-        UIpageData[pageID][k] = v
+    if id.keyaction then; for k,v in pairs(id.keyaction) do
 
-    end 
+        UImenuData[menuID][k] = v
+
+    end;end
     
 
     if id.pos then
@@ -97,11 +98,12 @@ function ui.define(id, next)
         else
             UIposData[textID] = id.pos
         end
-        
+
+        if id.replaceable then; UIposData[textID].replaceable = true; end
         if not next then; next = id.pos[1]; end --Prep for next
     end
 
-    if id.text then
+    if id.text or id.replaceable then
 
         if UItextData[textID] then
             ui.write("Warning, redefining textID: "..textID)
@@ -109,6 +111,7 @@ function ui.define(id, next)
 
         UItextData[textID] = {text = id.text}
         if id.style then; UItextData[textID].style = id.style; end
+        if id.replaceable then; UItextData[textID].replaceable = true; end
     end
 
     if id.near or id.action then --if button
@@ -119,9 +122,8 @@ function ui.define(id, next)
             UIbuttonData[textID] = {}
         end
 
-        if not id.style then; 
+        if not id.style and id.text then; 
             UItextData[textID].style = "button"
-            UIscrData[textID].style = "button"
         end --Set Style
         
         if not id.near then --Enforce id.near
@@ -134,13 +136,10 @@ function ui.define(id, next)
         if type(id.action) == "function" then --Enforce id.button.action
             UIbuttonData[textID].action = id.action
         elseif id.action == nil then
-            UIbuttonData[textID].action = function(); print("Button not setup"); sleep(1); end
+            UIbuttonData[textID].action = function(); ui.write("Button not setup"); end
         else
             error(textID.." button's action is not a function, but also not nil")
         end
-
-        --add // allow for keyaction
-        --keyaction = {keys.x = function(), keys.y = function(), ect.}
 
     end
 
@@ -151,7 +150,8 @@ function ui.define(id, next)
     ]]
     --give end location
     if id.text and next then; 
-        next = next+#id.text; 
+        if type(id.text) == "string" then; id.text = #id.text; end
+        next = next+id.text; 
     end
     return next
 end
@@ -160,32 +160,33 @@ end
 --------ui.draw--------
 --id = text id
 --location = {x,y} or location = "pos name"
-function ui.draw(textID, posID, textReplace, drawBool)
+function ui.draw(textID, extra, drawBool)
 
-    --if disabled, dont draw.
-    if drawBool == false then; return false;end
+    if extra and extra.pos then extra.p = extra.pos; end;
+    if extra and extra.text then extra.t = extra.text; end;
+    
+    if drawBool == false then; return false; end;
 
     local id = {text = UItextData[textID], pos = UIposData[textID]}
     local selected = settings.get("sys.ui.selected")
     local currStyle = "default"
 
-    if selected.id == textID then
-        currStyle = "blink"
+    if selected.id == textID then; currStyle = "blink"
     elseif selected.right == textID or selected.left == textID or selected.down == textID or selected.up == textID then
         currStyle = "highlight"
-    elseif currStyle == "default" and id.text.style then
+    elseif id.text.style then
         currStyle = id.text.style
     end
 
     local pos = id.pos
-    if posID ~= nil and posID ~= textID then
+    if extra and extra.p ~= nil and extra ~= textID then
         --if pos name, fetch posData
-        if type(posID) == "string" then; pos = UIposData[posID];
+        if type(extra) == "string" then; pos = UIposData[extra];
         --Else, raw posData
-        elseif type(posID) == "table" then; pos = posID; end
+        elseif type(extra) == "table" then; pos = extra; end
     end
 
-    if textReplace then; id.text.text = textReplace;
+    if extra and extra.p and (not id.text.text or id.text.replaceable) then; id.text.text = extra;
     elseif id.text.text == nil then; id.text.text = "!undefined text!"; end
 
     ui.setStyle(style[currStyle])
@@ -201,6 +202,24 @@ function ui.write(string)
     term.setCursorPos(1,13)
     term.write(string)
     term.setCursorPos(x,y)
+end
+
+function ui.clear(pos1,pos2,color)
+
+    if UItextData[pos1] and UIposData[pos1] then
+    --if we recieved an ID
+        term.setCursorPos(UIposData[pos1][1],UIposData[pos1][2])
+        for i = 1,#UItextData[pos1] do
+            write(" ")
+        end
+
+    elseif type(x1) == "array" and type(y1) == "array" then
+    --if we got specific pos data
+        
+    end
+
+    return true
+
 end
 
 --if i ever actually need to do this
@@ -222,68 +241,88 @@ function ui.center(middle, text, right)
     end
 end
 
-function ui.loadPage(pageID)
+function ui.loadMenu(menuID)
 
-    local path = settings.get("sys.ui.pagePath")
+    local path = settings.get("sys.ui.menuPath")
 
-    if path == {} and pageID == nil or pageID == "quit" then
+    if path == {} and menuID == nil or menuID == "quit" then
         return "quit"
-    elseif pageID == nil then
-        pageID = settings.get("sys.ui.page")
+    elseif menuID == nil then
+        menuID = settings.get("sys.ui.menu")
     end
 
-    if path == nil then
+    if path == nil or path == "false" or path == false then
+        settings.set("sys.ui.menuPath", {})
         path = {}
     end
 
-    if UIpageList[pageID] ~= nil then
-        table.insert(path,pageID)
-        settings.set("sys.ui.pagePath", path)
-        settings.set("sys.ui.page", pageID)
-        return UIpageList[pageID]
+    if UImenuList[menuID] ~= nil then
+        ui.nextMenu(menuID)
+        return UImenuList[menuID]
 
-    elseif fs.isDir(pageID) then
-        local unloadedPages = fs.list(pageID)
+    elseif fs.isDir(menuID) then
+        local unloadedMenus = fs.list(menuID)
         local findStart = false
-        for i = 1, #unloadedPages do
-            unloadedPages[i] = string.gsub(unloadedPages[i],".lua","")
-            UIpageList[unloadedPages[i]] = require(pageID.."."..unloadedPages[i])
-            if unloadedPages[i] == "main" or unloadedPages[i] == "init" then
-                findStart = unloadedPages[i]
+        for i = 1, #unloadedMenus do
+            unloadedMenus[i] = string.gsub(unloadedMenus[i],".lua","")
+            UImenuList[unloadedMenus[i]] = require(menuID.."."..unloadedMenus[i])
+            if unloadedMenus[i] == "main" or unloadedMenus[i] == "init" then
+                findStart = unloadedMenus[i]
             end
         end
 
         if not findStart then
-            findStart = unloadedPages[1]
+            findStart = unloadedMenus[1]
             print("Warning. Did not find specific 'main' or 'init'")
             print("Using first loaded...")
             sleep(1)
         end
 
-        UIpageData[pageID] = {}
-        settings.set("sys.ui.page", findStart)
-        table.insert(path,findStart)
-        settings.set("sys.ui.pagePath", path)
-        return UIpageList[findStart]
+        ui.nextMenu(menuID)
+        return UImenuList[findStart]
 
-    elseif fs.exists(pageID) or fs.exists(pageID..".lua") then
+    elseif fs.exists(menuID) or fs.exists(menuID..".lua") then
         
-        UIpageList[pageID] = require(pageID)
-        UIpageData[pageID] = {}
+        UImenuList[menuID] = require(menuID)
+        UImenuData[menuID] = {}
         
-        settings.set("sys.ui.page", pageID)
-        table.insert(path,pageID)
-        settings.set("sys.ui.pagePath", path)
-        return UIpageList[pageID]
+        ui.nextMenu(menuID)
+        return UImenuList[menuID]
     else
-        error("Cannot load "..pageID.." as it does not exist")
+        error("Cannot load "..menuID.." as it does not exist")
     end
 end
+
+function ui.nextMenu(menuID)
+    local oldMenu = settings.get("sys.ui.menu")
+
+    if oldMenu == menuID then
+        return false; end
+
+    local path = settings.get("sys.ui.menuPath")
+    if path == nil or path == "false" or path == false then
+        path = {menuID}; end
+
+    table.insert(path,menuID)
+    settings.set("sys.ui.menuPath", path)
+    settings.set("sys.ui.menu", menuID)
+
+end
+
+function ui.prevMenu()
+
+    local path = settings.get("sys.ui.menuPath")
+    table.remove(path)
+    settings.set("sys.ui.menuPath", path)
+    settings.set("sys.ui.menu", path[#path])
+
+end
+
 --[[
 To be added...
 
-function ui.createPage(name,desc,text,buttons)
-    --Makes a 'page' using the name + description,
+function ui.createmenu(name,desc,text,buttons)
+    --Makes a 'menu' using the name + description,
     --and letting the user select the buttons
 
     errcheck(name,"string",nil,true)
@@ -293,7 +332,7 @@ function ui.createPage(name,desc,text,buttons)
     term.clear()
 end
 
-function ui.page(name, redraw)
+function ui.menu(name, redraw)
 
     require("name")
     something.. something
@@ -315,7 +354,8 @@ end]]
 
 function ui.selector(buttonID)
 
-    local page = ui.loadPage()
+    local menu = ui.loadMenu()
+    local path = settings.get("sys.ui.menuPath")
     
     if buttonID ~= nil and buttonID ~= "none" and buttonID ~= "wait" then
         settings.set("sys.ui.selected", UIbuttonData[buttonID].near)
@@ -330,12 +370,13 @@ function ui.selector(buttonID)
     if type(buttonID) == "table" then; buttonID = buttonID.id; end
     local currButton = UIbuttonData[buttonID]
     local near = currButton.near
-    ui.write(page.name)
+    ui.write(textutils.serialise(path))
     local event, input, held = os.pullEvent("key")
     
     if input == keys.enter or input == keys.numPadEnter then
         --settings.set("sys.ui.selected", "none")
         local succ, why = pcall(currButton.action)
+        --ui.write(tostring(succ))
         if not succ then; ui.write(why); end
 
     elseif (input == keys.w or input == keys.up) and near.up ~= nil then
@@ -343,7 +384,7 @@ function ui.selector(buttonID)
         currButton = UIbuttonData[buttonID]
         near = UIbuttonData[buttonID].near
         settings.set("sys.ui.selected", near)
-        page.draw("button")
+        menu.draw("button")
 
 
     elseif (input == keys.s or input == keys.down) and near.down ~= nil then
@@ -351,7 +392,7 @@ function ui.selector(buttonID)
         currButton = UIbuttonData[buttonID]
         near = UIbuttonData[buttonID].near
         settings.set("sys.ui.selected", near)
-        page.draw("button")
+        menu.draw("button")
 
 
     elseif (input == keys.a or input == keys.left) and near.left ~= nil then
@@ -359,7 +400,7 @@ function ui.selector(buttonID)
         currButton = UIbuttonData[buttonID]
         near = UIbuttonData[buttonID].near
         settings.set("sys.ui.selected", near)
-        page.draw("button")
+        menu.draw("button")
 
 
     elseif (input == keys.d or input == keys.right) and near.right ~= nil then
@@ -367,19 +408,16 @@ function ui.selector(buttonID)
         currButton = UIbuttonData[buttonID]
         near = UIbuttonData[buttonID].near
         settings.set("sys.ui.selected", near)
-        page.draw("button")
+        menu.draw("button")
         
     elseif input == keys.backspace then
-        --[[local pagePath = settings.get("sys.ui.pagePath")
-        if #pagePath > 1 then
-            pagePath = table.remove(pagePath)
-        else]]
-        return "exit"
-        --end
+
+        ui.prevMenu()
 
         --keyactions!
-    else; for k,v in pairs(UIpageData[page.name]) do
-        if k == revKeys[input] then
+    elseif UImenuData[menu.name] then 
+        for k,v in pairs(UImenuData[menu.name]) do
+        if k == input then
             v()
         end;end
     end 

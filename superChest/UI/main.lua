@@ -30,7 +30,7 @@ local function define()
 
         pos = {hsync, vsync},
 
-        action = function() settings.set("sys.ui.page","requestList") end,
+        action = function() ui.nextMenu("requestList") end,
         near = {
             id = "request",
             right = "scan",
@@ -87,7 +87,7 @@ local function define()
 
         pos = {hsync, vsync},
 
-        action = function() settings.set("sys.ui.page","initSetup") end,
+        action = function() ui.nextMenu("initSetup") end,
         near = {
             id = "init",
             left = "scan",
@@ -105,10 +105,7 @@ local function define()
         pos = {UIposData["scan"][1], (vsync + 3)},
 
         action = function(); 
-            local path = settings.get("sys.ui.pagePath")
-            table.remove(path)
-            settings.set("sys.ui.pagePath", path)
-            quit = true
+            ui.prevMenu()
         end,
         near = {
             id = "quit",

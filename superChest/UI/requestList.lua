@@ -8,10 +8,9 @@ local function define()
         term.setTextColor(colours.red)
         ui.write("You need to scan before you can request items!")
         term.setTextColor(colours.white)
-        local path = settings.get("sys.ui.pagePath")
-        table.remove(path)
-        settings.set("sys.ui.pagePath", path)
-        return false
+        sleep(0.5)
+        ui.prevMenu()
+        return "redraw"
     end
 
         --Complete item list of what we own.
@@ -78,12 +77,9 @@ local function draw(redraw)
         term.setTextColor(colours.red)
         ui.write("You need to scan before you can request items!")
         term.setTextColor(colours.white)
-
-        local path = settings.get("sys.ui.pagePath")
-        table.remove(path)
-        settings.set("sys.ui.pagePath", path)
-        settings.set("sys.ui.page", path[#path])
-        return false
+        sleep(0.5)
+        ui.prevMenu()
+        return "redraw"
     end
     --Complete item list of what we own.
     local termX, termY = term.getSize()
@@ -106,7 +102,6 @@ local function draw(redraw)
     elseif type(redraw) == "string" then
         redraw = {redraw}
     end
-
 
 
     local near = settings.get("sys.ui.selected")

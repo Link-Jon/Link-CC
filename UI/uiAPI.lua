@@ -161,9 +161,17 @@ end
 --id = text id
 --location = {x,y} or location = "pos name"
 function ui.draw(textID, extra, drawBool)
+    if type(extra) == "table" and
+     extra.p or extra.pos or 
+     extra.t or extra.text then
+        if extra.pos then extra.p = extra.pos; end;
+        if extra.text then extra.t = extra.text; end;
+    elseif type(extra) == "table" then
+        extra = {p = extra}
+    else
+        extra = {t = extra}
+    end
 
-    if extra and extra.pos then extra.p = extra.pos; end;
-    if extra and extra.text then extra.t = extra.text; end;
     
     if drawBool == false then; return false; end;
 
@@ -284,7 +292,11 @@ function ui.loadMenu(menuID)
     elseif fs.exists(menuID) or fs.exists(menuID..".lua") then
         
         UImenuList[menuID] = require(menuID)
-        UImenuData[menuID] = {}
+        if UImenuList[menuID].keyactions then
+            UImenuData[menuID] = UImenuList[menuID].keyactions
+        else 
+            UImenuData[menuID] = {}
+        end
         
         ui.nextMenu(menuID)
         return UImenuList[menuID]

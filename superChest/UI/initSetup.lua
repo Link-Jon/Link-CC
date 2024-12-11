@@ -28,6 +28,14 @@ local function define()
             initLength = initLength + modifier
         end, --increase length var
 
+        keyaction = {
+            "plus" = function(modifier)
+            --numPadAdd and equals
+
+            if not modifier then; modifier = 1; end
+            initLength = initLength + modifier
+
+            end
         near = {
             id = "lengthUP",
             down = "lengthSET",
@@ -42,8 +50,13 @@ local function define()
     
         action = function()
             --get number from user
+            local newNum = nil
             repeat
-            ui.draw("lengthSet","Input number")
+            if newNum == nil then
+                ui.draw("lengthSet","Input number")
+            else
+                ui.clear("lengthSet",12)
+                ui.draw("length
             local event, character = os.pullEvent("key")
             local input = revKeys[key]
             if string.find(input,"%d") then

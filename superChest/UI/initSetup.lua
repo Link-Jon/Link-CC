@@ -28,14 +28,16 @@ local function define()
             initLength = initLength + modifier
         end, --increase length var
 
-        keyaction = {
-            "plus" = function(modifier)
-            --numPadAdd and equals
+        keys = {
+            equals = function(modifier)
+                if not modifier then; modifier = 1; end
+                initLength = initLength + modifier
+            end,
+            numPadAdd = function(modifier)
+                if not modifier then; modifier = 1; end
+                initLength = initLength + modifier
+            end},
 
-            if not modifier then; modifier = 1; end
-            initLength = initLength + modifier
-
-            end
         near = {
             id = "lengthUP",
             down = "lengthSET",
@@ -47,7 +49,7 @@ local function define()
         id = "lengthSET",
 
         pos = {5,7}, 
-    
+        replaceable = true,
         action = function()
             --get number from user
             local newNum = nil
@@ -56,24 +58,31 @@ local function define()
                 ui.draw("lengthSet","Input number")
             else
                 ui.clear("lengthSet",12)
-                ui.draw("length
-            local event, character = os.pullEvent("key")
-            local input = revKeys[key]
+                ui.draw("lengthSet",newNum)
+            end
+            local event, char = os.pullEvent("key")
+            local input = revKeys[char]
             if string.find(input,"%d") then
-                
-                ui.clear(5,7)
-
+                newNum = newNum..input
             end
             until input == "enter" or input == "numPadEnter"
-
-
+            initLength = newNum
+            return initLength
         end,
+         
         near = {
             id = "lengthSET",
             up = "lengthUP",
             down = "lengthDOWN",
             right = "confirm"
         }
+    })
+
+    ui.define({
+        id = "lengthDOWN",
+
+        replaceable = true,
+        pos = {1,termY}
     })
 
     ui.define({

@@ -81,9 +81,9 @@ function ui.define(id, next)
     local textID = id.id
     local menuID = settings.get("sys.ui.menu")
 
-    if id.keyaction then; for k,v in pairs(id.keyaction) do
+    if id.keys then; for k,v in pairs(id.keys) do
 
-        UImenuData[menuID][k] = v
+        UImenuList[menuID]["keys"][k] = v
 
     end;end
     
@@ -161,9 +161,7 @@ end
 --id = text id
 --location = {x,y} or location = "pos name"
 function ui.draw(textID, extra, drawBool)
-    if type(extra) == "table" and
-     extra.p or extra.pos or 
-     extra.t or extra.text then
+    if type(extra) == "table" and (extra.p or extra.pos or extra.t or extra.text) then
         if extra.pos then extra.p = extra.pos; end;
         if extra.text then extra.t = extra.text; end;
     elseif type(extra) == "table" then
@@ -252,13 +250,8 @@ end
 function ui.loadMenu(menuID)
 
     local path = settings.get("sys.ui.menuPath")
-
-    if path == {} and menuID == nil or menuID == "quit" then
-        return "quit"
-    elseif menuID == nil then
-        menuID = settings.get("sys.ui.menu")
-    end
-
+    if menuID == nil then; menuID = settings.get("sys.ui.menu"); end
+    if menuID == nil or menuID == "quit" then; return "quit"; end
     if path == nil or path == "false" or path == false then
         settings.set("sys.ui.menuPath", {})
         path = {}
@@ -292,12 +285,6 @@ function ui.loadMenu(menuID)
     elseif fs.exists(menuID) or fs.exists(menuID..".lua") then
         
         UImenuList[menuID] = require(menuID)
-        if UImenuList[menuID].keyactions then
-            UImenuData[menuID] = UImenuList[menuID].keyactions
-        else 
-            UImenuData[menuID] = {}
-        end
-        
         ui.nextMenu(menuID)
         return UImenuList[menuID]
     else
@@ -313,12 +300,17 @@ function ui.nextMenu(menuID)
 
     local path = settings.get("sys.ui.menuPath")
     if path == nil or path == "false" or path == false then
-        path = {menuID}; end
+        path = {}; end
 
     table.insert(path,menuID)
     settings.set("sys.ui.menuPath", path)
     settings.set("sys.ui.menu", menuID)
 
+end
+
+function ui.getMenu()
+    local menu = settings.get("sys.ui.menu")
+    return UImenu
 end
 
 function ui.prevMenu()
@@ -367,6 +359,8 @@ end]]
 function ui.selector(buttonID)
 
     local menu = ui.loadMenu()
+    print(textutils.serialise(menu))
+    sleep(1)
     local path = settings.get("sys.ui.menuPath")
     
     if buttonID ~= nil and buttonID ~= "none" and buttonID ~= "wait" then
@@ -427,8 +421,8 @@ function ui.selector(buttonID)
         ui.prevMenu()
 
         --keyactions!
-    elseif UImenuData[menu.name] then 
-        for k,v in pairs(UImenuData[menu.name]) do
+    elseif UImenuData[menu.name]["keys"] then 
+        for k,v in pairs(UImenuData[menu.name]["keys"]) do
         if k == input then
             v()
         end;end

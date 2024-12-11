@@ -100,13 +100,16 @@ local function draw(redraw)
             reuse = true
         }
     elseif type(redraw) == "string" then
-        redraw = {redraw}
+        redraw = {redraw} 
     end
 
 
     local near = settings.get("sys.ui.selected")
     selectedPosition = near.index
     local screenChanged = false
+
+    --checks with scrolling screen to show the rest
+    --of the list; also tells weither we should redraw EVERYTHING or not
     if first == false then
 
         if selectedPosition < 5 and indexPosition > 1 then

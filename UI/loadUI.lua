@@ -14,6 +14,7 @@ if not args[1] then
 end
 
 settings.set("sys.ui.menuPath", false)
+settings.set("sys.ui.menu", false)
 local currMenu = ui.loadMenu(args[1])
 settings.set("sys.ui.selected", currMenu.defaultButton)
 currMenu.define()

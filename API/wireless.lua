@@ -37,7 +37,7 @@ function scanner(channel,modem)
 end
 ]]
 
-local function airTranscieveWire(wiredSide, wirelessSide, continuious, force)
+function airTranscieveWire(wiredSide, wirelessSide, continuious, force)
 
     if continuious == nil then continuious = false end
 
@@ -64,7 +64,7 @@ local function airTranscieveWire(wiredSide, wirelessSide, continuious, force)
     repeat
         local event, side, channel, rplyChannel, msg, distance = os.pullEvent("modem_message")
         local msgStr
-        
+
         if type(msg) == "table" then
             msgStr = textutils.serialise(msg)
         else

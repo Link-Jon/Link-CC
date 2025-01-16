@@ -80,9 +80,10 @@ function airTranscieveWire(wiredSide, wirelessSide, continuious, force)
 
         if type(continuious) == "number" then
             continuious = continuious - 1
+            if continuious <= 0 then continuious = false end
         end
 
-    until continuious <= 0 or continuious == false
+    until continuious == false
 
 end
 

@@ -37,37 +37,46 @@ function scanner(channel,modem)
 end
 ]]
 
-local function airTranscieveWire(wiredSide, wirelessSide, continuious)
+local function airTranscieveWire(wiredSide, wirelessSide, continuious, force)
+
+    if continuious == nil then continuious = false end
 
     local wired = peripheral.wrap(wiredSide)
     local wireless = peripheral.wrap(wirelessSide)
 
     wired.open(rednet.CHANNEL_BROADCAST)
-    wired.open(rednet.CHANNEL_REPEAT)
+    --wired.open(rednet.CHANNEL_REPEAT)
     wireless.open(rednet.CHANNEL_BROADCAST)
-    wireless.open(rednet.CHANNEL_REPEAT)
+    --wireless.open(rednet.CHANNEL_REPEAT)
 
     --input check
     --if input is backwards.
-    if wired.isWireless() and not wireless.isWireless() then
+    if wired.isWireless() and not wireless.isWireless() and not force then
         local temp = wired
         wired = wireless
         wireless = temp
         temp = nil
     --if both same kind
-    elseif wired.isWireless() == wireless.isWireless() then
-        return false, "Only Wireless with Wired Please"
+    elseif wired.isWireless() == wireless.isWireless() and not force then
+        return false, "Only Wireless AND Wired, not 2 of the same please."
     end
 
+    repeat
+        local event, side, channel, rplyChannel, msg, distance = os.pullEvent("modem_message")
 
-    local event, side, channel, rplyChannel, msg, distance = os.pullEvent("modem_message")
-    
-    --this might cause inf recursion as is..?
-    if side == wirelessSide then
-        wired.transmit(channel, rplyChannel, msg)
-    elseif side == wiredSide then
-        wirelessSide.transmit(channel, rplyChannel, msg)
-    end
+        write(side.." ["..distance.."]: "..msg.."\n")
+        --this might cause inf recursion as is..?
+        if side == wirelessSide then
+            wired.transmit(rednet.CHANNEL_REPEAT, rplyChannel, msg)
+        elseif side == wiredSide then
+            wirelessSide.transmit(rednet.CHANNEL_REPEAT, rplyChannel, msg)
+        end
+
+        if type(continuious) == "number" then
+            continuious = continuious - 1
+        end
+
+    until continuious <= 0 or continuious == false
 
 end
 
@@ -88,7 +97,7 @@ HTTP.lua, merged.
 --required: arg1 and arg2.
 --if you put nil for 3, 4, 5, or 6 it will use default.
 --for arg[2] if its inside a file like /functions/git.lua you need to input "foldername/filename" for arg[2]
-logic = require(notes.dir.."logic")
+logic = require("logic")
 
 
 function github(arg1,arg2,arg3,arg4,arg5,arg6) --note. lua arrays start at 1, not 0. (changeable, but i'd rather not)

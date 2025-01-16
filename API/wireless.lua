@@ -21,6 +21,9 @@ Or maybe generally modem functions. :P
 --i dont really care how bad it is.
 --im thinking just convert to binary function.
 
+--... I need to fix WHERE my functions are.
+-- ugh i hate how disorganized i am,
+--but im too bad to fix it.
 --[[
 function scanner(channel,modem)
     if not modem then
@@ -34,6 +37,39 @@ function scanner(channel,modem)
 end
 ]]
 
+local function airTranscieveWire(wiredSide, wirelessSide, continuious)
+
+    local wired = peripheral.wrap(wiredSide)
+    local wireless = peripheral.wrap(wirelessSide)
+
+    wired.open(rednet.CHANNEL_BROADCAST)
+    wired.open(rednet.CHANNEL_REPEAT)
+    wireless.open(rednet.CHANNEL_BROADCAST)
+    wireless.open(rednet.CHANNEL_REPEAT)
+
+    --input check
+    --if input is backwards.
+    if wired.isWireless() and not wireless.isWireless() then
+        local temp = wired
+        wired = wireless
+        wireless = temp
+        temp = nil
+    --if both same kind
+    elseif wired.isWireless() == wireless.isWireless() then
+        return false, "Only Wireless with Wired Please"
+    end
+
+
+    local event, side, channel, rplyChannel, msg, distance = os.pullEvent("modem_message")
+    
+    --this might cause inf recursion as is..?
+    if side == wirelessSide then
+        wired.transmit(channel, rplyChannel, msg)
+    elseif side == wiredSide then
+        wirelessSide.transmit(channel, rplyChannel, msg)
+    end
+
+end
 
 --[[
 -- ========== --

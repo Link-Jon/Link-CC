@@ -1,0 +1,35 @@
+--------------------------------------
+from https://minecraftology.fandom.com/wiki/Big_Reactors
+
+
+Gelid Cryotheum 	    0.66 	0.95 	6.0 	3
+Resonant Ender 	        0.9 	0.75 	2.0 	2
+Graphite 	            0.1 	0.5 	2 	2
+Lead 	                0.75 	0.75 	1.75 	1.5[1]
+Life Essence 	        0.7 	0.55 	1.75 	2
+Energized Glowstone 	0.2 	0.6 	1.75 	1
+Destabilized Redstone 	0.75 	0.55 	1.6 	2.5
+Enderium 	            0.53 	0.88 	1.6 	3
+Titanium 	            0.53 	0.87 	1.59 	2.7
+Platinum 	            0.53 	0.86 	1.58 	2.5
+Shiny 	                0.53 	0.86 	1.58 	2.5
+Diamond 	            0.55 	0.85 	1.5 	3
+Emerald 	            0.55 	0.85 	1.5 	2.5
+Iron 	                0.5 	0.75 	1.5 	0.6
+Fluxed Electrum 	    0.54 	0.83 	1.48 	2.4
+Electrum 	            0.53 	0.82 	1.47 	2.2
+Gold 	                0.52 	0.8 	1.45 	2
+Silver 	                0.51 	0.79 	1.43 	1.5
+Invar 	                0.5 	0.79 	1.43 	0.6
+Aluminum 	            0.5 	0.78 	1.42 	0.6[1]
+Steel 	                0.5 	0.78 	1.42 	0.6
+Osmium 	                0.51 	0.77 	1.41 	1
+Brass 	                0.51 	0.77 	1.41 	1
+Bronze 	                0.51 	0.77 	1.41 	1
+Zinc 	                0.51 	0.77 	1.41 	1
+Copper 	                0.5 	0.75 	1.4 	1
+Water 	                0.33 	0.5 	1.33 	0.1
+Ice 	                0.33 	0.33 	1.15 	0.1[1]
+Glass 	                0.2 	0.25 	1.1 	0.3
+Snow 	                0.15 	0.33 	1.05 	0.05[1]
+Blazing Pyrotheum 	    0.66 	0.9 	1.0 	0.6 

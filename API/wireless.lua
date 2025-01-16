@@ -63,9 +63,15 @@ local function airTranscieveWire(wiredSide, wirelessSide, continuious, force)
 
     repeat
         local event, side, channel, rplyChannel, msg, distance = os.pullEvent("modem_message")
-
-        write(side.." ["..distance.."]: "..msg.."\n")
-        --this might cause inf recursion as is..?
+        local msgStr
+        
+        if type(msg) == "table" then
+            msgStr = textutils.serialise(msg)
+        else
+            msgStr = tostring(msg)
+        end
+        write(side.." ["..distance.."]: "..msgStr.."\n")
+        
         if side == wirelessSide then
             wired.transmit(rednet.CHANNEL_REPEAT, rplyChannel, msg)
         elseif side == wiredSide then

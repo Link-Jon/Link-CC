@@ -11,9 +11,9 @@ local loops = args[3]
 --does... does wireless side even matter to specify?
 -- meh.
 
-if peripheral.call(wired, "open", 1) ~= true then
+if peripheral.getType(wired) ~= "modem" then
     error("Wired modem (arg 1) not a modem")
-elseif peripheral.call(wireless, "open", 1) == true then
+elseif peripheral.getType(wireless) ~= "modem" then
     error("Wireless modem (arg 2) not a modem")
 end
 

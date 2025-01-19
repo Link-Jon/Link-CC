@@ -45,9 +45,9 @@ function airTranscieveWire(wiredSide, wirelessSide, continuious, force)
     local wireless = peripheral.wrap(wirelessSide)
 
     wired.open(rednet.CHANNEL_BROADCAST)
-    --wired.open(rednet.CHANNEL_REPEAT)
+    wired.open(rednet.CHANNEL_REPEAT)
     wireless.open(rednet.CHANNEL_BROADCAST)
-    --wireless.open(rednet.CHANNEL_REPEAT)
+    wireless.open(rednet.CHANNEL_REPEAT)
 
     --input check
     --if input is backwards.
@@ -65,17 +65,21 @@ function airTranscieveWire(wiredSide, wirelessSide, continuious, force)
         local event, side, channel, rplyChannel, msg, distance = os.pullEvent("modem_message")
         local msgStr
 
+        if wired.isOpen(rplyChannel) == false then wired.open(rplyChannel) end
+        if wireless.isOpen(rplyChannel) == false then wireless.open(rplyChannel) end
+
+        --if i get a new rply channel, i need to open that channel...
         if type(msg) == "table" then
             msgStr = textutils.serialise(msg)
         else
             msgStr = tostring(msg)
         end
-        write(side.." ["..distance.."]: "..msgStr.."\n")
+        write(os.clock()..": "..side.." ["..channel.."|"..rplyChannel.."]: "..msgStr.."\n")
         
         if side == wirelessSide then
-            wired.transmit(rednet.CHANNEL_REPEAT, rplyChannel, msg)
+            wired.transmit(channel, rplyChannel, msg)
         elseif side == wiredSide then
-            wirelessSide.transmit(rednet.CHANNEL_REPEAT, rplyChannel, msg)
+            wireless.transmit(channel, rplyChannel, msg)
         end
 
         if type(continuious) == "number" then

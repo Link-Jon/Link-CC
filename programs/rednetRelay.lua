@@ -17,10 +17,13 @@ elseif peripheral.getType(wireless) ~= "modem" then
     error("Wireless modem (arg 2) not a modem")
 end
 
-if loops == "true" or loops == "t" or loops == "y" or loops == "-1" then
-    loops = true
+if loops == "false" or loops == "f" or loops == "n" then
+    loops = false
 elseif loops ~= nil then
     loops = tonumber(loops)
-end
+else loops = true end
 
 airTranscieveWire(wired, wireless, loops)
+
+print("Program stopped? Press enter to continue")
+io.read("")

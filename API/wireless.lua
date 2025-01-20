@@ -118,7 +118,7 @@ function rednetChatLog()
             log.flush()
         else
             if type(msg) == "table" then msg = textutils.serialise(msg) end
-            term.print("UNSAVED: [rply/ID: "..rplyChannel..", dist: "..distance.."]"..msg)
+            print("UNSAVED: [rply/ID: "..rplyChannel..", dist: "..distance.."]"..msg)
         end
         
     end

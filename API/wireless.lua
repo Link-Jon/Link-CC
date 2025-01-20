@@ -91,6 +91,35 @@ function airTranscieveWire(wiredSide, wirelessSide, continuious, force)
 
 end
 
+
+function rednetChatLog()
+
+    local modem = peripheral.find("modem")
+
+    modem.open(rednet.CHANNEL_BROADCAST)
+    --after checking, yeah its sending relay always. i can use this to find it...
+    local log = fs.open("rednetChat.log","a")
+    local name, compID, message, x, y
+
+    while true do
+        local event, side, channel, rplyChannel, msg, distance = os.pullEvent("modem_message")
+        
+        if type(msg) ~= "table" and msg.sProtocal == "chat" and msg.message.sType == "chat" then
+
+            --We can either take the message from client, or server. Both however, would cause duplicates of everything, +1 per client connected...
+            --Taking from client lets use see the ID it came from so.. lets do that.
+            compID = rplyChannel
+            x,y = string.find(msg.message.sText,".->")
+            name = string.sub(msg.message.sText,x,y)
+            message = string.sub(msg.message.sText,y+1,#msg.message.sText)
+
+            log.write("["..name..", ID:"..rplyChannel..", dist:"..distance.."] "..message)
+        end
+        
+    end
+end
+
+
 --[[
 -- ========== --
 Internet functions.

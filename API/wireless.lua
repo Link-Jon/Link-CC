@@ -114,9 +114,13 @@ function rednetChatLog()
             message = string.sub(msg.message.sText,y+1,#msg.message.sText)
 
             log.write("["..name..", ID:"..rplyChannel..", dist:"..distance.."] "..message)
+            term.write("["..name..", ID:"..rplyChannel..", dist:"..distance.."] "..message)
+            log.flush()
         end
         
     end
+    
+    log.close()
 end
 
 

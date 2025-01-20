@@ -104,7 +104,7 @@ function rednetChatLog()
     while true do
         local event, side, channel, rplyChannel, msg, distance = os.pullEvent("modem_message")
         
-        if type(msg) ~= "table" and msg.sProtocal == "chat" and msg.message.sType == "chat" then
+        if type(msg) ~= "table" and msg.sProtocol == "chat" and msg.message.sType == "chat" then
 
             --We can either take the message from client, or server. Both however, would cause duplicates of everything, +1 per client connected...
             --Taking from client lets use see the ID it came from so.. lets do that.

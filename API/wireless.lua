@@ -116,6 +116,9 @@ function rednetChatLog()
             log.write("["..name..", ID:"..rplyChannel..", dist:"..distance.."] "..message)
             term.write("["..name..", ID:"..rplyChannel..", dist:"..distance.."] "..message)
             log.flush()
+        else
+            if type(msg) == "table" then msg = textutils.serialise(msg) end
+            term.write("UNSAVED: [rply/ID: "..rplyChannel..", dist: "..distance.."]"..msg)
         end
         
     end

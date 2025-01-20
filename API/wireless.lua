@@ -109,8 +109,8 @@ function rednetChatLog()
             --We can either take the message from client, or server. Both however, would cause duplicates of everything, +1 per client connected...
             --Taking from client lets use see the ID it came from so.. lets do that.
             compID = rplyChannel
-            x,y = string.find(msg.message.sText,".->")
-            name = string.sub(msg.message.sText,x,y)
+            x,y = string.find(msg.message.sText,">")
+            name = string.sub(msg.message.sText,1,y)
             message = string.sub(msg.message.sText,y+1,#msg.message.sText)
 
             log.write("["..name..", ID:"..rplyChannel..", dist:"..distance.."] "..message)
